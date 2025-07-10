@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generalized Cyclone Parameter Calculator with Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 80px;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .input-label {
+            font-weight: 500;
+        }
+        .input-field {
+            width: 100%;
+        }
+        /* Style for the comparison table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        .comparison-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+        .comparison-table tbody tr:nth-child(odd) {
+            background-color: #f1f5f9;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Generalized Cyclone Parameter Calculator</h1>
+            <p class="mt-2 text-md text-gray-600">Mert Kuplulu, Fluid Dynamics</p>
+        </header>
+
+        <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+            <div id="calculator-form">
+                <h2 class="text-2xl font-semibold mb-6 border-b pb-3">Input Parameters</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <!-- Cyclone Dimensions -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Cyclone Dimensions</h3>
+                        <div class="space-y-3">
+                            <div class="input-group"><label for="Dc_mm" class="input-label">Body Diameter (Dc)</label><input type="number" id="Dc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="20"><span class="text-gray-500">mm</span></div>
+                            <div class="input-group"><label for="Lc_mm" class="input-label">Barrel Length (Lc)</label><input type="number" id="Lc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="20"><span class="text-gray-500">mm</span></div>
+                            <div class="input-group"><label for="Zc_mm" class="input-label">Cone Length (Zc)</label><input type="number" id="Zc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="50"><span class="text-gray-500">mm</span></div>
+                            <div class="input-group"><label for="De_mm" class="input-label">Outlet Diameter (De)</label><input type="number" id="De_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="10"><span class="text-gray-500">mm</span></div>
+                            <div class="input-group"><label for="Dd_mm" class="input-label">Dust Outlet (Dd)</label><input type="number" id="Dd_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="5"><span class="text-gray-500">mm</span></div>
+                            <div class="input-group"><label for="Bc_mm" class="input-label">Inlet Width (Bc)</label><input type="number" id="Bc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="5"><span class="text-gray-500">mm</span></div>
+                            <div class="input-group"><label for="Hc_mm" class="input-label">Inlet Height (Hc)</label><input type="number" id="Hc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="9"><span class="text-gray-500">mm</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Fluid & Particle Properties -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Flow & Material Properties</h3>
+                        <div class="space-y-3">
+                            <div class="input-group"><label for="Q_lps" class="input-label">Inlet Flow Rate</label><input type="number" id="Q_lps" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1"><span class="text-gray-500">L/s</span></div>
+                            <div class="input-group"><label for="mu" class="input-label">Gas Viscosity (μ)</label><input type="number" id="mu" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1.81e-5"><span class="text-gray-500">Pa.s</span></div>
+                            <div class="input-group"><label for="rho_p" class="input-label">Particle Density (ρp)</label><input type="number" id="rho_p" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="2650"><span class="text-gray-500">kg/m³</span></div>
+                            <div class="input-group"><label for="rho_g" class="input-label">Gas Density (ρg)</label><input type="number" id="rho_g" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1.225"><span class="text-gray-500">kg/m³</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button id="calculate-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105">
+                        Calculate Parameters
+                    </button>
+                </div>
+            </div>
+
+            <div id="error-message" class="hidden mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"></div>
+
+            <div id="results" class="hidden mt-8">
+                <h2 class="text-2xl font-semibold mb-6 border-b pb-3">Current Calculation Results</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-lg text-indigo-700">Inlet Velocity</h3><p class="text-2xl font-mono"><span id="result-Vin"></span> m/s</p></div>
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-lg text-indigo-700">Total Number of Turns (Ne)</h3><p class="text-2xl font-mono"><span id="result-Ne_total"></span></p></div>
+                    <div class="bg-green-50 p-4 rounded-lg shadow-sm col-span-1 md:col-span-2"><h3 class="font-bold text-lg text-green-800">Lapple Model Cut Diameter (d50)</h3><p class="text-3xl font-mono text-center text-green-700 pt-2"><span id="result-d50"></span> µm</p></div>
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-lg text-gray-700">Barrel Section</h3><ul class="mt-2 space-y-1"><li><strong>Avg. Velocity (V1):</strong> <span id="result-V1" class="font-mono"></span> m/s</li><li><strong>Travel Distance (L1):</strong> <span id="result-L1_mm" class="font-mono"></span> mm</li><li><strong>Number of Turns (Ne1):</strong> <span id="result-Ne1" class="font-mono"></span></li></ul></div>
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-lg text-gray-700">Cone Section</h3><ul class="mt-2 space-y-1"><li><strong>Avg. Velocity (V2):</strong> <span id="result-V2" class="font-mono"></span> m/s</li><li><strong>Travel Distance (L2):</strong> <span id="result-L2_mm" class="font-mono"></span> mm</li><li><strong>Number of Turns (Ne2):</strong> <span id="result-Ne2" class="font-mono"></span></li></ul></div>
+                </div>
+                <div class="mt-6 flex justify-center items-center gap-4">
+                     <input type="text" id="run-name-input" placeholder="Enter Run Name (e.g., High Flow)" class="p-2 border border-gray-300 rounded-md shadow-sm w-64">
+                    <button id="save-run-btn" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105">
+                        Save Run for Comparison
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comparison Section -->
+            <div id="comparison-section" class="hidden mt-10">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Comparison History</h2>
+                    <button id="clear-history-btn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600">Clear History</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Run</th>
+                                <th>Name</th>
+                                <th>Dc (mm)</th>
+                                <th>Lc (mm)</th>
+                                <th>Zc (mm)</th>
+                                <th>Q (L/s)</th>
+                                <th>Vin (m/s)</th>
+                                <th>Ne (total)</th>
+                                <th>d50 (µm)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- GLOBAL VARIABLES FOR COMPARISON ---
+        let runHistory = [];
+        let runCounter = 1;
+
+        // --- NUMERICAL INTEGRATION ---
+        function quad(f, a, b, n = 1000) {
+            if (a === b) return 0;
+            const h = (b - a) / n;
+            let sum = 0.5 * (f(a) + f(b));
+            for (let i = 1; i < n; i++) {
+                const x = a + i * h;
+                const y = f(x);
+                if (isFinite(y)) { sum += y; }
+            }
+            return sum * h;
+        }
+
+        // --- VELOCITY & CALCULATION FUNCTIONS (unchanged) ---
+        const calculate_v_t1 = (V_in) => V_in;
+        function calculate_v_z1(V_in, D_c, D_e, B_c, H_c) { const Q_in = V_in * H_c * B_c; const annular_area = (Math.PI / 4) * (D_c**2 - D_e**2); if (annular_area <= 0) return 0; return Q_in / annular_area; }
+        function calculate_cone_radius_at_z(z, D_c, Z_c, D_d) { const R_c = D_c / 2; const R_d = D_d / 2; if (Z_c === 0) return R_c; return R_c - (z / Z_c) * (R_c - R_d); }
+        function calculate_v_t2(z, V_in, D_c, Z_c, D_d) { const R_c = D_c / 2; const r_at_z = calculate_cone_radius_at_z(z, D_c, Z_c, D_d); if (r_at_z <= 0) return Infinity; return (R_c / r_at_z) * V_in; }
+        function calculate_v_z2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c) { if ((D_c - D_d) <= 0 || Z_c <= 0) return 0; let Z_o2 = Z_c * (1 - (D_e - D_d) / (D_c - D_d)); if (Z_o2 <= 0) Z_o2 = Z_c; const Q_in = V_in * H_c * B_c; let Q_z = 0; if (z <= Z_o2) { Q_z = Q_in * (1 - z / Z_o2); } const r_cone_at_z = calculate_cone_radius_at_z(z, D_c, Z_c, D_d); const r_outlet = D_e / 2; const annular_area_z = Math.PI * (r_cone_at_z**2 - r_outlet**2); if (annular_area_z <= 0) return Infinity; return Q_z / annular_area_z; }
+        function calculate_v_r2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c) { const V_z2_at_z = calculate_v_z2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c); if (Z_c === 0) return 0; const tan_theta = ((D_c / 2) - (D_d / 2)) / Z_c; return V_z2_at_z * tan_theta; }
+        function integrand_l1(z, V_in, D_c, D_e, B_c, H_c) { const V_t1 = calculate_v_t1(V_in); const V_z1 = calculate_v_z1(V_in, D_c, D_e, B_c, H_c); if (V_z1 === 0) return Infinity; return Math.sqrt(V_t1**2 + V_z1**2) / V_z1; }
+        function integrand_l2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c) { const V_t2 = calculate_v_t2(z, V_in, D_c, Z_c, D_d); const V_z2 = calculate_v_z2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c); const V_r2 = calculate_v_r2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c); if (V_z2 === 0 || !isFinite(V_z2)) return 0; const total_velocity_V2 = Math.sqrt(V_t2**2 + V_z2**2 + V_r2**2); return total_velocity_V2 / V_z2; }
+        function calculate_barrel_parameters(V_in, D_c, D_e, L_c, B_c, H_c) { const V_t1 = calculate_v_t1(V_in); const V_z1 = calculate_v_z1(V_in, D_c, D_e, B_c, H_c); const V1 = Math.sqrt(V_t1**2 + V_z1**2); const L1 = quad(z => integrand_l1(z, V_in, D_c, D_e, B_c, H_c), 0, L_c); const Ne1 = L1 / (Math.PI * D_c); return { V1, L1, Ne1 }; }
+        function calculate_cone_parameters(V_in, D_c, D_e, Z_c, D_d, B_c, H_c) { const L2 = quad(z => integrand_l2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c), 0, Z_c); const avg_diameter_for_turns = (D_c + D_e) / 2.0; const Ne2 = avg_diameter_for_turns > 0 ? L2 / (Math.PI * avg_diameter_for_turns) : Infinity; const z_mid = Z_c / 2; const V_t2_avg = calculate_v_t2(z_mid, V_in, D_c, Z_c, D_d); const V_z2_avg = calculate_v_z2(z_mid, V_in, D_c, D_e, Z_c, D_d, B_c, H_c); const V_r2_avg = calculate_v_r2(z_mid, V_in, D_c, D_e, Z_c, D_d, B_c, H_c); const average_V2 = Math.sqrt(V_t2_avg**2 + V_z2_avg**2 + V_r2_avg**2); return { average_V2, L2, Ne2 }; }
+        function calculate_lapple_cut_diameter(mu, B_c, rho_p, rho_g, V_in, Ne_total) { const numerator = 9 * mu * B_c; const denominator = 2 * Math.PI * (rho_p - rho_g) * V_in * Ne_total; if (denominator <= 0) return Infinity; return Math.sqrt(numerator / denominator); }
+
+        // --- DOM EVENT HANDLING ---
+        document.getElementById('calculate-btn').addEventListener('click', () => {
+            const resultsDiv = document.getElementById('results');
+            const errorDiv = document.getElementById('error-message');
+            resultsDiv.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+
+            try {
+                const Q_lps = parseFloat(document.getElementById('Q_lps').value);
+                const D_c_mm = parseFloat(document.getElementById('Dc_mm').value);
+                const L_c_mm = parseFloat(document.getElementById('Lc_mm').value);
+                const Z_c_mm = parseFloat(document.getElementById('Zc_mm').value);
+                const D_e_mm = parseFloat(document.getElementById('De_mm').value);
+                const D_d_mm = parseFloat(document.getElementById('Dd_mm').value);
+                const B_c_mm = parseFloat(document.getElementById('Bc_mm').value);
+                const H_c_mm = parseFloat(document.getElementById('Hc_mm').value);
+                const mu = parseFloat(document.getElementById('mu').value);
+                const rho_p = parseFloat(document.getElementById('rho_p').value);
+                const rho_g = parseFloat(document.getElementById('rho_g').value);
+
+                const D_c = D_c_mm / 1000.0; const L_c = L_c_mm / 1000.0; const Z_c = Z_c_mm / 1000.0; const D_e = D_e_mm / 1000.0; const D_d = D_d_mm / 1000.0; const B_c = B_c_mm / 1000.0; const H_c = H_c_mm / 1000.0;
+                const Q_m3s = Q_lps / 1000.0;
+                const A_in = B_c * H_c;
+                if (A_in <= 0) throw new Error("Inlet area (Bc * Hc) must be positive.");
+                const V_in = Q_m3s / A_in;
+
+                if (!(D_c > D_e && D_e > D_d && D_d > 0 && L_c > 0 && Z_c >= 0 && V_in > 0 && B_c > 0 && H_c > 0)) {
+                    throw new Error("Dimensions must be positive. The following must hold: Dc > De > Dd > 0.");
+                }
+
+                const { V1, L1, Ne1 } = calculate_barrel_parameters(V_in, D_c, D_e, L_c, B_c, H_c);
+                const { average_V2, L2, Ne2 } = calculate_cone_parameters(V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
+                const Ne_total = Ne1 + Ne2;
+                const d50 = calculate_lapple_cut_diameter(mu, B_c, rho_p, rho_g, V_in, Ne_total);
+                
+                document.getElementById('result-Vin').textContent = V_in.toFixed(2);
+                document.getElementById('result-V1').textContent = V1.toFixed(4);
+                document.getElementById('result-L1_mm').textContent = (L1 * 1000).toFixed(2);
+                document.getElementById('result-Ne1').textContent = Ne1.toFixed(2);
+                document.getElementById('result-V2').textContent = isFinite(average_V2) ? average_V2.toFixed(4) : 'N/A';
+                document.getElementById('result-L2_mm').textContent = (L2 * 1000).toFixed(2);
+                document.getElementById('result-Ne2').textContent = Ne2.toFixed(2);
+                document.getElementById('result-Ne_total').textContent = Ne_total.toFixed(2);
+                document.getElementById('result-d50').textContent = (d50 * 1e6).toFixed(2);
+
+                resultsDiv.classList.remove('hidden');
+
+            } catch (e) {
+                errorDiv.textContent = `Error: ${e.message}. Please check your inputs.`;
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('save-run-btn').addEventListener('click', () => {
+            let runName = document.getElementById('run-name-input').value.trim();
+            if (runName === '') {
+                runName = `Run ${runCounter}`;
+            }
+            
+            const runData = {
+                id: runCounter,
+                name: runName,
+                Dc: document.getElementById('Dc_mm').value,
+                Lc: document.getElementById('Lc_mm').value,
+                Zc: document.getElementById('Zc_mm').value,
+                Q: document.getElementById('Q_lps').value,
+                Vin: document.getElementById('result-Vin').textContent,
+                Ne_total: document.getElementById('result-Ne_total').textContent,
+                d50: document.getElementById('result-d50').textContent,
+            };
+            runHistory.push(runData);
+            updateComparisonTable();
+            runCounter++;
+            document.getElementById('run-name-input').value = ''; // Clear input after saving
+        });
+
+        document.getElementById('clear-history-btn').addEventListener('click', () => {
+            runHistory = [];
+            runCounter = 1;
+            updateComparisonTable();
+        });
+
+        function updateComparisonTable() {
+            const tableBody = document.getElementById('comparison-body');
+            const comparisonSection = document.getElementById('comparison-section');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            if (runHistory.length === 0) {
+                comparisonSection.classList.add('hidden');
+                return;
+            }
+
+            comparisonSection.classList.remove('hidden');
+
+            runHistory.forEach(run => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${run.id}</td>
+                    <td>${run.name}</td>
+                    <td>${run.Dc}</td>
+                    <td>${run.Lc}</td>
+                    <td>${run.Zc}</td>
+                    <td>${run.Q}</td>
+                    <td>${run.Vin}</td>
+                    <td>${run.Ne_total}</td>
+                    <td>${run.d50}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('calculate-btn').click();
+        });
+    </script>
+</body>
+</html>
