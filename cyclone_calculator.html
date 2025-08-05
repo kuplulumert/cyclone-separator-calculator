@@ -21,6 +21,37 @@
         }
         .input-field {
             width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+            background-color: #ffffff;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background-color: #fefefe;
+        }
+        .input-field:hover {
+            border-color: #9ca3af;
+            background-color: #fafafa;
+        }
+        .instant-input {
+            border: 2px solid #e5e7eb !important;
+            transition: all 0.2s ease-in-out;
+            background-color: #ffffff;
+        }
+        .instant-input:focus {
+            outline: none;
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background-color: #fefefe;
+        }
+        .instant-input:hover {
+            border-color: #6b7280 !important;
+            background-color: #f9fafb;
         }
         .data-table {
             width: 100%;
@@ -479,10 +510,10 @@
                         <!-- Flow Parameters -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <h3 class="text-xl font-semibold text-blue-700 border-b border-blue-200 pb-2 mb-4">🌊 Flow Parameters</h3>
-                            <div class="grid grid-cols-2 gap-4">
+                                                         <div class="grid grid-cols-2 gap-4">
                                 <div class="input-group">
                                     <label for="instant-Q_lps" class="input-label">Flow Rate</label>
-                                    <input type="number" id="instant-Q_lps" value="100" step="1" class="input-field instant-input">
+                                    <input type="number" id="instant-Q_lps" value="1" step="0.1" class="input-field instant-input">
                                     <span class="unit-text">L/s</span>
                                 </div>
                                 <div class="input-group">
@@ -496,25 +527,25 @@
                         <!-- Main Dimensions -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <h3 class="text-xl font-semibold text-green-700 border-b border-green-200 pb-2 mb-4">📏 Main Dimensions</h3>
-                            <div class="grid grid-cols-2 gap-4">
+                                                         <div class="grid grid-cols-2 gap-4">
                                 <div class="input-group">
                                     <label for="instant-Dc_mm" class="input-label">Cyclone Ø (Dc)</label>
-                                    <input type="number" id="instant-Dc_mm" value="500" step="10" class="input-field instant-input">
+                                    <input type="number" id="instant-Dc_mm" value="20" step="1" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
                                     <label for="instant-Lc_mm" class="input-label">Length (Lc)</label>
-                                    <input type="number" id="instant-Lc_mm" value="1000" step="10" class="input-field instant-input">
+                                    <input type="number" id="instant-Lc_mm" value="20" step="1" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
                                     <label for="instant-De_mm" class="input-label">Exit Ø (De)</label>
-                                    <input type="number" id="instant-De_mm" value="250" step="5" class="input-field instant-input">
+                                    <input type="number" id="instant-De_mm" value="10" step="1" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
                                     <label for="instant-Dd_mm" class="input-label">Dust Ø (Dd)</label>
-                                    <input type="number" id="instant-Dd_mm" value="125" step="5" class="input-field instant-input">
+                                    <input type="number" id="instant-Dd_mm" value="5" step="1" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                             </div>
@@ -523,25 +554,25 @@
                         <!-- Inlet Parameters -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <h3 class="text-xl font-semibold text-purple-700 border-b border-purple-200 pb-2 mb-4">🔄 Inlet & Exit</h3>
-                            <div class="grid grid-cols-2 gap-4">
+                                                         <div class="grid grid-cols-2 gap-4">
                                 <div class="input-group">
                                     <label for="instant-Bc_mm" class="input-label">Inlet Width (Bc)</label>
-                                    <input type="number" id="instant-Bc_mm" value="125" step="5" class="input-field instant-input">
+                                    <input type="number" id="instant-Bc_mm" value="5" step="1" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
                                     <label for="instant-Hc_mm" class="input-label">Inlet Height (Hc)</label>
-                                    <input type="number" id="instant-Hc_mm" value="250" step="5" class="input-field instant-input">
+                                    <input type="number" id="instant-Hc_mm" value="9" step="1" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
                                     <label for="instant-Zc_mm" class="input-label">Exit Length (Zc)</label>
-                                    <input type="number" id="instant-Zc_mm" value="200" step="5" class="input-field instant-input">
+                                    <input type="number" id="instant-Zc_mm" value="50" step="1" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
                                     <label for="instant-initial_dust" class="input-label">Dust Load</label>
-                                    <input type="number" id="instant-initial_dust" value="100" step="5" class="input-field instant-input">
+                                    <input type="number" id="instant-initial_dust" value="200" step="10" class="input-field instant-input">
                                     <span class="unit-text">g</span>
                                 </div>
                             </div>
@@ -551,10 +582,10 @@
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <h3 class="text-xl font-semibold text-orange-700 border-b border-orange-200 pb-2 mb-4">🧪 Material Properties</h3>
                             <div class="space-y-3">
-                                <div class="grid grid-cols-2 gap-4">
+                                                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="input-group">
                                         <label for="instant-rho_p" class="input-label">Particle Density</label>
-                                        <input type="number" id="instant-rho_p" value="2500" step="50" class="input-field instant-input">
+                                        <input type="number" id="instant-rho_p" value="2650" step="50" class="input-field instant-input">
                                         <span class="unit-text">kg/m³</span>
                                     </div>
                                     <div class="input-group">
@@ -566,7 +597,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="input-group">
                                         <label for="instant-mu" class="input-label">Gas Viscosity</label>
-                                        <input type="number" id="instant-mu" value="1.81e-5" step="1e-6" class="input-field instant-input">
+                                        <input type="text" id="instant-mu" value="1.81e-5" class="input-field instant-input">
                                         <span class="unit-text">Pa·s</span>
                                     </div>
                                     <div class="input-group">
