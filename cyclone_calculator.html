@@ -610,11 +610,22 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: Chart -->
-                    <div class="bg-white p-6 rounded-2xl shadow-lg">
-                        <h3 class="text-xl font-semibold text-indigo-700 border-b border-indigo-200 pb-2 mb-4">📊 Live Efficiency Chart</h3>
-                        <div class="chart-container-fixed">
-                            <canvas id="instant-efficiency-chart"></canvas>
+                    <!-- Right Column: Charts -->
+                    <div class="space-y-6">
+                        <!-- Efficiency Chart -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-indigo-700 border-b border-indigo-200 pb-2 mb-4">📊 Live Efficiency Chart</h3>
+                            <div class="chart-container-fixed">
+                                <canvas id="instant-efficiency-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Dust Load Chart -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-green-700 border-b border-green-200 pb-2 mb-4">🌪️ Dust Load & Escaped Dust</h3>
+                            <div class="chart-container-fixed">
+                                <canvas id="instant-dust-chart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1246,11 +1257,13 @@
         // ===========================
         
         let instantChart = null;
+        let instantDustChart = null;
         let instantCalculationTimeout = null;
 
         function initInstantResultTab() {
             setupInstantEventListeners();
             initInstantChart();
+            initInstantDustChart();
             performInstantCalculation(); // Initial calculation
         }
 
@@ -1280,7 +1293,6 @@
                 const inputs = getInstantInputValues();
                 const results = calculateInstantResults(inputs);
                 updateInstantDisplay(results);
-                updateInstantChart(results);
             } catch (error) {
                 displayInstantError(error.message);
             }
@@ -1358,6 +1370,9 @@
                 escaped: total_escaped_dust,
                 velocity: V_in,
                 efficiencies: efficiencies,
+                dust_per_cyclone: dust_per_cyclone,
+                escaped_per_cyclone: escaped_per_cyclone,
+                num_cyclones: inputs.num_cyclones,
                 status: 'Valid Design'
             };
         }
@@ -1373,6 +1388,10 @@
             const statusElement = document.getElementById('instant-status');
             statusElement.textContent = results.status;
             statusElement.className = 'result-status';
+            
+            // Update charts
+            updateInstantChart(results);
+            updateInstantDustChart(results);
         }
 
         function displayInstantError(message) {
@@ -1480,10 +1499,128 @@
             });
         }
 
+        function initInstantDustChart() {
+            const ctx = document.getElementById('instant-dust-chart').getContext('2d');
+            
+            instantDustChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Per Cyclone'],
+                    datasets: [{
+                        label: 'Dust Load per Cyclone',
+                        data: [0],
+                        backgroundColor: '#3b82f6'
+                    }, {
+                        label: 'Escaped Dust per Cyclone',
+                        data: [0],
+                        backgroundColor: '#dc2626'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 20
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}g`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: false
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Dust (g)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 200
+                    }
+                },
+                plugins: [{
+                    id: 'instantDustValues',
+                    afterDatasetsDraw: function(chart) {
+                        const ctx = chart.ctx;
+                        ctx.save();
+                        ctx.font = 'bold 14px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 3;
+                        ctx.fillStyle = '#000000';
+                        
+                        chart.data.datasets.forEach((dataset, datasetIndex) => {
+                            const value = dataset.data[0];
+                            if (value && value > 0) {
+                                const meta = chart.getDatasetMeta(datasetIndex);
+                                if (meta && meta.data && meta.data[0]) {
+                                    const bar = meta.data[0];
+                                    const text = value.toFixed(1);
+                                    ctx.strokeText(text, bar.x, bar.y - 8);
+                                    ctx.fillText(text, bar.x, bar.y - 8);
+                                }
+                            }
+                        });
+                        
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
+
         function updateInstantChart(results) {
             if (instantChart && results.efficiencies) {
                 instantChart.data.datasets[0].data = results.efficiencies;
                 instantChart.update('none');
+            }
+        }
+
+        function updateInstantDustChart(results) {
+            if (instantDustChart && results) {
+                instantDustChart.data.datasets[0].data = [results.dust_per_cyclone || 0];
+                instantDustChart.data.datasets[1].data = [results.escaped_per_cyclone || 0];
+                instantDustChart.update('none');
             }
         }
 
