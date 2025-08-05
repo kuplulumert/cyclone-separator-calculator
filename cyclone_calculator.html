@@ -629,6 +629,364 @@
             pPerOptions.scales = {x:{title:{display:!0,font:{}},ticks:{font:{}}}, y:{title:{display:!0,text:"Dust Load (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}, y1:{type:"linear",display:!0,position:"right",title:{display:!0,text:"Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}},grid:{drawOnChartArea:!1}}};
             paramPerCycloneDustChart = new Chart(pPerCtx,{type:"line",data:{labels:[],datasets:[{label:"Dust Load per Cyclone",data:[],backgroundColor:"#3b82f6",borderColor:"#3b82f6",type:"line",yAxisID:"y",pointRadius:6,fill:false,tension:0.1},{label:"Escaped Dust per Cyclone",data:[],backgroundColor:"#dc2626",borderColor:"#dc2626",type:"line",yAxisID:"y1",pointRadius:6,fill:false,tension:0.1}]},options:pPerOptions,plugins:[{id:'paramPerCycloneValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{chart.data.datasets.forEach((dataset,datasetIndex)=>{const value=dataset.data[index];if(value&&value>0){const meta=chart.getDatasetMeta(datasetIndex);if(meta&&meta.data&&meta.data[index]){const element=meta.data[index];const text=value.toFixed(1);ctx.strokeText(text,element.x,element.y-8);ctx.fillText(text,element.x,element.y-8)}}})});ctx.restore()}}]});
         }
+
+        // ===========================
+        // OPTIMIZATION TAB FUNCTIONALITY
+        // ===========================
+        
+        const optimizationParameters = [
+            {id: 'Dc_mm', label: 'Cyclone Diameter (Dc)', unit: 'mm', min: 100, max: 2000, default_min: 300, default_max: 800},
+            {id: 'Lc_mm', label: 'Cyclone Length (Lc)', unit: 'mm', min: 100, max: 3000, default_min: 500, default_max: 1500},
+            {id: 'De_mm', label: 'Exit Diameter (De)', unit: 'mm', min: 50, max: 1000, default_min: 150, default_max: 400},
+            {id: 'Dd_mm', label: 'Dust Outlet Diameter (Dd)', unit: 'mm', min: 20, max: 500, default_min: 75, default_max: 200},
+            {id: 'Bc_mm', label: 'Inlet Width (Bc)', unit: 'mm', min: 20, max: 500, default_min: 80, default_max: 200},
+            {id: 'Hc_mm', label: 'Inlet Height (Hc)', unit: 'mm', min: 20, max: 500, default_min: 160, default_max: 400},
+            {id: 'Zc_mm', label: 'Exit Length (Zc)', unit: 'mm', min: 0, max: 1000, default_min: 100, default_max: 300}
+        ];
+
+        function initOptimizationTab() {
+            populateOptimizationParameters();
+            setupOptimizationEventListeners();
+        }
+
+        function populateOptimizationParameters() {
+            const container = document.getElementById('opt-variables-container');
+            container.innerHTML = '';
+            
+            optimizationParameters.forEach(param => {
+                const paramDiv = document.createElement('div');
+                paramDiv.className = 'border border-gray-200 rounded-lg p-4';
+                paramDiv.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-medium text-gray-700">${param.label}</label>
+                        <input type="checkbox" id="opt-enable-${param.id}" class="opt-param-checkbox" 
+                               data-param="${param.id}" onchange="toggleParameterRange('${param.id}')">
+                    </div>
+                    <div id="opt-range-${param.id}" class="hidden grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Min ${param.unit}</label>
+                            <input type="number" id="opt-min-${param.id}" value="${param.default_min}" 
+                                   min="${param.min}" max="${param.max}" class="w-full p-1 text-sm border border-gray-300 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Max ${param.unit}</label>
+                            <input type="number" id="opt-max-${param.id}" value="${param.default_max}" 
+                                   min="${param.min}" max="${param.max}" class="w-full p-1 text-sm border border-gray-300 rounded">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(paramDiv);
+            });
+        }
+
+        function toggleParameterRange(paramId) {
+            const checkbox = document.getElementById(`opt-enable-${paramId}`);
+            const rangeDiv = document.getElementById(`opt-range-${paramId}`);
+            
+            if (checkbox.checked) {
+                rangeDiv.classList.remove('hidden');
+            } else {
+                rangeDiv.classList.add('hidden');
+            }
+        }
+
+        function setupOptimizationEventListeners() {
+            document.getElementById('run-optimization-btn').addEventListener('click', runOptimization);
+        }
+
+        async function runOptimization() {
+            const objective = document.getElementById('opt-objective').value;
+            const enabledParams = getEnabledParameters();
+            
+            if (enabledParams.length === 0) {
+                alert('Please select at least one parameter to optimize.');
+                return;
+            }
+
+            showOptimizationProgress();
+            const results = await performGridSearchOptimization(objective, enabledParams);
+            hideOptimizationProgress();
+            displayOptimizationResults(results, objective);
+        }
+
+        function getEnabledParameters() {
+            const enabled = [];
+            optimizationParameters.forEach(param => {
+                const checkbox = document.getElementById(`opt-enable-${param.id}`);
+                if (checkbox.checked) {
+                    const minVal = parseFloat(document.getElementById(`opt-min-${param.id}`).value);
+                    const maxVal = parseFloat(document.getElementById(`opt-max-${param.id}`).value);
+                    enabled.push({
+                        id: param.id,
+                        label: param.label,
+                        unit: param.unit,
+                        min: minVal,
+                        max: maxVal,
+                        steps: 5 // 5 steps for grid search
+                    });
+                }
+            });
+            return enabled;
+        }
+
+        function showOptimizationProgress() {
+            document.getElementById('opt-progress-container').classList.remove('hidden');
+            document.getElementById('opt-results-container').classList.add('hidden');
+            document.getElementById('opt-welcome-message').classList.add('hidden');
+        }
+
+        function hideOptimizationProgress() {
+            document.getElementById('opt-progress-container').classList.add('hidden');
+        }
+
+        function updateProgress(current, total, text) {
+            const percent = (current / total) * 100;
+            document.getElementById('opt-progress-bar').style.width = percent + '%';
+            document.getElementById('opt-progress-text').textContent = text || `${current}/${total} calculations completed`;
+        }
+
+        async function performGridSearchOptimization(objective, enabledParams) {
+            const baseInputs = getCurrentInputValues();
+            const maxPressureConstraint = parseFloat(document.getElementById('opt-constraint-max-pressure').value) || Infinity;
+            
+            // Generate all parameter combinations
+            const combinations = generateParameterCombinations(enabledParams);
+            const results = [];
+            
+            for (let i = 0; i < combinations.length; i++) {
+                updateProgress(i, combinations.length, `Evaluating design ${i + 1}/${combinations.length}`);
+                
+                const inputs = { ...baseInputs, ...combinations[i] };
+                
+                try {
+                    const result = await evaluateDesign(inputs, objective, maxPressureConstraint);
+                    if (result && result.isValid) {
+                        results.push({ ...result, combination: combinations[i] });
+                    }
+                } catch (error) {
+                    console.warn('Design evaluation failed:', error);
+                }
+                
+                // Small delay to allow UI updates
+                if (i % 10 === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 1));
+                }
+            }
+            
+            // Sort results based on objective
+            results.sort((a, b) => {
+                if (objective === 'maximize_efficiency') {
+                    return b.objectiveValue - a.objectiveValue;
+                } else {
+                    return a.objectiveValue - b.objectiveValue;
+                }
+            });
+            
+            return results;
+        }
+
+        function generateParameterCombinations(enabledParams) {
+            if (enabledParams.length === 0) return [];
+            
+            const parameterValues = enabledParams.map(param => {
+                const values = [];
+                const step = (param.max - param.min) / (param.steps - 1);
+                for (let i = 0; i < param.steps; i++) {
+                    values.push(param.min + (step * i));
+                }
+                return { id: param.id, values };
+            });
+            
+            // Generate all combinations
+            function cartesianProduct(arrays) {
+                return arrays.reduce((acc, curr) => {
+                    const result = [];
+                    acc.forEach(a => {
+                        curr.values.forEach(b => {
+                            const combination = { ...a };
+                            combination[curr.id] = b;
+                            result.push(combination);
+                        });
+                    });
+                    return result;
+                }, [{}]);
+            }
+            
+            return cartesianProduct(parameterValues);
+        }
+
+        function getCurrentInputValues() {
+            return {
+                Q_lps: parseFloat(document.getElementById("Q_lps").value),
+                Dc_mm: parseFloat(document.getElementById("Dc_mm").value),
+                Lc_mm: parseFloat(document.getElementById("Lc_mm").value),
+                Zc_mm: parseFloat(document.getElementById("Zc_mm").value),
+                De_mm: parseFloat(document.getElementById("De_mm").value),
+                Dd_mm: parseFloat(document.getElementById("Dd_mm").value),
+                Bc_mm: parseFloat(document.getElementById("Bc_mm").value),
+                Hc_mm: parseFloat(document.getElementById("Hc_mm").value),
+                mu: parseFloat(document.getElementById("mu").value),
+                rho_p: parseFloat(document.getElementById("rho_p").value),
+                rho_g: parseFloat(document.getElementById("rho_g").value),
+                e_um: parseFloat(document.getElementById("e_um").value),
+                initial_dust: parseFloat(document.getElementById("initial_dust").value),
+                num_cyclones: parseInt(document.getElementById("num_cyclones").value) || 1
+            };
+        }
+
+        async function evaluateDesign(inputs, objective, maxPressureConstraint) {
+            try {
+                // Convert inputs to proper units
+                const D_c = inputs.Dc_mm / 1e3;
+                const L_c = inputs.Lc_mm / 1e3;
+                const Z_c = inputs.Zc_mm / 1e3;
+                const D_e = inputs.De_mm / 1e3;
+                const D_d = inputs.Dd_mm / 1e3;
+                const B_c = inputs.Bc_mm / 1e3;
+                const H_c = inputs.Hc_mm / 1e3;
+                const e = inputs.e_um / 1e6;
+                const Q_m3s = inputs.Q_lps / 1e3;
+                
+                // Validate dimensions
+                const A_in = B_c * H_c;
+                if (A_in <= 0) return null;
+                const V_in = Q_m3s / A_in;
+                if (!(D_c > D_e && D_e > D_d && D_d > 0 && L_c > 0 && Z_c >= 0 && V_in > 0 && B_c > 0 && H_c > 0)) {
+                    return null;
+                }
+                
+                // Perform calculation (reuse existing functions)
+                const pressureResults = cyclone_pressure_calculation(inputs.Q_lps, D_c, L_c, Z_c, D_e, D_d, B_c, H_c, inputs.mu, inputs.rho_g, inputs.e_um);
+                const efficiencies = cyclone_efficiency_calculation(inputs.Q_lps, D_c, L_c, Z_c, D_e, D_d, B_c, H_c, inputs.mu, inputs.rho_p, inputs.rho_g, inputs.e_um);
+                const d50 = lapple_d50_calculation(inputs.Q_lps, D_c, L_c, Z_c, D_e, D_d, B_c, H_c, inputs.mu, inputs.rho_p, inputs.rho_g);
+                
+                // Check constraints
+                if (pressureResults.total_loss > maxPressureConstraint) {
+                    return null;
+                }
+                
+                // Calculate objectives
+                const totalEfficiency = efficiencies.reduce((sum, eff, i) => sum + (eff * mass_fractions[i]), 0) * 100;
+                const totalEscapedDust = inputs.initial_dust * (1 - totalEfficiency / 100);
+                const dustPerCyclone = inputs.initial_dust / inputs.num_cyclones;
+                const escapedPerCyclone = totalEscapedDust / inputs.num_cyclones;
+                const airwattLoss = (pressureResults.total_loss * inputs.Q_lps) / 1000;
+                
+                let objectiveValue;
+                switch (objective) {
+                    case 'maximize_efficiency':
+                        objectiveValue = totalEfficiency;
+                        break;
+                    case 'minimize_pressure_drop':
+                        objectiveValue = pressureResults.total_loss;
+                        break;
+                    case 'minimize_escaped_dust':
+                        objectiveValue = totalEscapedDust;
+                        break;
+                    default:
+                        objectiveValue = totalEfficiency;
+                }
+                
+                return {
+                    isValid: true,
+                    objectiveValue,
+                    totalEfficiency,
+                    pressureDrop: pressureResults.total_loss,
+                    escapedDust: totalEscapedDust,
+                    dustPerCyclone,
+                    escapedPerCyclone,
+                    airwattLoss,
+                    d50: d50 * 1e6,
+                    inputs
+                };
+                
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function displayOptimizationResults(results, objective) {
+            document.getElementById('opt-results-container').classList.remove('hidden');
+            document.getElementById('opt-welcome-message').classList.add('hidden');
+            
+            if (results.length === 0) {
+                document.getElementById('opt-best-result-content').innerHTML = '<p class="text-red-600 text-center col-span-2">No valid designs found. Try adjusting your constraints or parameter ranges.</p>';
+                document.getElementById('opt-results-table').innerHTML = '';
+                return;
+            }
+            
+            // Display best result
+            const best = results[0];
+            displayBestResult(best, objective);
+            
+            // Display all results table
+            displayResultsTable(results, objective);
+        }
+
+        function displayBestResult(best, objective) {
+            const content = document.getElementById('opt-best-result-content');
+            content.innerHTML = `
+                <div><strong>Objective Value:</strong><br>${formatObjectiveValue(best.objectiveValue, objective)}</div>
+                <div><strong>Total Efficiency:</strong><br>${best.totalEfficiency.toFixed(2)}%</div>
+                <div><strong>Pressure Drop:</strong><br>${best.pressureDrop.toFixed(1)} Pa</div>
+                <div><strong>Escaped Dust:</strong><br>${best.escapedDust.toFixed(2)} g</div>
+                <div><strong>D50:</strong><br>${best.d50.toFixed(2)} μm</div>
+                <div><strong>Airwatt Loss:</strong><br>${best.airwattLoss.toFixed(2)} W</div>
+                <div class="md:col-span-2"><strong>Parameters:</strong><br>
+                    ${Object.entries(best.combination).map(([key, value]) => 
+                        `${key}: ${value.toFixed(1)} ${key.includes('mm') ? 'mm' : ''}`
+                    ).join(', ')}
+                </div>
+            `;
+        }
+
+        function displayResultsTable(results, objective) {
+            const table = document.getElementById('opt-results-table');
+            const enabledParams = getEnabledParameters();
+            
+            // Create header
+            let headerHTML = '<tr><th>Rank</th><th>Objective</th><th>Efficiency (%)</th><th>Pressure (Pa)</th><th>Escaped Dust (g)</th>';
+            enabledParams.forEach(param => {
+                headerHTML += `<th>${param.label}</th>`;
+            });
+            headerHTML += '</tr>';
+            
+            // Create rows
+            let bodyHTML = '';
+            results.slice(0, 20).forEach((result, index) => { // Show top 20 results
+                bodyHTML += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${formatObjectiveValue(result.objectiveValue, objective)}</td>
+                    <td>${result.totalEfficiency.toFixed(2)}</td>
+                    <td>${result.pressureDrop.toFixed(1)}</td>
+                    <td>${result.escapedDust.toFixed(2)}</td>`;
+                enabledParams.forEach(param => {
+                    bodyHTML += `<td>${result.combination[param.id].toFixed(1)}</td>`;
+                });
+                bodyHTML += '</tr>';
+            });
+            
+            table.innerHTML = `<thead>${headerHTML}</thead><tbody>${bodyHTML}</tbody>`;
+        }
+
+        function formatObjectiveValue(value, objective) {
+            switch (objective) {
+                case 'maximize_efficiency':
+                    return `${value.toFixed(2)}%`;
+                case 'minimize_pressure_drop':
+                    return `${value.toFixed(1)} Pa`;
+                case 'minimize_escaped_dust':
+                    return `${value.toFixed(2)} g`;
+                default:
+                    return value.toFixed(2);
+            }
+        }
+
+        // Initialize optimization tab when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initOptimizationTab();
+        });
+
     </script>
 </body>
 </html>
