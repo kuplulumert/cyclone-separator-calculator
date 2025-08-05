@@ -145,6 +145,11 @@
             padding: 1rem;
             background: #f9fafb;
         }
+        .chart-container-fixed {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
         .tab-content {
             display: none;
         }
@@ -428,156 +433,157 @@
             <!-- = INSTANT RESULT TAB = -->
             <!-- ======================= -->
             <div id="instant-result-tab" class="tab-content">
+                <!-- Main Results Row -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+                    <div class="result-card">
+                        <h3 class="result-title">D50</h3>
+                        <p class="result-value" id="instant-d50">--</p>
+                        <span class="result-unit">μm</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Efficiency</h3>
+                        <p class="result-value" id="instant-efficiency">--</p>
+                        <span class="result-unit">%</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Pressure</h3>
+                        <p class="result-value" id="instant-pressure">--</p>
+                        <span class="result-unit">Pa</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Airwatt</h3>
+                        <p class="result-value" id="instant-airwatt">--</p>
+                        <span class="result-unit">W</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Escaped</h3>
+                        <p class="result-value" id="instant-escaped">--</p>
+                        <span class="result-unit">g</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Velocity</h3>
+                        <p class="result-value" id="instant-velocity">--</p>
+                        <span class="result-unit">m/s</span>
+                    </div>
+                </div>
+
+                <!-- Status Row -->
+                <div class="bg-white p-4 rounded-lg shadow-sm mb-8 text-center">
+                    <p class="result-status" id="instant-status">Ready for calculations</p>
+                </div>
+
+                <!-- Parameters and Chart Row -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Left Column: Input Parameters -->
-                    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-                        <h2 class="text-3xl font-semibold border-b pb-3 mb-6">Input Parameters</h2>
-                        <div class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-6">
+                        <!-- Flow Parameters -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-blue-700 border-b border-blue-200 pb-2 mb-4">🌊 Flow Parameters</h3>
+                            <div class="grid grid-cols-2 gap-4">
                                 <div class="input-group">
                                     <label for="instant-Q_lps" class="input-label">Flow Rate</label>
                                     <input type="number" id="instant-Q_lps" value="100" step="1" class="input-field instant-input">
                                     <span class="unit-text">L/s</span>
                                 </div>
                                 <div class="input-group">
-                                    <label for="instant-num_cyclones" class="input-label">Number of Cyclones</label>
+                                    <label for="instant-num_cyclones" class="input-label">Cyclones</label>
                                     <input type="number" id="instant-num_cyclones" value="1" min="1" step="1" class="input-field instant-input">
                                     <span class="unit-text">units</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Main Dimensions -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-green-700 border-b border-green-200 pb-2 mb-4">📏 Main Dimensions</h3>
+                            <div class="grid grid-cols-2 gap-4">
                                 <div class="input-group">
-                                    <label for="instant-Dc_mm" class="input-label">Cyclone Diameter (Dc)</label>
-                                    <input type="number" id="instant-Dc_mm" value="500" step="1" class="input-field instant-input">
+                                    <label for="instant-Dc_mm" class="input-label">Cyclone Ø (Dc)</label>
+                                    <input type="number" id="instant-Dc_mm" value="500" step="10" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
-                                    <label for="instant-Lc_mm" class="input-label">Cyclone Length (Lc)</label>
-                                    <input type="number" id="instant-Lc_mm" value="1000" step="1" class="input-field instant-input">
+                                    <label for="instant-Lc_mm" class="input-label">Length (Lc)</label>
+                                    <input type="number" id="instant-Lc_mm" value="1000" step="10" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-De_mm" class="input-label">Exit Ø (De)</label>
+                                    <input type="number" id="instant-De_mm" value="250" step="5" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-Dd_mm" class="input-label">Dust Ø (Dd)</label>
+                                    <input type="number" id="instant-Dd_mm" value="125" step="5" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="input-group">
-                                    <label for="instant-De_mm" class="input-label">Exit Diameter (De)</label>
-                                    <input type="number" id="instant-De_mm" value="250" step="1" class="input-field instant-input">
-                                    <span class="unit-text">mm</span>
-                                </div>
-                                <div class="input-group">
-                                    <label for="instant-Dd_mm" class="input-label">Dust Outlet Diameter (Dd)</label>
-                                    <input type="number" id="instant-Dd_mm" value="125" step="1" class="input-field instant-input">
-                                    <span class="unit-text">mm</span>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Inlet Parameters -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-purple-700 border-b border-purple-200 pb-2 mb-4">🔄 Inlet & Exit</h3>
+                            <div class="grid grid-cols-2 gap-4">
                                 <div class="input-group">
                                     <label for="instant-Bc_mm" class="input-label">Inlet Width (Bc)</label>
-                                    <input type="number" id="instant-Bc_mm" value="125" step="1" class="input-field instant-input">
+                                    <input type="number" id="instant-Bc_mm" value="125" step="5" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
                                     <label for="instant-Hc_mm" class="input-label">Inlet Height (Hc)</label>
-                                    <input type="number" id="instant-Hc_mm" value="250" step="1" class="input-field instant-input">
+                                    <input type="number" id="instant-Hc_mm" value="250" step="5" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="input-group">
                                     <label for="instant-Zc_mm" class="input-label">Exit Length (Zc)</label>
-                                    <input type="number" id="instant-Zc_mm" value="200" step="1" class="input-field instant-input">
+                                    <input type="number" id="instant-Zc_mm" value="200" step="5" class="input-field instant-input">
                                     <span class="unit-text">mm</span>
                                 </div>
                                 <div class="input-group">
-                                    <label for="instant-initial_dust" class="input-label">Initial Dust Load</label>
-                                    <input type="number" id="instant-initial_dust" value="100" step="1" class="input-field instant-input">
+                                    <label for="instant-initial_dust" class="input-label">Dust Load</label>
+                                    <input type="number" id="instant-initial_dust" value="100" step="5" class="input-field instant-input">
                                     <span class="unit-text">g</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="input-group">
-                                    <label for="instant-mu" class="input-label">Gas Viscosity (μ)</label>
-                                    <input type="number" id="instant-mu" value="1.81e-5" step="1e-6" class="input-field instant-input">
-                                    <span class="unit-text">Pa·s</span>
+                        <!-- Material Properties -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-orange-700 border-b border-orange-200 pb-2 mb-4">🧪 Material Properties</h3>
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="input-group">
+                                        <label for="instant-rho_p" class="input-label">Particle Density</label>
+                                        <input type="number" id="instant-rho_p" value="2500" step="50" class="input-field instant-input">
+                                        <span class="unit-text">kg/m³</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="instant-rho_g" class="input-label">Gas Density</label>
+                                        <input type="number" id="instant-rho_g" value="1.225" step="0.01" class="input-field instant-input">
+                                        <span class="unit-text">kg/m³</span>
+                                    </div>
                                 </div>
-                                <div class="input-group">
-                                    <label for="instant-rho_p" class="input-label">Particle Density (ρp)</label>
-                                    <input type="number" id="instant-rho_p" value="2500" step="1" class="input-field instant-input">
-                                    <span class="unit-text">kg/m³</span>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="input-group">
+                                        <label for="instant-mu" class="input-label">Gas Viscosity</label>
+                                        <input type="number" id="instant-mu" value="1.81e-5" step="1e-6" class="input-field instant-input">
+                                        <span class="unit-text">Pa·s</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="instant-e_um" class="input-label">Roughness</label>
+                                        <input type="number" id="instant-e_um" value="45" step="5" class="input-field instant-input">
+                                        <span class="unit-text">μm</span>
+                                    </div>
                                 </div>
-                                <div class="input-group">
-                                    <label for="instant-rho_g" class="input-label">Gas Density (ρg)</label>
-                                    <input type="number" id="instant-rho_g" value="1.225" step="0.001" class="input-field instant-input">
-                                    <span class="unit-text">kg/m³</span>
-                                </div>
-                            </div>
-
-                            <div class="input-group">
-                                <label for="instant-e_um" class="input-label">Surface Roughness (ε)</label>
-                                <input type="number" id="instant-e_um" value="45" step="1" class="input-field instant-input">
-                                <span class="unit-text">μm</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Column: Live Results -->
-                    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-                        <h2 class="text-3xl font-semibold border-b pb-3 mb-6">Live Results</h2>
-                        <div id="instant-results-content" class="space-y-6">
-                            <!-- Results will be populated by JavaScript -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="result-card">
-                                    <h3 class="result-title">D50 Cut Diameter</h3>
-                                    <p class="result-value" id="instant-d50">--</p>
-                                    <span class="result-unit">μm</span>
-                                </div>
-                                <div class="result-card">
-                                    <h3 class="result-title">Total Efficiency</h3>
-                                    <p class="result-value" id="instant-efficiency">--</p>
-                                    <span class="result-unit">%</span>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="result-card">
-                                    <h3 class="result-title">Pressure Drop</h3>
-                                    <p class="result-value" id="instant-pressure">--</p>
-                                    <span class="result-unit">Pa</span>
-                                </div>
-                                <div class="result-card">
-                                    <h3 class="result-title">Airwatt Loss</h3>
-                                    <p class="result-value" id="instant-airwatt">--</p>
-                                    <span class="result-unit">W</span>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="result-card">
-                                    <h3 class="result-title">Escaped Dust</h3>
-                                    <p class="result-value" id="instant-escaped">--</p>
-                                    <span class="result-unit">g</span>
-                                </div>
-                                <div class="result-card">
-                                    <h3 class="result-title">Inlet Velocity</h3>
-                                    <p class="result-value" id="instant-velocity">--</p>
-                                    <span class="result-unit">m/s</span>
-                                </div>
-                            </div>
-
-                            <div class="result-card full-width">
-                                <h3 class="result-title">Status</h3>
-                                <p class="result-status" id="instant-status">Ready</p>
-                            </div>
-
-                            <!-- Mini Efficiency Chart -->
-                            <div class="chart-container">
-                                <h3 class="text-lg font-semibold mb-3">Efficiency by Particle Size</h3>
-                                <canvas id="instant-efficiency-chart" width="400" height="200"></canvas>
-                            </div>
+                    <!-- Right Column: Chart -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h3 class="text-xl font-semibold text-indigo-700 border-b border-indigo-200 pb-2 mb-4">📊 Live Efficiency Chart</h3>
+                        <div class="chart-container-fixed">
+                            <canvas id="instant-efficiency-chart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -1353,26 +1359,51 @@
 
         function initInstantChart() {
             const ctx = document.getElementById('instant-efficiency-chart').getContext('2d');
+            
             instantChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: particle_sizes_microns,
                     datasets: [{
                         label: 'Efficiency (%)',
-                        data: [],
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
+                        data: new Array(particle_sizes_microns.length).fill(0),
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 3,
                         fill: true,
-                        tension: 0.1
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#4f46e5',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 20
+                        }
+                    },
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#4f46e5',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Efficiency: ${context.parsed.y.toFixed(1)}%`;
+                                }
+                            }
                         }
                     },
                     scales: {
@@ -1380,17 +1411,39 @@
                             type: 'logarithmic',
                             title: {
                                 display: true,
-                                text: 'Particle Size (μm)'
+                                text: 'Particle Size (μm)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Efficiency (%)'
+                                text: 'Efficiency (%)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
                             },
                             min: 0,
-                            max: 100
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
                         }
+                    },
+                    animation: {
+                        duration: 200
                     }
                 }
             });
