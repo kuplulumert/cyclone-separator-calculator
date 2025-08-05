@@ -836,7 +836,7 @@
 
         async function evaluateDesign(inputs, objective, maxPressureConstraint) {
             try {
-                // Convert inputs to proper units
+                // Convert inputs to proper units (same as main calculation)
                 const D_c = inputs.Dc_mm / 1e3;
                 const L_c = inputs.Lc_mm / 1e3;
                 const Z_c = inputs.Zc_mm / 1e3;
@@ -847,7 +847,7 @@
                 const e = inputs.e_um / 1e6;
                 const Q_m3s = inputs.Q_lps / 1e3;
                 
-                // Validate dimensions
+                // Validate dimensions (same as main calculation)
                 const A_in = B_c * H_c;
                 if (A_in <= 0) return null;
                 const V_in = Q_m3s / A_in;
@@ -855,52 +855,65 @@
                     return null;
                 }
                 
-                // Perform calculation (reuse existing functions)
-                const pressureResults = cyclone_pressure_calculation(inputs.Q_lps, D_c, L_c, Z_c, D_e, D_d, B_c, H_c, inputs.mu, inputs.rho_g, inputs.e_um);
-                const efficiencies = cyclone_efficiency_calculation(inputs.Q_lps, D_c, L_c, Z_c, D_e, D_d, B_c, H_c, inputs.mu, inputs.rho_p, inputs.rho_g, inputs.e_um);
-                const d50 = lapple_d50_calculation(inputs.Q_lps, D_c, L_c, Z_c, D_e, D_d, B_c, H_c, inputs.mu, inputs.rho_p, inputs.rho_g);
+                // Perform calculation using the same approach as main calculation
+                const {V1, L1, Ne1} = calculate_barrel_parameters(V_in, D_c, D_e, L_c, B_c, H_c);
+                const {average_V2, L2, Ne2} = calculate_cone_parameters(V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
+                const Ne_total = Ne1 + Ne2;
+                const d50 = calculate_lapple_cut_diameter(inputs.mu, B_c, inputs.rho_p, inputs.rho_g, V_in, Ne_total);
+                const d50_microns = d50 * 1e6;
+                const pressureResults = calculate_pressure_loss(V_in, D_c, D_e, L_c, Z_c, D_d, B_c, H_c, inputs.rho_g, inputs.mu, e);
+                const airwatt_loss = pressureResults.total_loss * Q_m3s;
                 
                 // Check constraints
                 if (pressureResults.total_loss > maxPressureConstraint) {
                     return null;
                 }
                 
-                // Calculate objectives
-                const totalEfficiency = efficiencies.reduce((sum, eff, i) => sum + (eff * mass_fractions[i]), 0) * 100;
-                const totalEscapedDust = inputs.initial_dust * (1 - totalEfficiency / 100);
-                const dustPerCyclone = inputs.initial_dust / inputs.num_cyclones;
-                const escapedPerCyclone = totalEscapedDust / inputs.num_cyclones;
-                const airwattLoss = (pressureResults.total_loss * inputs.Q_lps) / 1000;
+                // Calculate efficiency for each particle size (same as main calculation)
+                let totalMassEfficiency = 0;
+                particle_sizes_microns.forEach((dp, index) => {
+                    const massFraction = mass_fractions[index];
+                    const efficiency = calculate_separation_efficiency(d50_microns, dp);
+                    const weightedEfficiency = efficiency * massFraction;
+                    totalMassEfficiency += weightedEfficiency;
+                });
+                
+                // Calculate final results (same as main calculation)
+                const dust_per_cyclone = inputs.initial_dust / inputs.num_cyclones;
+                const escaped_per_cyclone = dust_per_cyclone * (1 - totalMassEfficiency);
+                const total_escaped_dust = escaped_per_cyclone * inputs.num_cyclones;
+                const totalEfficiencyPercent = totalMassEfficiency * 100;
                 
                 let objectiveValue;
                 switch (objective) {
                     case 'maximize_efficiency':
-                        objectiveValue = totalEfficiency;
+                        objectiveValue = totalEfficiencyPercent;
                         break;
                     case 'minimize_pressure_drop':
                         objectiveValue = pressureResults.total_loss;
                         break;
                     case 'minimize_escaped_dust':
-                        objectiveValue = totalEscapedDust;
+                        objectiveValue = total_escaped_dust;
                         break;
                     default:
-                        objectiveValue = totalEfficiency;
+                        objectiveValue = totalEfficiencyPercent;
                 }
                 
                 return {
                     isValid: true,
                     objectiveValue,
-                    totalEfficiency,
+                    totalEfficiency: totalEfficiencyPercent,
                     pressureDrop: pressureResults.total_loss,
-                    escapedDust: totalEscapedDust,
-                    dustPerCyclone,
-                    escapedPerCyclone,
-                    airwattLoss,
-                    d50: d50 * 1e6,
+                    escapedDust: total_escaped_dust,
+                    dustPerCyclone: dust_per_cyclone,
+                    escapedPerCyclone: escaped_per_cyclone,
+                    airwattLoss: airwatt_loss * 1000, // Convert to W
+                    d50: d50_microns,
                     inputs
                 };
                 
             } catch (error) {
+                console.error('Design evaluation error:', error);
                 return null;
             }
         }
