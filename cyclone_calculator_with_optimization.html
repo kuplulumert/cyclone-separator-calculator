@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generalized Cyclone Parameter Calculator with Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: font-size 0.2s ease-in-out;
+        }
+        .input-group {
+            display: grid;
+            grid-template-columns: 1.5fr 100px 85px; 
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .input-field {
+            width: 100%;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            text-align: center;
+            transition: font-size 0.2s ease-in-out;
+        }
+        .data-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+        .control-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .control-btn {
+            padding: 0.5rem; border-radius: 9999px; background-color: #e5e7eb;
+        }
+        .control-btn:hover { background-color: #d1d5db; }
+        .layout-btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .layout-btn.active {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+       
+        /* SortableJS Styles */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .drag-handle {
+            cursor: grab;
+            color: #9ca3af;
+        }
+        .drag-handle:hover {
+            color: #374151;
+        }
+        .sortable-card {
+             min-height: 100px;
+        }
+        .sortable-ghost {
+            opacity: 0.4;
+            background: #c7d2fe;
+            border: 2px dashed #4f46e5;
+        }
+        .sortable-column {
+            min-height: 200px;
+        }
+
+        /* Tab Styles */
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            color: #6b7280;
+        }
+        .tab-button.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-screen-xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900">Generalized Cyclone Parameter Calculator</h1>
+            <p class="mt-2 text-lg text-gray-600">Mert Küplülü</p>
+        </header>
+
+        <main>
+            <div class="border-b border-gray-300 mb-8">
+                <nav class="flex -mb-px">
+                    <button class="tab-button active" data-tab="single-calc-tab">Single Calculation</button>
+                    <button class="tab-button" data-tab="param-study-tab">Parametric Study</button>
+                    <button class="tab-button" data-tab="optimization-tab">Optimization</button>
+                </nav>
+            </div>
+
+            <div id="single-calc-tab" class="tab-content active">
+                <div id="main-grid-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                     <div id="sortable-column-1" class="sortable-column flex flex-col gap-8">
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                             <div id="calculator-form">
+                                 <div class="card-header mb-6 border-b pb-3">
+                                     <div class="flex items-center gap-4">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                                         <h2 class="text-3xl font-semibold">Input Parameters</h2>
+                                     </div>
+                                     <div class="control-container">
+                                         <div class="control-group">
+                                             <button id="layout-1-col" class="layout-btn">1 Column</button>
+                                             <button id="layout-2-col" class="layout-btn active">2 Columns</button>
+                                         </div>
+                                         <div class="control-group">
+                                             <button class="font-down-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg></button>
+                                             <span class="text-sm font-medium">Text Size</span>
+                                             <button class="font-up-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg></button>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                     <div>
+                                         <h3 class="text-lg font-semibold text-gray-700 mb-4">Cyclone Dimensions</h3>
+                                         <div class="space-y-3">
+                                             <div class="input-group"><label for="Dc_mm" class="input-label">Body Diameter (Dc)</label><input type="number" id="Dc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="20"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Lc_mm" class="input-label">Barrel Length (Lc)</label><input type="number" id="Lc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="20"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Zc_mm" class="input-label">Cone Length (Zc)</label><input type="number" id="Zc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="50"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="De_mm" class="input-label">Outlet Diameter (De)</label><input type="number" id="De_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="10"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Dd_mm" class="input-label">Dust Outlet (Dd)</label><input type="number" id="Dd_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="5"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Bc_mm" class="input-label">Inlet Width (Bc)</label><input type="number" id="Bc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="5"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Hc_mm" class="input-label">Inlet Height (Hc)</label><input type="number" id="Hc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="9"><span class="unit-text text-gray-500">mm</span></div>
+                                         </div>
+                                     </div>
+                                     <div>
+                                         <h3 class="text-lg font-semibold text-gray-700 mb-4">Flow & Material Properties</h3>
+                                         <div class="space-y-3">
+                                             <div class="input-group"><label for="Q_lps" class="input-label">Inlet Flow Rate</label><input type="number" id="Q_lps" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1"><span class="unit-text text-gray-500">L/s</span></div>
+                                             <div class="input-group"><label for="mu" class="input-label">Gas Viscosity (μ)</label><input type="text" id="mu" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1.81e-5"><span class="unit-text text-gray-500">Pa.s</span></div>
+                                             <div class="input-group"><label for="rho_p" class="input-label">Particle Density (ρp)</label><input type="number" id="rho_p" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="2650"><span class="unit-text text-gray-500">kg/m³</span></div>
+                                             <div class="input-group"><label for="rho_g" class="input-label">Gas Density (ρg)</label><input type="number" id="rho_g" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1.225"><span class="unit-text text-gray-500">kg/m³</span></div>
+                                             <div class="input-group"><label for="e_um" class="input-label">Roughness (e)</label><input type="number" id="e_um" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="45"><span class="unit-text text-gray-500">µm</span></div>
+                                             <div class="input-group"><label for="initial_dust" class="input-label">Initial Dust Load</label><input type="number" id="initial_dust" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="200"><span class="unit-text text-gray-500">g</span></div>
+                                             <div class="input-group"><label for="num_cyclones" class="input-label"># of Cyclones</label><input type="number" id="num_cyclones" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1"><span class="unit-text text-gray-500">units</span></div>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="mt-8 flex justify-center items-center gap-4">
+                                     <input type="text" id="run-name-input" placeholder="Enter Run Name" class="p-2 border border-gray-300 rounded-md shadow-sm w-64">
+                                     <button id="calculate-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105">Calculate</button>
+                                     <button id="save-run-btn" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105">Save Run</button>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                     <div id="sortable-column-2" class="sortable-column flex flex-col gap-8">
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Efficiency Comparison</h3></div></div><canvas id="efficiency-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Dust Load &amp; Escaped Dust per Cyclone</h3></div></div><canvas id="per-cyclone-dust-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Total Escaped Dust Comparison</h3></div></div><canvas id="escaped-dust-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Pressure Drop Comparison</h3></div></div><canvas id="pressure-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Airwatt Loss Comparison</h3></div></div><canvas id="airwatt-chart"></canvas></div>
+                         <div id="error-message" class="hidden sortable-card bg-red-100 border border-red-400 text-red-700 rounded-lg p-4"></div>
+                     </div>
+                </div>
+                <div id="results-container" class="mt-8">
+                     <div id="results" class="hidden bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                         <div class="card-header mb-6 border-b pb-3">
+                            <div class="flex items-center gap-4">
+                                <h2 class="text-3xl font-semibold">Calculation Results</h2>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-indigo-700">Inlet Velocity</h3><p class="text-3xl font-mono"><span id="result-Vin"></span> m/s</p></div>
+                            <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-indigo-700">Total Number of Turns (Ne)</h3><p class="text-3xl font-mono"><span id="result-Ne_total"></span></p></div>
+                            <div class="bg-green-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-green-800">Lapple Model Cut Diameter (d50)</h3><p class="text-4xl font-mono text-center text-green-700 pt-2"><span id="result-d50"></span> µm</p></div>
+                            <div class="bg-blue-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-blue-800">Total Mass Separation Efficiency</h3><p class="text-4xl font-mono text-center text-blue-700 pt-2"><span id="result-total-efficiency"></span> %</p></div>
+                            <div class="bg-red-50 p-6 rounded-lg shadow-sm col-span-1 md:col-span-2">
+                                <h3 class="font-bold text-xl text-red-800 mb-3 text-center">Pressure Drop & Power Consumption</h3>
+                                <div class="grid grid-cols-2 gap-x-8 gap-y-2 max-w-lg mx-auto text-lg">
+                                    <span>Entry Loss (ΔPe):</span><span class="font-mono text-right"><span id="result-dPe"></span> Pa</span>
+                                    <span>Kinetic Loss (ΔPk):</span><span class="font-mono text-right"><span id="result-dPk"></span> Pa</span>
+                                    <span>Frictional Loss (ΔPf):</span><span class="font-mono text-right"><span id="result-dPf"></span> Pa</span>
+                                    <span>Rotational Loss (ΔPr):</span><span class="font-mono text-right"><span id="result-dPr"></span> Pa</span>
+                                    <span>Exit Loss (ΔPo):</span><span class="font-mono text-right"><span id="result-dPo"></span> Pa</span>
+                                </div>
+                                <div class="text-center mt-4 pt-4 border-t border-red-200"><h4 class="font-semibold text-gray-600">Total Pressure Loss</h4><p class="text-4xl font-bold text-red-700 my-1"><span id="result-total-pa"></span> Pa</p><p class="text-lg text-red-600">(<span id="result-total-h2o"></span> in H₂O)</p></div>
+                                <div class="text-center mt-4 pt-4 border-t border-red-200"><h4 class="font-semibold text-gray-600">Airwatt Loss</h4><p class="text-4xl font-bold text-red-700 my-1"><span id="result-airwatt-loss"></span> W</p></div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-gray-700">Barrel Section</h3><ul class="mt-2 space-y-1 text-lg"><li><strong>Avg. Velocity (V1):</strong> <span id="result-V1" class="font-mono"></span> m/s</li><li><strong>Travel Distance (L1):</strong> <span id="result-L1_mm" class="font-mono"></span> mm</li><li><strong>Number of Turns (Ne1):</strong> <span id="result-Ne1" class="font-mono"></span></li></ul></div>
+                            <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-gray-700">Cone Section</h3><ul class="mt-2 space-y-1 text-lg"><li><strong>Avg. Velocity (V2):</strong> <span id="result-V2" class="font-mono"></span> m/s</li><li><strong>Travel Distance (L2):</strong> <span id="result-L2_mm" class="font-mono"></span> mm</li><li><strong>Number of Turns (Ne2):</strong> <span id="result-Ne2" class="font-mono"></span></li></ul></div>
+                            <div class="bg-yellow-50 p-4 rounded-lg shadow-sm col-span-1 md:col-span-2"><h3 class="font-bold text-xl text-yellow-800">Dust Emission</h3><div class="text-center mt-2"><p class="text-lg text-gray-600">Dust Load per Cyclone: <span id="result-dust-per-cyclone" class="font-semibold"></span> g</p><p class="text-lg text-gray-600">Escaped Dust per Cyclone: <span id="result-escaped-per-cyclone" class="font-semibold"></span> g</p><hr class="my-2"><h4 class="font-semibold text-yellow-800 text-xl">Total System Escaped Dust</h4><p class="text-4xl font-mono text-yellow-700 pt-1"><span id="result-escaped-dust"></span> g</p></div></div>
+                        </div>
+                        <div id="efficiency-section" class="mt-10"><h3 class="text-2xl font-semibold mb-4">Particle Separation Efficiency Details</h3><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Particle Size (dp, µm)</th><th>Mass Fraction (%)</th><th>Separation Efficiency (%)</th><th>Weighted Efficiency (%)</th></tr></thead><tbody id="efficiency-body"></tbody></table></div></div>
+                        <div id="comparison-section" class="hidden mt-10"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-semibold">Comparison History</h2><button id="clear-history-btn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600">Clear History</button></div><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Run</th><th>Name</th><th>d50 (µm)</th><th>Total ΔP (Pa)</th><th>Airwatt Loss (W)</th><th>Escaped Dust (g)</th></tr></thead><tbody id="comparison-body"></tbody></table></div></div>
+                     </div>
+                </div>
+            </div>
+
+            <div id="param-study-tab" class="tab-content">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-8">
+                    <div class="card-header mb-6 border-b pb-3">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-3xl font-semibold">Parametric Study Setup</h2>
+                        </div>
+                        <div class="control-container">
+                            <div class="control-group">
+                                <button id="param-layout-1-col" class="layout-btn">1 Column</button>
+                                <button id="param-layout-2-col" class="layout-btn active">2 Columns</button>
+                            </div>
+                            <div class="control-group">
+                                <button class="font-down-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg></button>
+                                <span class="text-sm font-medium">Text Size</span>
+                                <button class="font-up-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="param-study-form" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                        <div>
+                            <label for="param-select" class="block text-sm font-medium text-gray-700 mb-1">Parameter to Study</label>
+                            <select id="param-select" class="w-full p-2 border border-gray-300 rounded-md shadow-sm"></select>
+                        </div>
+                        <div>
+                            <label for="param-start" class="block text-sm font-medium text-gray-700 mb-1">Start Value</label>
+                            <input type="number" id="param-start" value="1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div>
+                            <label for="param-end" class="block text-sm font-medium text-gray-700 mb-1">End Value</label>
+                            <input type="number" id="param-end" value="5" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div>
+                            <label for="param-step" class="block text-sm font-medium text-gray-700 mb-1">Step</label>
+                            <input type="number" id="param-step" value="1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="md:col-span-4 flex justify-center mt-4">
+                            <button id="run-study-btn" class="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-purple-700 transition-transform transform hover:scale-105">Run Study</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="param-grid-container" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div id="param-sortable-column-1" class="sortable-column flex flex-col gap-8">
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Efficiency</h3>
+                                </div>
+                            </div>
+                            <canvas id="param-efficiency-chart"></canvas>
+                        </div>
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Pressure Drop</h3>
+                                </div>
+                            </div>
+                            <canvas id="param-pressure-chart"></canvas>
+                        </div>
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Dust Load</h3>
+                                </div>
+                            </div>
+                            <canvas id="param-per-cyclone-dust-chart"></canvas>
+                        </div>
+                    </div>
+                    <div id="param-sortable-column-2" class="sortable-column flex flex-col gap-8">
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Escaped Dust</h3>
+                                </div>
+                            </div>
+                            <canvas id="param-escaped-dust-chart"></canvas>
+                        </div>
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Airwatt Loss</h3>
+                                </div>
+                            </div>
+                            <canvas id="param-airwatt-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="optimization-tab" class="tab-content">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                    <div class="card-header mb-6 border-b pb-3">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-3xl font-semibold">Cyclone Optimization</h2>
+                        </div>
+                    </div>
+                    <div class="text-center py-12">
+                        <div class="text-6xl mb-4">⚙️</div>
+                        <h3 class="text-2xl font-semibold text-gray-700 mb-2">Optimization Coming Soon</h3>
+                        <p class="text-gray-500">Advanced optimization algorithms will be implemented here.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- GLOBAL VARIABLES & UNTOUCHED NORMAL CALCULATION CODE ---
+        let runHistory = []; let runCounter = 1;
+        const particle_sizes_microns = [0.5, 1.5, 2.5, 3.5, 4.5, 6, 8.5, 15, 30, 60, 100];
+        const mass_fractions = [0.025, 0.075, 0.085, 0.070, 0.055, 0.100, 0.090, 0.200, 0.180, 0.115, 0.005];
+        let efficiencyChart, pressureChart, escapedDustChart, perCycloneDustChart, airwattChart;
+        let lastCalculatedData = {};
+        const chartColors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6b7280'];
+        const pressureColors = { dPe: '#60a5fa', dPk: '#fb923c', dPf: '#f87171', dPr: '#a78bfa', dPo: '#f472b6' };
+        const MIN_VELOCITY = 1e-6;
+        let globalFontSizeModifier = 0;
+       
+        function updateAllTextSizes() {
+            const baseBodySize = 1.1; const step = 0.05;
+            document.body.style.fontSize = `${baseBodySize + (globalFontSizeModifier * step)}rem`;
+            const charts = [efficiencyChart, pressureChart, escapedDustChart, perCycloneDustChart, airwattChart, paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart];
+            charts.forEach(chart => {
+                if (chart) {
+                    chart.options.scales.x.title.font.size = 16 + globalFontSizeModifier;
+                    chart.options.scales.x.ticks.font.size = 14 + globalFontSizeModifier;
+                    if (chart.options.scales.y) {
+                        chart.options.scales.y.ticks.font.size = 14 + globalFontSizeModifier;
+                        chart.options.scales.y.title.font.size = 16 + globalFontSizeModifier;
+                    }
+                    if (chart.options.plugins.legend) {
+                        chart.options.plugins.legend.labels.font.size = 14 + globalFontSizeModifier;
+                    }
+                    chart.update('none'); 
+                }
+            });
+        }
+        function setupControls() {
+            document.querySelectorAll('.font-up-btn').forEach(btn => btn.addEventListener('click', () => { globalFontSizeModifier++; updateAllTextSizes(); }));
+            document.querySelectorAll('.font-down-btn').forEach(btn => btn.addEventListener('click', () => { if (globalFontSizeModifier > -5) { globalFontSizeModifier--; updateAllTextSizes(); } }));
+            
+            // Single Calculation Tab Layout Controls
+            const grid = document.getElementById('main-grid-container');
+            const col1 = document.getElementById('sortable-column-1');
+            const col2 = document.getElementById('sortable-column-2');
+            const btn1Col = document.getElementById('layout-1-col');
+            const btn2Col = document.getElementById('layout-2-col');
+            btn1Col.addEventListener('click', () => { if (btn1Col.classList.contains('active')) return; grid.classList.remove('lg:grid-cols-2'); col2.style.display = 'none'; Array.from(col2.children).forEach(card => col1.appendChild(card)); btn1Col.classList.add('active'); btn2Col.classList.remove('active'); });
+            btn2Col.addEventListener('click', () => { if (btn2Col.classList.contains('active')) return; grid.classList.add('lg:grid-cols-2'); col2.style.display = 'flex'; const cards = Array.from(col1.children); const halfwayPoint = Math.ceil(cards.length / 2); cards.slice(halfwayPoint).forEach(card => col2.appendChild(card)); btn2Col.classList.add('active'); btn1Col.classList.remove('active'); });
+            
+            // Parametric Study Tab Layout Controls
+            const paramGridContainer = document.getElementById('param-grid-container');
+            const paramCol1 = document.getElementById('param-sortable-column-1');
+            const paramCol2 = document.getElementById('param-sortable-column-2');
+            const paramBtn1Col = document.getElementById('param-layout-1-col');
+            const paramBtn2Col = document.getElementById('param-layout-2-col');
+            paramBtn1Col.addEventListener('click', () => {
+                if (paramBtn1Col.classList.contains('active')) return;
+                paramGridContainer.classList.remove('lg:grid-cols-2');
+                paramCol2.style.display = 'none';
+                Array.from(paramCol2.children).forEach(card => paramCol1.appendChild(card));
+                paramBtn1Col.classList.add('active');
+                paramBtn2Col.classList.remove('active');
+            });
+            paramBtn2Col.addEventListener('click', () => {
+                if (paramBtn2Col.classList.contains('active')) return;
+                paramGridContainer.classList.add('lg:grid-cols-2');
+                paramCol2.style.display = 'flex';
+                const cards = Array.from(paramCol1.children);
+                const initialSplitPoint = 3; 
+                cards.slice(initialSplitPoint).forEach(card => paramCol2.appendChild(card));
+                paramBtn2Col.classList.add('active');
+                paramBtn1Col.classList.remove('active');
+            });
+
+            // Main Tab Controls
+            const tabs = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    tabContents.forEach(content => {
+                        content.classList.toggle('active', content.id === tab.dataset.tab);
+                    });
+                });
+            });
+        }
+        function simpson(f,a,b,n,args){if(a>=b)return 0;if(n%2!==0)n++;const h=(b-a)/n;let sum=f(a,...args)+f(b,...args);for(let i=1;i<n;i+=2){const y=f(a+i*h,...args);if(isFinite(y))sum+=4*y}for(let i=2;i<n-1;i+=2){const y=f(a+i*h,...args);if(isFinite(y))sum+=2*y}return sum*h/3}
+        const calculate_v_t1=(V_in)=>V_in;function calculate_v_z1(V_in,D_c,D_e,B_c,H_c){const Q_in=V_in*H_c*B_c;const annular_area=(Math.PI/4)*(D_c**2-D_e**2);if(annular_area<=0)return 0;return Q_in/annular_area}
+        function calculate_cone_radius_at_z(z,D_c,Z_c,D_d){const R_c=D_c/2;const R_d=D_d/2;if(Z_c===0)return R_c;return R_c-(z/Z_c)*(R_c-R_d)}
+        function calculate_v_t2(z,V_in,D_c,Z_c,D_d){const R_c=D_c/2;const r_at_z=calculate_cone_radius_at_z(z,D_c,Z_c,D_d);if(r_at_z<=0)return Infinity;return(R_c/r_at_z)*V_in}
+        function calculate_v_z2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c){if((D_c-D_d)<=0||Z_c<=0)return 0;let Z_o2=Z_c*(1-(D_e-D_d)/(D_c-D_d));if(Z_o2<=0)Z_o2=Z_c;const Q_in=V_in*H_c*B_c;let Q_z=0;if(z<=Z_o2){Q_z=Q_in*(1-z/Z_o2)}const r_cone_at_z=calculate_cone_radius_at_z(z,D_c,Z_c,D_d);const r_outlet=D_e/2;const annular_area_z=Math.PI*(r_cone_at_z**2-r_outlet**2);if(annular_area_z<=0)return Infinity;return Q_z/annular_area_z}
+        function calculate_v_r2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c){const V_z2_at_z=calculate_v_z2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);if(Z_c===0)return 0;const tan_theta=((D_c/2)-(D_d/2))/Z_c;return V_z2_at_z*tan_theta}
+        function integrand_l1(z,V_in,D_c,D_e,B_c,H_c){const V_t1=calculate_v_t1(V_in);const V_z1=calculate_v_z1(V_in,D_c,D_e,B_c,H_c);if(V_z1<MIN_VELOCITY)return 0;return Math.sqrt(V_t1**2+V_z1**2)/V_z1}
+        function integrand_l2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c){const V_t2=calculate_v_t2(z,V_in,D_c,Z_c,D_d);const V_z2=calculate_v_z2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_r2=calculate_v_r2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);if(V_z2<MIN_VELOCITY||!isFinite(V_z2))return 0;const total_velocity_V2=Math.sqrt(V_t2**2+V_z2**2+V_r2**2);return total_velocity_V2/V_z2}
+        function calculate_barrel_parameters(V_in,D_c,D_e,L_c,B_c,H_c){const V_t1=calculate_v_t1(V_in);const V_z1=calculate_v_z1(V_in,D_c,D_e,B_c,H_c);const V1=Math.sqrt(V_t1**2+V_z1**2);const L1=simpson(z=>integrand_l1(z,V_in,D_c,D_e,B_c,H_c),0,L_c,1e3,[]);const Ne1=L1/(Math.PI*D_c);return{V1,L1,Ne1}}
+        function calculate_cone_parameters(V_in,D_c,D_e,Z_c,D_d,B_c,H_c){const L2=simpson(z=>integrand_l2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c),0,Z_c,1e3,[]);const avg_diameter_for_turns=(D_c+D_e)/2;const Ne2=avg_diameter_for_turns>0?L2/(Math.PI*avg_diameter_for_turns):Infinity;const z_mid=Z_c/2;const V_t2_avg=calculate_v_t2(z_mid,V_in,D_c,Z_c,D_d);const V_z2_avg=calculate_v_z2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_r2_avg=calculate_v_r2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const average_V2=Math.sqrt(V_t2_avg**2+V_z2_avg**2+V_r2_avg**2);return{average_V2,L2,Ne2}}
+        function calculate_lapple_cut_diameter(mu,B_c,rho_p,rho_g,V_in,Ne_total){const numerator=9*mu*B_c;const denominator=2*Math.PI*(rho_p-rho_g)*V_in*Ne_total;if(denominator<=0)return Infinity;return Math.sqrt(numerator/denominator)}
+        function calculate_separation_efficiency(d50_microns,dp_microns){if(dp_microns<=0)return 0;return 1/(1+(d50_microns/dp_microns)**2)}
+        function swamee_jain_friction_factor(Re,e,D){if(Re<2300)return 64/Re;const log_term=e/(3.7*D)+5.74/(Re**.9);if(log_term<=0)return.02;return.25/(Math.log10(log_term))**2}
+        function calculate_pressure_loss(V_in,D_c,D_e,L_c,Z_c,D_d,B_c,H_c,rho_g,mu,e){const Q_in=V_in*B_c*H_c;const VP_in=.5*rho_g*V_in**2;const C5=1;const delta_Pe=C5*VP_in;const A_out=Math.PI*(D_e/2)**2;const V_out=Q_in/A_out;const VP_out=.5*rho_g*V_out**2;const delta_Pk=VP_in-VP_out;const R=D_c/2;const r0=D_e/2;const delta_Pr=r0>0?rho_g*V_in**2*(R/r0-1):Infinity;const C6=1.8;const delta_Po=C6*VP_out;const V_z1_val=calculate_v_z1(V_in,D_c,D_e,B_c,H_c);const V_s1=Math.sqrt(V_in**2+V_z1_val**2);const D_s1=V_s1>0?Math.sqrt(4*Q_in/(Math.PI*V_s1)):0;const Re1=D_s1>0?rho_g*V_s1*D_s1/mu:0;const f1=swamee_jain_friction_factor(Re1,e,D_s1);const VP_s1=.5*rho_g*V_s1**2;const L1=simpson(z=>integrand_l1(z,V_in,D_c,D_e,B_c,H_c),0,L_c,1e3,[]);const delta_Pf1=D_s1>0?f1/2*(VP_s1/D_s1)*L1:0;let Z_o2=0;if(D_c-D_d>0&&Z_c>0){Z_o2=Z_c*(D_c-D_e)/(D_c-D_d)}
+        if(Z_o2<=0){Z_o2=Z_c}const z_mid=Z_o2/2;const V_t2_avg=calculate_v_t2(z_mid,V_in,D_c,Z_c,D_d);const V_z2_avg=calculate_v_z2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_r2_avg=calculate_v_r2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_s2_avg=Math.sqrt(V_t2_avg**2+V_z2_avg**2+V_r2_avg**2);const Q_z_avg=Q_in*(1-z_mid/Z_o2);const D_s2_avg=V_s2_avg>0?Math.sqrt(4*Q_z_avg/(Math.PI*V_s2_avg)):0;const Re2_avg=D_s2_avg>0?rho_g*V_s2_avg*D_s2_avg/mu:0;const f2_avg=swamee_jain_friction_factor(Re2_avg,e,D_s2_avg);const VP_s2_avg=.5*rho_g*V_s2_avg**2;const L2=simpson(z=>integrand_l2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c),0,Z_c,1e3,[]);const delta_Pf2=D_s2_avg>0?f2_avg/2*(VP_s2_avg/D_s2_avg)*L2:0;const delta_Pf_total=delta_Pf1+delta_Pf2;const total_loss=delta_Pe+delta_Pk+delta_Pr+delta_Po+delta_Pf_total;return{total_loss,delta_Pe,delta_Pk,delta_Pf_total,delta_Pr,delta_Po}}
+        function initCharts() {
+            const chartOptionsTemplate={responsive:!0,maintainAspectRatio:!0,layout:{padding:{top:15}},plugins:{legend:{position:"bottom",labels:{font:{}}}}};
+            const effCtx=document.getElementById("efficiency-chart").getContext("2d");let effOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));effOptions.scales={x:{title:{display:!0,text:"Particle Size (µm)",font:{}},ticks:{font:{}},type:"logarithmic"},y:{title:{display:!0,text:"Separation Efficiency (%)",font:{}},min:0,max:110,ticks:{callback:value=>value<=100?value+"%":"",font:{}}}};effOptions.plugins.tooltip={callbacks:{label:context=>`${context.dataset.label||""}: ${context.parsed.y.toFixed(2)}%`}};efficiencyChart=new Chart(effCtx,{type:"line",data:{labels:particle_sizes_microns,datasets:[]},options:effOptions});
+            const pressureCtx=document.getElementById("pressure-chart").getContext("2d");let pressureOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));pressureOptions.scales={x:{stacked:!0,title:{font:{}},ticks:{font:{}}},y:{stacked:!0,title:{display:!0,text:"Pressure Loss (Pa)",font:{}},ticks:{font:{}}}};pressureChart=new Chart(pressureCtx,{type:"bar",data:{labels:[],datasets:[{label:"Entry Loss",data:[],backgroundColor:pressureColors.dPe},{label:"Kinetic Loss",data:[],backgroundColor:pressureColors.dPk},{label:"Frictional Loss",data:[],backgroundColor:pressureColors.dPf},{label:"Rotational Loss",data:[],backgroundColor:pressureColors.dPr},{label:"Exit Loss",data:[],backgroundColor:pressureColors.dPo}]},options:pressureOptions,plugins:[{id:'pressureValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()}}]});
+            const createBarChartWithLabels=(canvasId,yAxisTitle,datasets)=>{const ctx=document.getElementById(canvasId).getContext("2d");let options=JSON.parse(JSON.stringify(chartOptionsTemplate));options.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:yAxisTitle,font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};const chart=new Chart(ctx,{type:"bar",data:{labels:[],datasets:datasets},options:options});chart.options.plugins.afterDatasetsDraw=function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()};return chart};
+            const escapedDustCtx=document.getElementById("escaped-dust-chart").getContext("2d");let escapedDustOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));escapedDustOptions.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};escapedDustChart=new Chart(escapedDustCtx,{type:"bar",data:{labels:[],datasets:[{label:"Total Escaped Dust",data:[],backgroundColor:"#facc15"}]},options:escapedDustOptions,plugins:[{id:'escapedDustValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
+            const airwattCtx=document.getElementById("airwatt-chart").getContext("2d");let airwattOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));airwattOptions.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Airwatt Loss (W)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};airwattChart=new Chart(airwattCtx,{type:"bar",data:{labels:[],datasets:[{label:"Airwatt Loss",data:[],backgroundColor:"#8b5cf6"}]},options:airwattOptions,plugins:[{id:'airwattValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
+            const perCycloneCtx=document.getElementById("per-cyclone-dust-chart").getContext("2d");let perCycloneOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));perCycloneOptions.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Dust Load (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}},y1:{type:"linear",display:!0,position:"right",title:{display:!0,text:"Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}},grid:{drawOnChartArea:!1}}};perCycloneDustChart=new Chart(perCycloneCtx,{type:"line",data:{labels:[],datasets:[{label:"Dust Load per Cyclone",data:[],backgroundColor:"#3b82f6",borderColor:"#3b82f6",type:"line",yAxisID:"y",pointRadius:6,fill:false,tension:0.1},{label:"Escaped Dust per Cyclone",data:[],backgroundColor:"#dc2626",borderColor:"#dc2626",type:"line",yAxisID:"y1",pointRadius:6,fill:false,tension:0.1}]},options:perCycloneOptions,plugins:[{id:'perCycloneValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{chart.data.datasets.forEach((dataset,datasetIndex)=>{const value=dataset.data[index];if(value&&value>0){const meta=chart.getDatasetMeta(datasetIndex);if(meta&&meta.data&&meta.data[index]){const element=meta.data[index];const text=value.toFixed(1);ctx.strokeText(text,element.x,element.y-8);ctx.fillText(text,element.x,element.y-8)}}})});ctx.restore()}}]});
+        }
+        document.getElementById("calculate-btn").addEventListener("click",()=>{const resultsContainer=document.getElementById("results-container");const resultsDiv=document.getElementById("results");const errorDiv=document.getElementById("error-message");resultsDiv.classList.add("hidden");errorDiv.classList.add("hidden");try{const Q_lps=parseFloat(document.getElementById("Q_lps").value);const D_c_mm=parseFloat(document.getElementById("Dc_mm").value);const L_c_mm=parseFloat(document.getElementById("Lc_mm").value);const Z_c_mm=parseFloat(document.getElementById("Zc_mm").value);const D_e_mm=parseFloat(document.getElementById("De_mm").value);const D_d_mm=parseFloat(document.getElementById("Dd_mm").value);const B_c_mm=parseFloat(document.getElementById("Bc_mm").value);const H_c_mm=parseFloat(document.getElementById("Hc_mm").value);const mu=parseFloat(document.getElementById("mu").value);const rho_p=parseFloat(document.getElementById("rho_p").value);const rho_g=parseFloat(document.getElementById("rho_g").value);const e_um=parseFloat(document.getElementById("e_um").value);const initial_dust=parseFloat(document.getElementById("initial_dust").value);const num_cyclones=parseInt(document.getElementById("num_cyclones").value)||1;
+        const D_c=D_c_mm/1e3;const L_c=L_c_mm/1e3;const Z_c=Z_c_mm/1e3;const D_e=D_e_mm/1e3;const D_d=D_d_mm/1e3;const B_c=B_c_mm/1e3;const H_c=H_c_mm/1e3;const e=e_um/1e6;const Q_m3s=Q_lps/1e3;const A_in=B_c*H_c;if(A_in<=0)throw new Error("Inlet area (Bc * Hc) must be positive.");const V_in=Q_m3s/A_in;if(!(D_c>D_e&&D_e>D_d&&D_d>0&&L_c>0&&Z_c>=0&&V_in>0&&B_c>0&&H_c>0))throw new Error("Dimensions must be positive. The following must hold: Dc > De > Dd > 0.");
+        const{V1,L1,Ne1}=calculate_barrel_parameters(V_in,D_c,D_e,L_c,B_c,H_c);const{average_V2,L2,Ne2}=calculate_cone_parameters(V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const Ne_total=Ne1+Ne2;const d50=calculate_lapple_cut_diameter(mu,B_c,rho_p,rho_g,V_in,Ne_total);const d50_microns=d50*1e6;const pressureResults=calculate_pressure_loss(V_in,D_c,D_e,L_c,Z_c,D_d,B_c,H_c,rho_g,mu,e);const airwatt_loss=pressureResults.total_loss*Q_m3s;const efficiencyTableBody=document.getElementById("efficiency-body");efficiencyTableBody.innerHTML="";let totalMassEfficiency=0;let currentEfficiencies=[];
+        particle_sizes_microns.forEach((dp,index)=>{const massFraction=mass_fractions[index];const efficiency=calculate_separation_efficiency(d50_microns,dp);currentEfficiencies.push(efficiency*100);const weightedEfficiency=efficiency*massFraction;totalMassEfficiency+=weightedEfficiency;const row=document.createElement("tr");row.innerHTML=`<td>${dp}</td><td>${(massFraction*100).toFixed(1)}</td><td>${(efficiency*100).toFixed(2)}</td><td>${(weightedEfficiency*100).toFixed(2)}</td>`;efficiencyTableBody.appendChild(row)});
+        const dust_per_cyclone=initial_dust/num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*num_cyclones;lastCalculatedData={d50:d50_microns,total_loss_pa:pressureResults.total_loss,airwatt_loss:airwatt_loss,escaped_dust:total_escaped_dust,dust_per_cyclone:dust_per_cyclone,escaped_per_cyclone:escaped_per_cyclone,pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po},efficiencies:currentEfficiencies};
+        document.getElementById("result-Vin").textContent=V_in.toFixed(2);document.getElementById("result-V1").textContent=V1.toFixed(4);document.getElementById("result-L1_mm").textContent=(L1*1e3).toFixed(2);document.getElementById("result-Ne1").textContent=Ne1.toFixed(2);document.getElementById("result-V2").textContent=isFinite(average_V2)?average_V2.toFixed(4):"N/A";document.getElementById("result-L2_mm").textContent=(L2*1e3).toFixed(2);document.getElementById("result-Ne2").textContent=Ne2.toFixed(2);document.getElementById("result-Ne_total").textContent=Ne_total.toFixed(2);
+        document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
+        document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
+        document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);runCounter++;document.getElementById("run-name-input").value=""});
+        document.getElementById("clear-history-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()})});
+        function updateComparisonTable(){const tableBody=document.getElementById("comparison-body");const comparisonSection=document.getElementById("comparison-section");tableBody.innerHTML="";if(runHistory.length===0){comparisonSection.classList.add("hidden");return}comparisonSection.classList.remove("hidden");runHistory.forEach(run=>{const row=document.createElement("tr");row.innerHTML=`<td>${run.id}</td><td>${run.name}</td><td>${(run.d50).toFixed(2)}</td><td>${run.total_loss_pa.toFixed(2)}</td><td>${run.airwatt_loss.toFixed(3)}</td><td>${run.escaped_dust.toFixed(2)}</td>`;tableBody.appendChild(row)});updateAllTextSizes()}
+        function updateChartsForNewRun(runData){const newEffColor=chartColors[(runHistory.length-1)%chartColors.length];efficiencyChart.data.datasets.push({label:runData.name,data:runData.efficiencies,borderColor:newEffColor,backgroundColor:"transparent",borderWidth:2,tension:.1,pointBackgroundColor:newEffColor});pressureChart.data.labels.push(runData.name);pressureChart.data.datasets[0].data.push(runData.pressure_components.dPe);pressureChart.data.datasets[1].data.push(runData.pressure_components.dPk);pressureChart.data.datasets[2].data.push(runData.pressure_components.dPf);pressureChart.data.datasets[3].data.push(runData.pressure_components.dPr);pressureChart.data.datasets[4].data.push(runData.pressure_components.dPo);escapedDustChart.data.labels.push(runData.name);escapedDustChart.data.datasets[0].data.push(runData.escaped_dust);airwattChart.data.labels.push(runData.name);airwattChart.data.datasets[0].data.push(runData.airwatt_loss);perCycloneDustChart.data.labels.push(runData.name);perCycloneDustChart.data.datasets[0].data.push(runData.dust_per_cyclone);perCycloneDustChart.data.datasets[1].data.push(runData.escaped_per_cyclone);        [efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(c=>{c.update();c.draw()})}
+       
+        // --- PAGE INITIALIZATION & NEW PARAMETRIC STUDY CODE ---
+        let paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart;
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            initParametricStudyCharts();
+            setupControls();
+            populateParamSelect();
+            updateAllTextSizes(); 
+
+            const col1 = document.getElementById('sortable-column-1');
+            const col2 = document.getElementById('sortable-column-2');
+            const paramCol1 = document.getElementById('param-sortable-column-1');
+            const paramCol2 = document.getElementById('param-sortable-column-2');
+
+            const sortableOptions = {group: 'shared-cards',animation: 150,handle: '.drag-handle',ghostClass: 'sortable-ghost'};
+            
+            new Sortable(col1, sortableOptions);
+            new Sortable(col2, sortableOptions);
+            new Sortable(paramCol1, sortableOptions);
+            new Sortable(paramCol2, sortableOptions);
+            
+            document.getElementById('calculate-btn').click();
+        });
+
+        // --- PARAMETRIC STUDY FUNCTIONS ---
+        const studyableParams={'Dc_mm':'Body Diameter (mm)','Lc_mm':'Barrel Length (mm)','Zc_mm':'Cone Length (mm)','De_mm':'Outlet Diameter (mm)','Dd_mm':'Dust Outlet (mm)','Bc_mm':'Inlet Width (mm)','Hc_mm':'Inlet Height (mm)','Q_lps':'Inlet Flow Rate (L/s)','initial_dust':'Initial Dust Load (g)','num_cyclones':'# of Cyclones'};
+        function populateParamSelect(){const select=document.getElementById('param-select');for(const[key,value]of Object.entries(studyableParams)){const option=document.createElement('option');option.value=key;option.textContent=value;select.appendChild(option)}}
+        function getInputsFromDOM(){const inputs={};document.querySelectorAll('#calculator-form input').forEach(el=>{inputs[el.id]=parseFloat(el.value)});return inputs}
+       
+        function runParametricCalculationStep(inputs) {
+            const D_c=inputs.Dc_mm/1e3,L_c=inputs.Lc_mm/1e3,Z_c=inputs.Zc_mm/1e3,D_e=inputs.De_mm/1e3,D_d=inputs.Dd_mm/1e3,B_c=inputs.Bc_mm/1e3,H_c=inputs.Hc_mm/1e3,e=inputs.e_um/1e6,Q_m3s=inputs.Q_lps/1e3;
+            const A_in=B_c*H_c; if(A_in<=0)throw new Error("Inlet area must be positive."); const V_in=Q_m3s/A_in;
+            if(!(D_c>D_e&&D_e>D_d&&D_d>0&&L_c>0&&Z_c>=0&&V_in>0&&B_c>0&&H_c>0))throw new Error("Invalid dimensions. Must hold: Dc > De > Dd > 0.");
+            const{V1,L1,Ne1}=calculate_barrel_parameters(V_in,D_c,D_e,L_c,B_c,H_c); const{average_V2,L2,Ne2}=calculate_cone_parameters(V_in,D_c,D_e,Z_c,D_d,B_c,H_c);
+            const Ne_total=Ne1+Ne2; const d50=calculate_lapple_cut_diameter(inputs.mu,B_c,inputs.rho_p,inputs.rho_g,V_in,Ne_total);
+            const pressureResults=calculate_pressure_loss(V_in,D_c,D_e,L_c,Z_c,D_d,B_c,H_c,inputs.rho_g,inputs.mu,e);
+            const airwatt_loss=pressureResults.total_loss*Q_m3s; let totalMassEfficiency=0; let currentEfficiencies = [];
+            particle_sizes_microns.forEach((dp, index)=>{const eff=calculate_separation_efficiency(d50*1e6,dp); currentEfficiencies.push(eff*100); totalMassEfficiency+=eff*mass_fractions[index]});
+            const dust_per_cyclone=inputs.initial_dust/inputs.num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*inputs.num_cyclones;
+            return {d50_microns:d50*1e6, total_loss_pa:pressureResults.total_loss, airwatt_loss, total_escaped_dust, dust_per_cyclone, escaped_per_cyclone, pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po}, efficiencies: currentEfficiencies};
+        }
+
+        document.getElementById('run-study-btn').addEventListener('click', () => {
+            const paramKey = document.getElementById('param-select').value;
+            const paramLabel = studyableParams[paramKey];
+            const start = parseFloat(document.getElementById('param-start').value);
+            const end = parseFloat(document.getElementById('param-end').value);
+            const step = parseFloat(document.getElementById('param-step').value);
+            if (!paramKey || isNaN(start) || isNaN(end) || isNaN(step) || step <= 0) { alert("Please check parametric study inputs."); return; }
+
+            const baseInputs = getInputsFromDOM();
+            const originalValue = baseInputs[paramKey];
+            const studyResults = [];
+            const independentVar = [];
+
+            for (let i = start; i <= end; i += step) {
+                document.getElementById(paramKey).value = i; // Temporarily set input value for calculation
+                const currentInputs = getInputsFromDOM();
+                try {
+                    const result = runParametricCalculationStep(currentInputs);
+                    studyResults.push(result);
+                    independentVar.push(i.toFixed(2));
+                } catch (e) {
+                    console.warn(`Calculation failed for ${paramLabel}=${i}: ${e.message}`);
+                }
+            }
+            document.getElementById(paramKey).value = originalValue; // Restore original value
+
+            // Plot results
+            // For the line chart, we create a new dataset for each step of the study
+            paramEfficiencyChart.data.labels = particle_sizes_microns; // X-axis is particle size
+            paramEfficiencyChart.options.scales.x.title.text = "Particle Size (µm)";
+            paramEfficiencyChart.data.datasets = studyResults.map((result, i) => ({
+                label: `${paramLabel.split(' ')[0]} = ${independentVar[i]}`,
+                data: result.efficiencies,
+                borderColor: chartColors[i % chartColors.length],
+                backgroundColor: 'transparent',
+                fill: false,
+                borderWidth: 2
+            }));
+
+            // For bar charts, the independent variable is on the x-axis
+            [paramPressureChart, paramEscapedDustChart, paramAirwattChart, paramPerCycloneDustChart].forEach(chart => {
+                chart.data.labels = independentVar;
+                chart.options.scales.x.title.text = paramLabel;
+            });
+
+            paramPressureChart.data.datasets.forEach((dataset, i) => {
+                const key = Object.keys(pressureColors)[i];
+                dataset.data = studyResults.map(r => r.pressure_components[key]);
+            });
+
+            paramEscapedDustChart.data.datasets[0].data = studyResults.map(r => r.total_escaped_dust);
+            paramAirwattChart.data.datasets[0].data = studyResults.map(r => r.airwatt_loss);
+            paramPerCycloneDustChart.data.datasets[0].data = studyResults.map(r => r.dust_per_cyclone);
+            paramPerCycloneDustChart.data.datasets[1].data = studyResults.map(r => r.escaped_per_cyclone);
+
+            [paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart].forEach(c => {c.update();c.draw()});
+            document.getElementById('param-grid-container').classList.remove('hidden');
+        });
+
+        function initParametricStudyCharts() {
+            const chartOptionsTemplate={responsive:!0,maintainAspectRatio:!0,layout:{padding:{top:15}},plugins:{legend:{position:"bottom",labels:{font:{}}}}};
+            
+            // Parametric Efficiency Chart (Line)
+            const pEffCtx = document.getElementById("param-efficiency-chart").getContext("2d");
+            let pEffOptions = JSON.parse(JSON.stringify(chartOptionsTemplate));
+            pEffOptions.scales={x:{title:{display:!0,text:"Particle Size (µm)",font:{}},ticks:{font:{}},type:"logarithmic"},y:{title:{display:!0,text:"Separation Efficiency (%)",font:{}},min:0,max:110,ticks:{callback:value=>value<=100?value+"%":"",font:{}}}};
+            paramEfficiencyChart = new Chart(pEffCtx,{type:"line",data:{labels:particle_sizes_microns,datasets:[]},options:pEffOptions});
+
+            // Parametric Pressure Chart (Stacked Bar)
+            const pPressCtx = document.getElementById("param-pressure-chart").getContext("2d");
+            let pPressOptions = JSON.parse(JSON.stringify(chartOptionsTemplate));
+            pPressOptions.scales={x:{stacked:!0,title:{display:!0, font:{}},ticks:{font:{}}},y:{stacked:!0,title:{display:!0,text:"Pressure Loss (Pa)",font:{}},ticks:{font:{}}}};
+            paramPressureChart = new Chart(pPressCtx,{type:"bar",data:{labels:[],datasets:[{label:"Entry Loss",data:[],backgroundColor:pressureColors.dPe},{label:"Kinetic Loss",data:[],backgroundColor:pressureColors.dPk},{label:"Frictional Loss",data:[],backgroundColor:pressureColors.dPf},{label:"Rotational Loss",data:[],backgroundColor:pressureColors.dPr},{label:"Exit Loss",data:[],backgroundColor:pressureColors.dPo}]},options:pPressOptions,plugins:[{id:'paramPressureValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()}}]});
+
+            // Re-usable helper for simple bar charts
+            const createParamBarChart=(canvasId,yAxisTitle,datasets)=>{const ctx=document.getElementById(canvasId).getContext("2d");let options=JSON.parse(JSON.stringify(chartOptionsTemplate));options.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:yAxisTitle,font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};const chart=new Chart(ctx,{type:"bar",data:{labels:[],datasets:datasets},options:options});chart.options.plugins.afterDatasetsDraw=function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()};return chart};
+
+            const paramEscapedDustCtx=document.getElementById("param-escaped-dust-chart").getContext("2d");let paramEscapedDustOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));paramEscapedDustOptions.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Total Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};paramEscapedDustChart=new Chart(paramEscapedDustCtx,{type:"bar",data:{labels:[],datasets:[{label:"Total Escaped Dust",data:[],backgroundColor:"#facc15"}]},options:paramEscapedDustOptions,plugins:[{id:'paramEscapedDustValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
+            const paramAirwattCtx=document.getElementById("param-airwatt-chart").getContext("2d");let paramAirwattOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));paramAirwattOptions.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Airwatt Loss (W)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};paramAirwattChart=new Chart(paramAirwattCtx,{type:"bar",data:{labels:[],datasets:[{label:"Airwatt Loss",data:[],backgroundColor:"#8b5cf6"}]},options:paramAirwattOptions,plugins:[{id:'paramAirwattValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
+           
+            // Parametric Per Cyclone Chart (Grouped Bar)
+            const pPerCtx = document.getElementById("param-per-cyclone-dust-chart").getContext("2d");
+            let pPerOptions = JSON.parse(JSON.stringify(chartOptionsTemplate));
+            pPerOptions.scales = {x:{title:{display:!0,font:{}},ticks:{font:{}}}, y:{title:{display:!0,text:"Dust Load (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}, y1:{type:"linear",display:!0,position:"right",title:{display:!0,text:"Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}},grid:{drawOnChartArea:!1}}};
+            paramPerCycloneDustChart = new Chart(pPerCtx,{type:"bar",data:{labels:[],datasets:[{label:"Dust Load per Cyclone",data:[],backgroundColor:"#3b82f6",type:"bar",yAxisID:"y"},{label:"Escaped Dust per Cyclone",data:[],backgroundColor:"#dc2626",borderColor:"#dc2626",type:"line",yAxisID:"y1",pointRadius:6,fill:false,tension:0.1}]},options:pPerOptions,plugins:[{id:'paramPerCycloneValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{chart.data.datasets.forEach((dataset,datasetIndex)=>{const value=dataset.data[index];if(value&&value>0){const meta=chart.getDatasetMeta(datasetIndex);if(meta&&meta.data&&meta.data[index]){const element=meta.data[index];let x,y;if(dataset.type==="line"||dataset.type==="scatter"){x=element.x;y=element.y}else{x=element.x;y=element.y}const text=value.toFixed(1);ctx.strokeText(text,x,y-8);ctx.fillText(text,x,y-8)}}})});ctx.restore()}}]});
+        }
+    </script>
+</body>
+</html>
