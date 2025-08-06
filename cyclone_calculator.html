@@ -868,7 +868,7 @@
         function calculate_pressure_loss(V_in,D_c,D_e,L_c,Z_c,D_d,B_c,H_c,rho_g,mu,e){const Q_in=V_in*B_c*H_c;const VP_in=.5*rho_g*V_in**2;const C5=1;const delta_Pe=C5*VP_in;const A_out=Math.PI*(D_e/2)**2;const V_out=Q_in/A_out;const VP_out=.5*rho_g*V_out**2;const delta_Pk=VP_in-VP_out;const R=D_c/2;const r0=D_e/2;const delta_Pr=r0>0?rho_g*V_in**2*(R/r0-1):Infinity;const C6=1.8;const delta_Po=C6*VP_out;const V_z1_val=calculate_v_z1(V_in,D_c,D_e,B_c,H_c);const V_s1=Math.sqrt(V_in**2+V_z1_val**2);const D_s1=V_s1>0?Math.sqrt(4*Q_in/(Math.PI*V_s1)):0;const Re1=D_s1>0?rho_g*V_s1*D_s1/mu:0;const f1=swamee_jain_friction_factor(Re1,e,D_s1);const VP_s1=.5*rho_g*V_s1**2;const L1=simpson(z=>integrand_l1(z,V_in,D_c,D_e,B_c,H_c),0,L_c,1e3,[]);const delta_Pf1=D_s1>0?f1/2*(VP_s1/D_s1)*L1:0;let Z_o2=0;if(D_c-D_d>0&&Z_c>0){Z_o2=Z_c*(D_c-D_e)/(D_c-D_d)}
         if(Z_o2<=0){Z_o2=Z_c}const z_mid=Z_o2/2;const V_t2_avg=calculate_v_t2(z_mid,V_in,D_c,Z_c,D_d);const V_z2_avg=calculate_v_z2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_r2_avg=calculate_v_r2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_s2_avg=Math.sqrt(V_t2_avg**2+V_z2_avg**2+V_r2_avg**2);const Q_z_avg=Q_in*(1-z_mid/Z_o2);const D_s2_avg=V_s2_avg>0?Math.sqrt(4*Q_z_avg/(Math.PI*V_s2_avg)):0;const Re2_avg=D_s2_avg>0?rho_g*V_s2_avg*D_s2_avg/mu:0;const f2_avg=swamee_jain_friction_factor(Re2_avg,e,D_s2_avg);const VP_s2_avg=.5*rho_g*V_s2_avg**2;const L2=simpson(z=>integrand_l2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c),0,Z_c,1e3,[]);const delta_Pf2=D_s2_avg>0?f2_avg/2*(VP_s2_avg/D_s2_avg)*L2:0;const delta_Pf_total=delta_Pf1+delta_Pf2;const total_loss=delta_Pe+delta_Pk+delta_Pr+delta_Po+delta_Pf_total;return{total_loss,delta_Pe,delta_Pk,delta_Pf_total,delta_Pr,delta_Po}}
         function initCharts() {
-            const chartOptionsTemplate={responsive:!0,maintainAspectRatio:!0,layout:{padding:{top:15}},plugins:{legend:{position:"bottom",labels:{font:{},filter:function(legendItem,chart){return chart.isDatasetVisible(legendItem.datasetIndex)}},onClick:null}}};
+            const chartOptionsTemplate={responsive:!0,maintainAspectRatio:!0,layout:{padding:{top:15}},plugins:{legend:{position:"bottom",labels:{font:{}},onClick:null}}};
             const effCtx=document.getElementById("efficiency-chart").getContext("2d");let effOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));effOptions.scales={x:{title:{display:!0,text:"Particle Size (µm)",font:{}},ticks:{font:{}},type:"logarithmic"},y:{title:{display:!0,text:"Separation Efficiency (%)",font:{}},min:0,max:110,ticks:{callback:value=>value<=100?value+"%":"",font:{}}}};effOptions.plugins.tooltip={callbacks:{label:context=>`${context.dataset.label||""}: ${context.parsed.y.toFixed(2)}%`}};efficiencyChart=new Chart(effCtx,{type:"line",data:{labels:particle_sizes_microns,datasets:[]},options:effOptions});
             const pressureCtx=document.getElementById("pressure-chart").getContext("2d");let pressureOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));pressureOptions.scales={x:{stacked:!0,title:{font:{}},ticks:{font:{}}},y:{stacked:!0,title:{display:!0,text:"Pressure Loss (Pa)",font:{}},ticks:{font:{}}}};pressureChart=new Chart(pressureCtx,{type:"bar",data:{labels:[],datasets:[{label:"Entry Loss",data:[],backgroundColor:pressureColors.dPe},{label:"Kinetic Loss",data:[],backgroundColor:pressureColors.dPk},{label:"Frictional Loss",data:[],backgroundColor:pressureColors.dPf},{label:"Rotational Loss",data:[],backgroundColor:pressureColors.dPr},{label:"Exit Loss",data:[],backgroundColor:pressureColors.dPo}]},options:pressureOptions,plugins:[{id:'pressureValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()}}]});
             const createBarChartWithLabels=(canvasId,yAxisTitle,datasets)=>{const ctx=document.getElementById(canvasId).getContext("2d");let options=JSON.parse(JSON.stringify(chartOptionsTemplate));options.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:yAxisTitle,font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};const chart=new Chart(ctx,{type:"bar",data:{labels:[],datasets:datasets},options:options});chart.options.plugins.afterDatasetsDraw=function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()};return chart};
@@ -917,10 +917,21 @@
             
             controlsContainer.innerHTML = '';
             
-            chart.data.datasets.forEach((dataset, index) => {
+            // Store original datasets if not already stored
+            if (!chart._originalDatasets) {
+                chart._originalDatasets = JSON.parse(JSON.stringify(chart.data.datasets));
+            }
+            
+            // Initialize visibility state if not exists
+            if (!chart._datasetVisibility) {
+                chart._datasetVisibility = chart._originalDatasets.map(() => true);
+            }
+            
+            chart._originalDatasets.forEach((dataset, index) => {
                 const button = document.createElement('button');
+                const isVisible = chart._datasetVisibility[index];
                 button.className = `dataset-toggle-btn px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
-                    chart.isDatasetVisible(index) 
+                    isVisible 
                         ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' 
                         : 'bg-gray-100 text-gray-500 border border-gray-200'
                 }`;
@@ -934,12 +945,16 @@
                 button.appendChild(document.createTextNode(dataset.label || `Dataset ${index + 1}`));
                 
                 button.addEventListener('click', () => {
-                    const isVisible = chart.isDatasetVisible(index);
-                    chart.setDatasetVisibility(index, !isVisible);
+                    // Toggle visibility state
+                    chart._datasetVisibility[index] = !chart._datasetVisibility[index];
+                    
+                    // Rebuild datasets array with only visible datasets
+                    chart.data.datasets = chart._originalDatasets.filter((_, i) => chart._datasetVisibility[i]);
+                    
                     chart.update('none'); // Update without animation for better performance
                     
                     // Update button appearance
-                    if (chart.isDatasetVisible(index)) {
+                    if (chart._datasetVisibility[index]) {
                         button.className = 'dataset-toggle-btn px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 bg-indigo-100 text-indigo-700 border border-indigo-200';
                     } else {
                         button.className = 'dataset-toggle-btn px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 bg-gray-100 text-gray-500 border border-gray-200';
@@ -1949,7 +1964,7 @@
         }
 
         function updateComparisonTable(){const tableBody=document.getElementById("comparison-body");const comparisonSection=document.getElementById("comparison-section");tableBody.innerHTML="";if(runHistory.length===0){comparisonSection.classList.add("hidden");return}comparisonSection.classList.remove("hidden");runHistory.forEach(run=>{const row=document.createElement("tr");row.innerHTML=`<td>${run.id}</td><td>${run.name}</td><td>${(run.d50).toFixed(2)}</td><td>${run.total_loss_pa.toFixed(2)}</td><td>${run.airwatt_loss.toFixed(3)}</td><td>${run.escaped_dust.toFixed(2)}</td>`;tableBody.appendChild(row)});updateAllTextSizes()}
-        function updateChartsForNewRun(runData){const newEffColor=chartColors[(runHistory.length-1)%chartColors.length];efficiencyChart.data.datasets.push({label:runData.name,data:runData.efficiencies,borderColor:newEffColor,backgroundColor:"transparent",borderWidth:2,tension:.1,pointBackgroundColor:newEffColor});pressureChart.data.labels.push(runData.name);pressureChart.data.datasets[0].data.push(runData.pressure_components.dPe);pressureChart.data.datasets[1].data.push(runData.pressure_components.dPk);pressureChart.data.datasets[2].data.push(runData.pressure_components.dPf);pressureChart.data.datasets[3].data.push(runData.pressure_components.dPr);pressureChart.data.datasets[4].data.push(runData.pressure_components.dPo);escapedDustChart.data.labels.push(runData.name);escapedDustChart.data.datasets[0].data.push(runData.escaped_dust);airwattChart.data.labels.push(runData.name);airwattChart.data.datasets[0].data.push(runData.airwatt_loss);perCycloneDustChart.data.labels.push(runData.name);perCycloneDustChart.data.datasets[0].data.push(runData.dust_per_cyclone);perCycloneDustChart.data.datasets[1].data.push(runData.escaped_per_cyclone);        [efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(c=>{c.update();c.draw()});createDatasetControls('efficiency-chart',efficiencyChart);createDatasetControls('pressure-chart',pressureChart);createDatasetControls('per-cyclone-dust-chart',perCycloneDustChart)}
+        function updateChartsForNewRun(runData){const newEffColor=chartColors[(runHistory.length-1)%chartColors.length];efficiencyChart.data.datasets.push({label:runData.name,data:runData.efficiencies,borderColor:newEffColor,backgroundColor:"transparent",borderWidth:2,tension:.1,pointBackgroundColor:newEffColor});pressureChart.data.labels.push(runData.name);pressureChart.data.datasets[0].data.push(runData.pressure_components.dPe);pressureChart.data.datasets[1].data.push(runData.pressure_components.dPk);pressureChart.data.datasets[2].data.push(runData.pressure_components.dPf);pressureChart.data.datasets[3].data.push(runData.pressure_components.dPr);pressureChart.data.datasets[4].data.push(runData.pressure_components.dPo);escapedDustChart.data.labels.push(runData.name);escapedDustChart.data.datasets[0].data.push(runData.escaped_dust);airwattChart.data.labels.push(runData.name);airwattChart.data.datasets[0].data.push(runData.airwatt_loss);perCycloneDustChart.data.labels.push(runData.name);perCycloneDustChart.data.datasets[0].data.push(runData.dust_per_cyclone);perCycloneDustChart.data.datasets[1].data.push(runData.escaped_per_cyclone);        [efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(c=>{c._originalDatasets=null;c._datasetVisibility=null;c.update();c.draw()});createDatasetControls('efficiency-chart',efficiencyChart);createDatasetControls('pressure-chart',pressureChart);createDatasetControls('per-cyclone-dust-chart',perCycloneDustChart)}
        
         // --- PAGE INITIALIZATION & NEW PARAMETRIC STUDY CODE ---
         let paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart;
@@ -2064,13 +2079,13 @@
             paramPerCycloneDustChart.data.datasets[0].data = studyResults.map(r => r.dust_per_cyclone);
             paramPerCycloneDustChart.data.datasets[1].data = studyResults.map(r => r.escaped_per_cyclone);
 
-            [paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart].forEach(c => {c.update();c.draw()});
+            [paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart].forEach(c => {c._originalDatasets=null;c._datasetVisibility=null;c.update();c.draw()});
             createDatasetControls('param-per-cyclone-dust-chart',paramPerCycloneDustChart);
             document.getElementById('param-grid-container').classList.remove('hidden');
         });
 
         function initParametricStudyCharts() {
-            const chartOptionsTemplate={responsive:!0,maintainAspectRatio:!0,layout:{padding:{top:15}},plugins:{legend:{position:"bottom",labels:{font:{},filter:function(legendItem,chart){return chart.isDatasetVisible(legendItem.datasetIndex)}},onClick:null}}};
+            const chartOptionsTemplate={responsive:!0,maintainAspectRatio:!0,layout:{padding:{top:15}},plugins:{legend:{position:"bottom",labels:{font:{}},onClick:null}}};
             
             // Parametric Efficiency Chart (Line)
             const pEffCtx = document.getElementById("param-efficiency-chart").getContext("2d");
