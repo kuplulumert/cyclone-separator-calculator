@@ -188,14 +188,58 @@
             display: block;
         }
         
-        /* Zoom out all tabs to 80% except AI Assistant */
-        .tab-content:not(#ml-assistant-tab) {
-            zoom: 0.8;
+        /* Dynamic zoom control */
+        .tab-content {
             transform-origin: top left;
+            transition: zoom 0.3s ease;
+        }
+        
+        /* Zoom control buttons */
+        .zoom-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .zoom-btn {
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .zoom-btn:hover {
+            background: rgba(59, 130, 246, 1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .zoom-btn.active {
+            background: rgba(34, 197, 94, 0.9);
+        }
+        
+        .zoom-btn.active:hover {
+            background: rgba(34, 197, 94, 1);
         }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
+
+    <!-- Zoom Controls -->
+    <div class="zoom-controls">
+        <button id="zoom-80-btn" class="zoom-btn" onclick="setZoom(0.8)">🔍- 80%</button>
+        <button id="zoom-100-btn" class="zoom-btn active" onclick="setZoom(1.0)">🔍+ 100%</button>
+    </div>
 
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-screen-xl">
         <header class="text-center mb-8">
@@ -4648,6 +4692,28 @@ Comparative analysis based on ${runHistory.length} design variations
                 setTimeout(updateRunSelector, 100);
             });
         }
+
+        // Zoom Control Functions
+        let currentZoom = 1.0;
+        
+        function setZoom(zoomLevel) {
+            currentZoom = zoomLevel;
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabContents.forEach(tab => {
+                tab.style.zoom = zoomLevel;
+            });
+            
+            // Update button states
+            document.getElementById('zoom-80-btn').classList.toggle('active', zoomLevel === 0.8);
+            document.getElementById('zoom-100-btn').classList.toggle('active', zoomLevel === 1.0);
+        }
+        
+        // Initialize zoom controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial state
+            setZoom(1.0);
+        });
 
     </script>
 </body>
