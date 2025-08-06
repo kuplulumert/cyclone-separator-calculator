@@ -1919,8 +1919,7 @@
 
             paramEscapedDustChart.data.datasets[0].data = studyResults.map(r => r.total_escaped_dust);
             paramAirwattChart.data.datasets[0].data = studyResults.map(r => r.airwatt_loss);
-            // Update chart data for new structure
-            const totalDustData = studyResults.map(r => r.dust_per_cyclone);
+            // Update chart data for new clean structure
             const escapedDustData = studyResults.map(r => r.escaped_per_cyclone);
             const efficiencyData = studyResults.map(r => {
                 const totalDust = r.dust_per_cyclone;
@@ -1929,9 +1928,11 @@
                 return totalDust > 0 ? (collected / totalDust) * 100 : 0;
             });
             
-            paramPerCycloneDustChart.data.datasets[0].data = totalDustData;   // Total Dust Load
-            paramPerCycloneDustChart.data.datasets[1].data = escapedDustData; // Escaped Dust (log scale)
-            paramPerCycloneDustChart.data.datasets[2].data = efficiencyData;  // Collection Efficiency
+            // Store total dust per cyclone as global for display (should be constant across parameter study)
+            window.currentTotalDustPerCyclone = studyResults.length > 0 ? studyResults[0].dust_per_cyclone : 0;
+            
+            paramPerCycloneDustChart.data.datasets[0].data = escapedDustData; // Escaped Dust (log scale)
+            paramPerCycloneDustChart.data.datasets[1].data = efficiencyData;  // Collection Efficiency
 
             [paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart].forEach(c => {c.update();c.draw()});
             document.getElementById('param-grid-container').classList.remove('hidden');
@@ -1958,7 +1959,7 @@
             const paramEscapedDustCtx=document.getElementById("param-escaped-dust-chart").getContext("2d");let paramEscapedDustOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));paramEscapedDustOptions.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Total Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};paramEscapedDustChart=new Chart(paramEscapedDustCtx,{type:"bar",data:{labels:[],datasets:[{label:"Total Escaped Dust",data:[],backgroundColor:"#facc15"}]},options:paramEscapedDustOptions,plugins:[{id:'paramEscapedDustValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
             const paramAirwattCtx=document.getElementById("param-airwatt-chart").getContext("2d");let paramAirwattOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));paramAirwattOptions.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Airwatt Loss (W)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};paramAirwattChart=new Chart(paramAirwattCtx,{type:"bar",data:{labels:[],datasets:[{label:"Airwatt Loss",data:[],backgroundColor:"#8b5cf6"}]},options:paramAirwattOptions,plugins:[{id:'paramAirwattValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
            
-            // Parametric Per Cyclone Chart (Professional Dual-Axis with Logarithmic Scale)
+            // Parametric Per Cyclone Chart (Clean Design with Total Dust Text)
             const pPerCtx = document.getElementById("param-per-cyclone-dust-chart").getContext("2d");
             let pPerOptions = JSON.parse(JSON.stringify(chartOptionsTemplate));
             pPerOptions.scales = {
@@ -1967,35 +1968,27 @@
                     ticks: {font: {}}
                 },
                 y: {
-                    title: {display: true, text: 'Total Dust per Cyclone (g)', font: {}},
+                    title: {display: true, text: 'Escaped Dust per Cyclone (g)', font: {}},
                     beginAtZero: true,
                     grace: "10%",
                     ticks: {font: {}},
-                    position: 'left'
+                    type: "logarithmic",
+                    min: 0.001
                 },
                 y1: {
-                    type: "logarithmic",
+                    type: "linear",
                     display: true,
                     position: "right",
-                    title: {display: true, text: 'Escaped Dust (g) - Log Scale', font: {}},
-                    min: 0.001,
+                    title: {display: true, text: 'Collection Efficiency (%)', font: {}},
+                    beginAtZero: true,
+                    max: 100,
                     ticks: {
                         font: {},
                         callback: function(value) {
-                            // Show nice logarithmic labels
-                            if (value >= 1) return value.toFixed(0) + 'g';
-                            if (value >= 0.1) return value.toFixed(1) + 'g';
-                            if (value >= 0.01) return value.toFixed(2) + 'g';
-                            return value.toFixed(3) + 'g';
+                            return value + '%';
                         }
                     },
                     grid: {drawOnChartArea: false}
-                },
-                y2: {
-                    type: "linear",
-                    display: false, // Hidden axis for efficiency line
-                    min: 0,
-                    max: 100
                 }
             };
             pPerOptions.plugins = {
@@ -2006,9 +1999,7 @@
                             const label = context.dataset.label || '';
                             const value = context.parsed.y;
                             
-                            if (label.includes('Total Dust')) {
-                                return label + ': ' + value.toFixed(2) + 'g';
-                            } else if (label.includes('Escaped Dust')) {
+                            if (label.includes('Escaped Dust')) {
                                 return label + ': ' + value.toFixed(3) + 'g';
                             } else if (label.includes('Efficiency')) {
                                 return label + ': ' + value.toFixed(1) + '%';
@@ -2016,18 +2007,16 @@
                             return label + ': ' + value.toFixed(2);
                         },
                         footer: function(tooltipItems) {
-                            // Calculate and show efficiency
+                            // Show total dust reference
                             const dataIndex = tooltipItems[0].dataIndex;
                             const datasets = tooltipItems[0].chart.data.datasets;
-                            const totalData = datasets.find(d => d.label === 'Total Dust Load').data;
-                            const escapedData = datasets.find(d => d.label === 'Escaped Dust').data;
+                            const escapedData = datasets.find(d => d.label === 'Escaped Dust per Cyclone').data;
                             
-                            if (totalData && escapedData) {
-                                const total = totalData[dataIndex];
+                            if (escapedData && window.currentTotalDustPerCyclone) {
                                 const escaped = escapedData[dataIndex];
+                                const total = window.currentTotalDustPerCyclone;
                                 const collected = total - escaped;
-                                const efficiency = total > 0 ? ((collected / total) * 100) : 0;
-                                return `Collected: ${collected.toFixed(2)}g | Efficiency: ${efficiency.toFixed(1)}%`;
+                                return `Total Dust: ${total.toFixed(1)}g | Collected: ${collected.toFixed(2)}g`;
                             }
                             return '';
                         }
@@ -2044,22 +2033,12 @@
             };
             
             paramPerCycloneDustChart = new Chart(pPerCtx, {
-                type: "bar",
+                type: "line",
                 data: {
                     labels: [],
                     datasets: [
                         {
-                            label: "Total Dust Load",
-                            data: [],
-                            type: "bar",
-                            backgroundColor: "rgba(59, 130, 246, 0.7)", // Blue bars for total
-                            borderColor: "#3b82f6",
-                            borderWidth: 2,
-                            yAxisID: "y",
-                            order: 3
-                        },
-                        {
-                            label: "Escaped Dust", 
+                            label: "Escaped Dust per Cyclone", 
                             data: [],
                             type: "line",
                             backgroundColor: "#ef4444",
@@ -2072,8 +2051,7 @@
                             pointHoverRadius: 8,
                             fill: false,
                             tension: 0.3,
-                            yAxisID: "y1",
-                            order: 1
+                            yAxisID: "y"
                         },
                         {
                             label: "Collection Efficiency",
@@ -2089,8 +2067,7 @@
                             pointHoverRadius: 8,
                             fill: false,
                             tension: 0.3,
-                            yAxisID: "y2",
-                            order: 2
+                            yAxisID: "y1"
                         }
                     ]
                 },
@@ -2101,29 +2078,43 @@
                         const ctx = chart.ctx;
                         ctx.save();
                         
-                        // Draw total dust values on bars
-                        const totalDataset = chart.data.datasets.find(d => d.label === 'Total Dust Load');
-                        if (totalDataset) {
-                            const totalMeta = chart.getDatasetMeta(chart.data.datasets.indexOf(totalDataset));
-                            totalMeta.data.forEach((bar, index) => {
-                                const value = totalDataset.data[index];
-                                if (value && value > 0) {
-                                    ctx.fillStyle = '#ffffff';
-                                    ctx.strokeStyle = '#1e40af';
-                                    ctx.lineWidth = 2;
-                                    ctx.font = 'bold 12px Arial';
-                                    ctx.textAlign = 'center';
-                                    ctx.textBaseline = 'middle';
-                                    
-                                    const text = value.toFixed(1) + 'g';
-                                    ctx.strokeText(text, bar.x, bar.y + (bar.height / 2));
-                                    ctx.fillText(text, bar.x, bar.y + (bar.height / 2));
-                                }
-                            });
+                        // Draw total dust text in top-left corner
+                        if (window.currentTotalDustPerCyclone) {
+                            ctx.fillStyle = '#1f2937';
+                            ctx.font = 'bold 16px Arial';
+                            ctx.textAlign = 'left';
+                            ctx.textBaseline = 'top';
+                            
+                            const totalText = `Total Dust per Cyclone: ${window.currentTotalDustPerCyclone.toFixed(1)}g`;
+                            
+                            // Add background rectangle
+                            const textMetrics = ctx.measureText(totalText);
+                            const padding = 8;
+                            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                            ctx.fillRect(
+                                chart.chartArea.left, 
+                                chart.chartArea.top - 5, 
+                                textMetrics.width + padding * 2, 
+                                20 + padding
+                            );
+                            
+                            // Add border
+                            ctx.strokeStyle = '#e5e7eb';
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect(
+                                chart.chartArea.left, 
+                                chart.chartArea.top - 5, 
+                                textMetrics.width + padding * 2, 
+                                20 + padding
+                            );
+                            
+                            // Draw text
+                            ctx.fillStyle = '#1f2937';
+                            ctx.fillText(totalText, chart.chartArea.left + padding, chart.chartArea.top + padding - 5);
                         }
                         
                         // Draw escaped dust values on line points
-                        const escapedDataset = chart.data.datasets.find(d => d.label === 'Escaped Dust');
+                        const escapedDataset = chart.data.datasets.find(d => d.label === 'Escaped Dust per Cyclone');
                         if (escapedDataset) {
                             const escapedMeta = chart.getDatasetMeta(chart.data.datasets.indexOf(escapedDataset));
                             escapedMeta.data.forEach((point, index) => {
