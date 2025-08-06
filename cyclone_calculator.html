@@ -783,7 +783,7 @@
         document.getElementById("load-from-file-input").addEventListener("change", loadRunsFromFile);
         document.getElementById("export-all-runs-btn").addEventListener("click", exportAllRuns);
 
-        function saveRunsToFile() {
+        async function saveRunsToFile() {
             if (runHistory.length === 0) {
                 alert("No runs to save. Please calculate and save some runs first.");
                 return;
@@ -797,18 +797,49 @@
             };
             
             const dataStr = JSON.stringify(dataToSave, null, 2);
+            const filename = `cyclone_runs_${new Date().toISOString().split('T')[0]}.json`;
+            
+            // Try to use the modern File System Access API first
+            if ('showSaveFilePicker' in window) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'Cyclone Run Data',
+                            accept: {
+                                'application/json': ['.json']
+                            }
+                        }]
+                    });
+                    
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(dataStr);
+                    await writable.close();
+                    
+                    alert(`Successfully saved ${runHistory.length} runs to your chosen location!`);
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return; // User cancelled
+                    }
+                    console.error('File System Access API failed:', error);
+                    // Fall back to download method
+                }
+            }
+            
+            // Fallback for browsers that don't support File System Access API
             const dataBlob = new Blob([dataStr], {type: 'application/json'});
             const url = URL.createObjectURL(dataBlob);
             
             const link = document.createElement('a');
             link.href = url;
-            link.download = `cyclone_runs_${new Date().toISOString().split('T')[0]}.json`;
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
             
-            alert(`Successfully saved ${runHistory.length} runs to file!`);
+            alert(`Successfully saved ${runHistory.length} runs to file!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
         }
 
         function loadRunsFromFile(event) {
@@ -888,7 +919,7 @@
             reader.readAsText(file);
         }
 
-        function exportAllRuns() {
+        async function exportAllRuns() {
             if (runHistory.length === 0) {
                 alert("No runs to export. Please calculate and save some runs first.");
                 return;
@@ -923,18 +954,49 @@
             };
             
             const dataStr = JSON.stringify(exportData, null, 2);
+            const filename = `cyclone_analysis_export_${new Date().toISOString().split('T')[0]}.json`;
+            
+            // Try to use the modern File System Access API first
+            if ('showSaveFilePicker' in window) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'Cyclone Analysis Export',
+                            accept: {
+                                'application/json': ['.json']
+                            }
+                        }]
+                    });
+                    
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(dataStr);
+                    await writable.close();
+                    
+                    alert(`Successfully exported detailed analysis of ${runHistory.length} runs to your chosen location!`);
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return; // User cancelled
+                    }
+                    console.error('File System Access API failed:', error);
+                    // Fall back to download method
+                }
+            }
+            
+            // Fallback for browsers that don't support File System Access API
             const dataBlob = new Blob([dataStr], {type: 'application/json'});
             const url = URL.createObjectURL(dataBlob);
             
             const link = document.createElement('a');
             link.href = url;
-            link.download = `cyclone_analysis_export_${new Date().toISOString().split('T')[0]}.json`;
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
             
-            alert(`Successfully exported detailed analysis of ${runHistory.length} runs to file!`);
+            alert(`Successfully exported detailed analysis of ${runHistory.length} runs to file!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
         }
         function updateComparisonTable(){const tableBody=document.getElementById("comparison-body");const comparisonSection=document.getElementById("comparison-section");tableBody.innerHTML="";if(runHistory.length===0){comparisonSection.classList.add("hidden");return}comparisonSection.classList.remove("hidden");runHistory.forEach(run=>{const row=document.createElement("tr");row.innerHTML=`<td>${run.id}</td><td>${run.name}</td><td>${(run.d50).toFixed(2)}</td><td>${run.total_loss_pa.toFixed(2)}</td><td>${run.airwatt_loss.toFixed(3)}</td><td>${run.escaped_dust.toFixed(2)}</td>`;tableBody.appendChild(row)});updateAllTextSizes()}
         function updateChartsForNewRun(runData){const newEffColor=chartColors[(runHistory.length-1)%chartColors.length];efficiencyChart.data.datasets.push({label:runData.name,data:runData.efficiencies,borderColor:newEffColor,backgroundColor:"transparent",borderWidth:2,tension:.1,pointBackgroundColor:newEffColor});pressureChart.data.labels.push(runData.name);pressureChart.data.datasets[0].data.push(runData.pressure_components.dPe);pressureChart.data.datasets[1].data.push(runData.pressure_components.dPk);pressureChart.data.datasets[2].data.push(runData.pressure_components.dPf);pressureChart.data.datasets[3].data.push(runData.pressure_components.dPr);pressureChart.data.datasets[4].data.push(runData.pressure_components.dPo);escapedDustChart.data.labels.push(runData.name);escapedDustChart.data.datasets[0].data.push(runData.escaped_dust);airwattChart.data.labels.push(runData.name);airwattChart.data.datasets[0].data.push(runData.airwatt_loss);perCycloneDustChart.data.labels.push(runData.name);perCycloneDustChart.data.datasets[0].data.push(runData.dust_per_cyclone);perCycloneDustChart.data.datasets[1].data.push(runData.escaped_per_cyclone);        [efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(c=>{c.update();c.draw()})}
