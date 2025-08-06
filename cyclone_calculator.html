@@ -231,6 +231,135 @@
         .zoom-btn.active:hover {
             background: rgba(34, 197, 94, 1);
         }
+        
+        /* Floating Results Preview */
+        .results-preview {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            width: 320px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        .results-preview.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        
+        .results-preview.minimized {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .results-preview.minimized .preview-content {
+            display: none;
+        }
+        
+        .results-preview.minimized .preview-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 24px;
+        }
+        
+        .preview-header {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px 12px 0 0;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .preview-content {
+            padding: 16px;
+        }
+        
+        .preview-metric {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .preview-metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .metric-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .efficiency-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #10b981 0%, #10b981 var(--efficiency), #e5e7eb var(--efficiency), #e5e7eb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+        
+        .efficiency-circle::before {
+            content: '';
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .efficiency-text {
+            position: relative;
+            z-index: 1;
+            font-size: 14px;
+            font-weight: 700;
+            color: #059669;
+        }
+        
+        .preview-toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .preview-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -239,6 +368,38 @@
     <div class="zoom-controls">
         <button id="zoom-80-btn" class="zoom-btn" onclick="setZoom(0.8)">🔍- 80%</button>
         <button id="zoom-100-btn" class="zoom-btn active" onclick="setZoom(1.0)">🔍+ 100%</button>
+    </div>
+
+    <!-- Floating Results Preview -->
+    <div id="results-preview" class="results-preview">
+        <div class="preview-header">
+            <span>📊 Quick Results</span>
+            <button class="preview-toggle-btn" onclick="togglePreview()">−</button>
+        </div>
+        <div class="preview-content">
+            <div class="efficiency-circle" style="--efficiency: 0%">
+                <div class="efficiency-text" id="preview-efficiency">0%</div>
+            </div>
+            <div class="preview-metric">
+                <span class="metric-label">Total Mass Efficiency</span>
+                <span class="metric-value" id="preview-efficiency-value">-</span>
+            </div>
+            <div class="preview-metric">
+                <span class="metric-label">Pressure Drop</span>
+                <span class="metric-value" id="preview-pressure-value">-</span>
+            </div>
+            <div class="preview-metric">
+                <span class="metric-label">Cut Diameter (d50)</span>
+                <span class="metric-value" id="preview-d50-value">-</span>
+            </div>
+            <div class="preview-metric">
+                <span class="metric-label">Dust Captured</span>
+                <span class="metric-value" id="preview-dust-value">-</span>
+            </div>
+        </div>
+        <div class="preview-toggle" style="display: none;">
+            📊
+        </div>
     </div>
 
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-screen-xl">
@@ -1115,6 +1276,13 @@
                     tabContents.forEach(content => {
                         content.classList.toggle('active', content.id === tab.dataset.tab);
                     });
+                    
+                    // Handle results preview visibility
+                    if (tab.dataset.tab === 'single-calc-tab' && lastCalculatedData && Object.keys(lastCalculatedData).length > 0) {
+                        showResultsPreview(lastCalculatedData);
+                    } else {
+                        hideResultsPreview();
+                    }
                 });
             });
         }
@@ -1149,7 +1317,7 @@
         const dust_per_cyclone=initial_dust/num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*num_cyclones;lastCalculatedData={d50:d50_microns,total_loss_pa:pressureResults.total_loss,airwatt_loss:airwatt_loss,escaped_dust:total_escaped_dust,dust_per_cyclone:dust_per_cyclone,escaped_per_cyclone:escaped_per_cyclone,total_mass_efficiency:totalMassEfficiency,pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po},efficiencies:currentEfficiencies};
         document.getElementById("result-Vin").textContent=V_in.toFixed(2);document.getElementById("result-V1").textContent=V1.toFixed(4);document.getElementById("result-L1_mm").textContent=(L1*1e3).toFixed(2);document.getElementById("result-Ne1").textContent=Ne1.toFixed(2);document.getElementById("result-V2").textContent=isFinite(average_V2)?average_V2.toFixed(4):"N/A";document.getElementById("result-L2_mm").textContent=(L2*1e3).toFixed(2);document.getElementById("result-Ne2").textContent=Ne2.toFixed(2);document.getElementById("result-Ne_total").textContent=Ne_total.toFixed(2);
         document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
-        document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
+        document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters();showResultsPreview(lastCalculatedData)}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
         document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);runCounter++;document.getElementById("run-name-input").value=""});
         document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()})});
 
@@ -4813,6 +4981,64 @@ Comparative analysis based on ${runHistory.length} design variations
                 addMessage("Chat history cleared. How can I help you?", 'ai');
             }, 300);
         }
+
+        // Results Preview Functions
+        function showResultsPreview(results) {
+            const preview = document.getElementById('results-preview');
+            const currentTab = document.querySelector('.tab-content.active');
+            
+            // Only show preview in single calculation tab
+            if (currentTab && currentTab.id === 'single-calc-tab' && results) {
+                const totalEfficiency = results.total_mass_efficiency || 0;
+                const efficiencyPercent = totalEfficiency * 100;
+                const pressureDrop = results.total_loss_pa || 0;
+                const d50 = results.d50 || 0;
+                const dustCaptured = results.dust_per_cyclone || 0;
+                
+                // Update efficiency circle
+                const circle = preview.querySelector('.efficiency-circle');
+                const efficiencyText = document.getElementById('preview-efficiency');
+                circle.style.setProperty('--efficiency', `${efficiencyPercent}%`);
+                efficiencyText.textContent = `${efficiencyPercent.toFixed(1)}%`;
+                
+                // Update metric values
+                document.getElementById('preview-efficiency-value').textContent = `${efficiencyPercent.toFixed(1)}%`;
+                document.getElementById('preview-pressure-value').textContent = `${pressureDrop.toFixed(0)} Pa`;
+                document.getElementById('preview-d50-value').textContent = `${d50.toFixed(1)} μm`;
+                document.getElementById('preview-dust-value').textContent = `${dustCaptured.toFixed(2)} g`;
+                
+                // Show the preview
+                preview.classList.add('show');
+            } else {
+                // Hide preview for other tabs
+                preview.classList.remove('show');
+            }
+        }
+        
+        function hideResultsPreview() {
+            const preview = document.getElementById('results-preview');
+            preview.classList.remove('show');
+        }
+        
+        function togglePreview() {
+            const preview = document.getElementById('results-preview');
+            const toggleBtn = preview.querySelector('.preview-toggle-btn');
+            
+            if (preview.classList.contains('minimized')) {
+                preview.classList.remove('minimized');
+                toggleBtn.textContent = '−';
+            } else {
+                preview.classList.add('minimized');
+                toggleBtn.textContent = '+';
+            }
+        }
+        
+        // Auto-hide preview when clicking on minimized version
+        document.getElementById('results-preview').addEventListener('click', function(e) {
+            if (this.classList.contains('minimized') && e.target === this) {
+                togglePreview();
+            }
+        });
 
     </script>
 </body>
