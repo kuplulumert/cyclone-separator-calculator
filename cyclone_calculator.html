@@ -476,7 +476,18 @@
                                 <div id="opt-best-result-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg"></div>
                             </div>
                             <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-                                 <h2 class="text-3xl font-semibold border-b pb-3 mb-6">All Valid Results</h2>
+                                 <div class="flex justify-between items-center border-b pb-3 mb-6">
+                                     <h2 class="text-3xl font-semibold">All Valid Results</h2>
+                                     <div class="flex gap-3">
+                                         <button id="export-all-designs-csv" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105 flex items-center gap-2">
+                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                             </svg>
+                                             Export All Designs (CSV)
+                                         </button>
+                                         <span id="total-designs-count" class="text-sm text-gray-600 px-3 py-2 bg-gray-100 rounded-lg font-medium"></span>
+                                     </div>
+                                 </div>
                                  <div class="overflow-x-auto"><table id="opt-results-table" class="data-table"><thead></thead><tbody></tbody></table></div>
                             </div>
                         </div>
@@ -1134,6 +1145,8 @@
         // OPTIMIZATION TAB FUNCTIONALITY
         // ===========================
         
+        let allOptimizationDesigns = []; // Store all designs for CSV export
+        
         const optimizationParameters = [
             {id: 'Dc_mm', label: 'Cyclone Diameter (Dc)', unit: 'mm', min: 100, max: 2000, default_min: 300, default_max: 800},
             {id: 'Lc_mm', label: 'Cyclone Length (Lc)', unit: 'mm', min: 100, max: 3000, default_min: 500, default_max: 1500},
@@ -1192,6 +1205,141 @@
 
         function setupOptimizationEventListeners() {
             document.getElementById('run-optimization-btn').addEventListener('click', runOptimization);
+            document.getElementById('export-all-designs-csv').addEventListener('click', exportAllDesignsToCSV);
+        }
+
+        async function exportAllDesignsToCSV() {
+            if (allOptimizationDesigns.length === 0) {
+                alert("No optimization data to export. Please run an optimization first.");
+                return;
+            }
+            
+            // Create CSV header
+            const headers = [
+                'Design_ID',
+                'Objective',
+                'Is_Valid',
+                'Constraint_Violated',
+                'Error_Reason',
+                // Input parameters
+                'Dc_mm',
+                'Lc_mm', 
+                'Zc_mm',
+                'De_mm',
+                'Dd_mm',
+                'Bc_mm',
+                'Hc_mm',
+                'Q_lps',
+                'num_cyclones',
+                'mu',
+                'rho_p',
+                'rho_g',
+                'e_um',
+                'initial_dust',
+                // Output results
+                'Total_Efficiency_%',
+                'Pressure_Drop_Pa',
+                'Escaped_Dust_g',
+                'Dust_per_Cyclone_g',
+                'Escaped_per_Cyclone_g',
+                'Airwatt_Loss_W',
+                'D50_microns',
+                'Objective_Value'
+            ];
+            
+            // Convert data to CSV format
+            const csvRows = [headers.join(',')];
+            
+            allOptimizationDesigns.forEach(design => {
+                const row = [
+                    design.design_id,
+                    design.objective,
+                    design.is_valid,
+                    design.constraint_violated,
+                    design.error_reason || '',
+                    // Input parameters
+                    design.Dc_mm || design.Dc_mm || '',
+                    design.Lc_mm || design.Lc_mm || '',
+                    design.Zc_mm || design.Zc_mm || '',
+                    design.De_mm || design.De_mm || '',
+                    design.Dd_mm || design.Dd_mm || '',
+                    design.Bc_mm || design.Bc_mm || '',
+                    design.Hc_mm || design.Hc_mm || '',
+                    design.Q_lps || design.Q_lps || '',
+                    design.num_cyclones || design.num_cyclones || '',
+                    design.mu || design.mu || '',
+                    design.rho_p || design.rho_p || '',
+                    design.rho_g || design.rho_g || '',
+                    design.e_um || design.e_um || '',
+                    design.initial_dust || design.initial_dust || '',
+                    // Output results
+                    design.total_efficiency || '',
+                    design.pressure_drop || '',
+                    design.escaped_dust || '',
+                    design.dust_per_cyclone || '',
+                    design.escaped_per_cyclone || '',
+                    design.airwatt_loss || '',
+                    design.d50_microns || '',
+                    design.objective_value || ''
+                ];
+                
+                // Escape commas and quotes in CSV data
+                const escapedRow = row.map(field => {
+                    if (field === null || field === undefined) return '';
+                    const str = String(field);
+                    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                        return '"' + str.replace(/"/g, '""') + '"';
+                    }
+                    return str;
+                });
+                
+                csvRows.push(escapedRow.join(','));
+            });
+            
+            const csvContent = csvRows.join('\n');
+            const filename = `optimization_all_designs_${new Date().toISOString().split('T')[0]}.csv`;
+            
+            // Try to use the modern File System Access API first
+            if ('showSaveFilePicker' in window) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'CSV Data Files',
+                            accept: {
+                                'text/csv': ['.csv']
+                            }
+                        }]
+                    });
+                    
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(csvContent);
+                    await writable.close();
+                    
+                    alert(`Successfully exported ${allOptimizationDesigns.length} designs to your chosen location!`);
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return; // User cancelled
+                    }
+                    console.error('File System Access API failed:', error);
+                    // Fall back to download method
+                }
+            }
+            
+            // Fallback for browsers that don't support File System Access API
+            const dataBlob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert(`Successfully exported ${allOptimizationDesigns.length} designs to CSV file!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
         }
 
         async function runOptimization() {
@@ -1252,6 +1400,7 @@
             // Generate all parameter combinations
             const combinations = generateParameterCombinations(enabledParams);
             const results = [];
+            allOptimizationDesigns = []; // Clear previous results
             
             for (let i = 0; i < combinations.length; i++) {
                 updateProgress(i, combinations.length, `Evaluating design ${i + 1}/${combinations.length}`);
@@ -1260,11 +1409,66 @@
                 
                 try {
                     const result = await evaluateDesign(inputs, objective, maxPressureConstraint);
+                    
+                    // Store ALL designs (valid and invalid) for CSV export
+                    const designRecord = {
+                        design_id: i + 1,
+                        objective: objective,
+                        ...combinations[i], // All input parameters
+                        ...inputs, // Include base inputs too
+                        is_valid: result ? result.isValid : false,
+                        constraint_violated: result ? (result.pressureDrop > maxPressureConstraint) : false,
+                        error_reason: result ? null : 'Calculation failed'
+                    };
+                    
+                    if (result) {
+                        // Add calculated results
+                        designRecord.total_efficiency = result.totalEfficiency;
+                        designRecord.pressure_drop = result.pressureDrop;
+                        designRecord.escaped_dust = result.escapedDust;
+                        designRecord.dust_per_cyclone = result.dustPerCyclone;
+                        designRecord.escaped_per_cyclone = result.escapedPerCyclone;
+                        designRecord.airwatt_loss = result.airwattLoss;
+                        designRecord.d50_microns = result.d50;
+                        designRecord.objective_value = result.objectiveValue;
+                    } else {
+                        // Add null values for failed calculations
+                        designRecord.total_efficiency = null;
+                        designRecord.pressure_drop = null;
+                        designRecord.escaped_dust = null;
+                        designRecord.dust_per_cyclone = null;
+                        designRecord.escaped_per_cyclone = null;
+                        designRecord.airwatt_loss = null;
+                        designRecord.d50_microns = null;
+                        designRecord.objective_value = null;
+                    }
+                    
+                    allOptimizationDesigns.push(designRecord);
+                    
                     if (result && result.isValid) {
                         results.push({ ...result, combination: combinations[i] });
                     }
                 } catch (error) {
                     console.warn('Design evaluation failed:', error);
+                    
+                    // Still record the failed design
+                    allOptimizationDesigns.push({
+                        design_id: i + 1,
+                        objective: objective,
+                        ...combinations[i],
+                        ...inputs,
+                        is_valid: false,
+                        constraint_violated: false,
+                        error_reason: error.message || 'Unknown error',
+                        total_efficiency: null,
+                        pressure_drop: null,
+                        escaped_dust: null,
+                        dust_per_cyclone: null,
+                        escaped_per_cyclone: null,
+                        airwatt_loss: null,
+                        d50_microns: null,
+                        objective_value: null
+                    });
                 }
                 
                 // Small delay to allow UI updates
@@ -1421,6 +1625,13 @@
         function displayOptimizationResults(results, objective) {
             document.getElementById('opt-results-container').classList.remove('hidden');
             document.getElementById('opt-welcome-message').classList.add('hidden');
+            
+            // Update total designs count
+            const totalDesigns = allOptimizationDesigns.length;
+            const validDesigns = results.length;
+            const invalidDesigns = totalDesigns - validDesigns;
+            document.getElementById('total-designs-count').textContent = 
+                `${totalDesigns} total designs (${validDesigns} valid, ${invalidDesigns} invalid)`;
             
             if (results.length === 0) {
                 document.getElementById('opt-best-result-content').innerHTML = '<p class="text-red-600 text-center col-span-2">No valid designs found. Try adjusting your constraints or parameter ranges.</p>';
