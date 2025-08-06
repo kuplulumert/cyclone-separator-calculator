@@ -3334,10 +3334,11 @@
             if (lowerMessage.includes('efficiency') || lowerMessage.includes('improve')) {
                 if (runHistory.length > 0) {
                     const avgEfficiencies = runHistory.map(run => 
-                        run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length * 100
+                        run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length
                     );
-                    const bestRun = runHistory[avgEfficiencies.indexOf(Math.max(...avgEfficiencies))];
-                    return `For improving efficiency, I recommend examining "${bestRun.name}" which achieved ${Math.max(...avgEfficiencies).toFixed(1)}% efficiency. ${getRandomResponse('efficiency')}`;
+                    const avgEfficienciesPercent = avgEfficiencies.map(eff => eff * 100);
+                    const bestRun = runHistory[avgEfficienciesPercent.indexOf(Math.max(...avgEfficienciesPercent))];
+                    return `For improving efficiency, I recommend examining "${bestRun.name}" which achieved ${Math.max(...avgEfficienciesPercent).toFixed(1)}% efficiency. ${getRandomResponse('efficiency')}`;
                 }
                 return getRandomResponse('efficiency');
             } 
@@ -3387,7 +3388,8 @@
             runHistory.forEach(run => {
                 const option = document.createElement('option');
                 option.value = run.id;
-                option.textContent = `${run.name} (Eff: ${(run.efficiencies.reduce((a,b) => a+b, 0) / run.efficiencies.length * 100).toFixed(1)}%)`;
+                const avgEfficiency = run.efficiencies.reduce((a,b) => a+b, 0) / run.efficiencies.length;
+                option.textContent = `${run.name} (Eff: ${(avgEfficiency * 100).toFixed(1)}%)`;
                 runSelector.appendChild(option);
             });
         }
@@ -3451,10 +3453,11 @@
             // Generate AI insights based on selected run
             const insights = generateDesignInsights(runData, runData);
             
+            const avgEfficiency = runData.efficiencies.reduce((a,b) => a+b, 0) / runData.efficiencies.length;
             analysis.innerHTML = `
                 <div class="mb-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
                     <p class="text-sm font-medium text-blue-800">${runData.name}</p>
-                    <p class="text-sm text-blue-600">Average Efficiency: ${(runData.efficiencies.reduce((a,b) => a+b, 0) / runData.efficiencies.length * 100).toFixed(1)}% | Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa</p>
+                    <p class="text-sm text-blue-600">Average Efficiency: ${(avgEfficiency * 100).toFixed(1)}% | Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa</p>
                 </div>
                 ${insights.map(insight => `
                     <div class="p-3 rounded-lg ${insight.type === 'good' ? 'bg-green-50 border-l-4 border-green-400' : 
@@ -3560,43 +3563,42 @@
 
         function generateComprehensiveRunAnalysis(runData) {
             const avgEfficiency = runData.efficiencies ? 
-                runData.efficiencies.reduce((a, b) => a + b, 0) / runData.efficiencies.length * 100 : 0;
+                runData.efficiencies.reduce((a, b) => a + b, 0) / runData.efficiencies.length : 0;
+            const avgEfficiencyPercent = avgEfficiency * 100;
             
             const analysisTexts = [
                 `Detailed analysis of "${runData.name}":
 
-**Performance Metrics:**
-• Average Efficiency: ${avgEfficiency.toFixed(1)}%
+Performance Metrics:
+• Average Efficiency: ${avgEfficiencyPercent.toFixed(1)}%
 • Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa
 • Cut Diameter (d50): ${runData.d50.toFixed(1)} μm
 • Dust per Cyclone: ${runData.dust_per_cyclone.toFixed(2)} g
 • Escaped Dust: ${runData.escaped_per_cyclone.toFixed(2)} g per cyclone
 
-**AI Assessment:**`,
+AI Assessment: ${avgEfficiencyPercent > 85 ? 'This design demonstrates excellent separation performance with well-balanced operating characteristics.' : avgEfficiencyPercent > 70 ? 'This design shows good performance with potential for further optimization.' : 'This design has moderate performance and would benefit from parameter adjustments.'}`,
 
                 `Performance analysis for "${runData.name}":
 
-This design achieves ${avgEfficiency.toFixed(1)}% efficiency with a ${runData.total_loss_pa.toFixed(0)} Pa pressure drop. The cut diameter of ${runData.d50.toFixed(1)}μm indicates ${runData.d50 < 10 ? 'excellent fine particle capture' : 'moderate particle separation'}.
+This design achieves ${avgEfficiencyPercent.toFixed(1)}% efficiency with a ${runData.total_loss_pa.toFixed(0)} Pa pressure drop. The cut diameter of ${runData.d50.toFixed(1)}μm indicates ${runData.d50 < 10 ? 'excellent fine particle capture capability' : 'moderate particle separation performance'}.
 
-**Key Insights:**
-${avgEfficiency > 85 ? '✅ Excellent efficiency for industrial applications' : avgEfficiency > 70 ? '✓ Good efficiency, some optimization possible' : '⚠️ Efficiency below optimal range'}
-${runData.total_loss_pa < 1500 ? '✅ Acceptable pressure drop' : '⚠️ High pressure drop may increase operating costs'}
-${runData.d50 < 15 ? '✅ Good fine particle separation' : '⚠️ Limited fine particle capture capability'}`,
+Key Insights:
+${avgEfficiencyPercent > 85 ? 'Excellent efficiency for industrial applications' : avgEfficiencyPercent > 70 ? 'Good efficiency, some optimization possible' : 'Efficiency below optimal range - consider design modifications'}
+${runData.total_loss_pa < 1500 ? 'Acceptable pressure drop for most applications' : 'High pressure drop may increase operating costs significantly'}
+${runData.d50 < 15 ? 'Good fine particle separation capability' : 'Limited fine particle capture - consider geometry optimization'}`,
 
                 `Engineering analysis of "${runData.name}":
 
-**Efficiency Breakdown:**
-- Fine particles (<5μm): ${runData.efficiencies[0] ? (runData.efficiencies[0]*100).toFixed(1) : 'N/A'}%
-- Medium particles (5-20μm): Average ~${runData.efficiencies.slice(3,7).reduce((a,b) => a+b, 0)/4*100 || 0}%
-- Coarse particles (>20μm): ${runData.efficiencies[runData.efficiencies.length-1] ? (runData.efficiencies[runData.efficiencies.length-1]*100).toFixed(1) : 'N/A'}%
+Efficiency Breakdown:
+- Fine particles (0.5μm): ${runData.efficiencies[0] ? (runData.efficiencies[0]*100).toFixed(1) : 'N/A'}%
+- Medium particles (8.5μm): ${runData.efficiencies[6] ? (runData.efficiencies[6]*100).toFixed(1) : 'N/A'}%
+- Coarse particles (100μm): ${runData.efficiencies[runData.efficiencies.length-1] ? (runData.efficiencies[runData.efficiencies.length-1]*100).toFixed(1) : 'N/A'}%
 
-**Design Assessment:**
-${avgEfficiency > 80 ? 'This is a well-optimized design suitable for most dust collection applications.' : 'There is room for improvement in this design. Consider adjusting key parameters.'}
+Design Assessment:
+${avgEfficiencyPercent > 80 ? 'This is a well-optimized design suitable for most dust collection applications.' : 'There is room for improvement in this design. Consider adjusting key parameters.'}
 
-**Recommendations:**
-${runData.total_loss_pa > 2000 ? '• Reduce pressure drop by increasing outlet diameter' : ''}
-${avgEfficiency < 75 ? '• Improve efficiency by optimizing inlet velocity or cyclone diameter' : ''}
-${runData.d50 > 15 ? '• Enhance fine particle capture by reducing cyclone dimensions' : ''}`
+Recommendations:
+${runData.total_loss_pa > 2000 ? 'Consider reducing pressure drop by increasing outlet diameter or adjusting inlet geometry. ' : ''}${avgEfficiencyPercent < 75 ? 'Improve efficiency by optimizing inlet velocity or reducing cyclone diameter. ' : ''}${runData.d50 > 15 ? 'Enhance fine particle capture by reducing overall cyclone dimensions.' : ''}`
             ];
 
             return analysisTexts[Math.floor(Math.random() * analysisTexts.length)];
@@ -3604,50 +3606,51 @@ ${runData.d50 > 15 ? '• Enhance fine particle capture by reducing cyclone dime
 
         function generateMultiRunComparison() {
             const efficiencies = runHistory.map(run => 
-                run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length * 100
+                run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length
             );
+            const efficienciesPercent = efficiencies.map(eff => eff * 100);
             const pressures = runHistory.map(run => run.total_loss_pa);
             const cutDiameters = runHistory.map(run => run.d50);
 
-            const bestEfficiency = Math.max(...efficiencies);
-            const bestEfficiencyRun = runHistory[efficiencies.indexOf(bestEfficiency)];
+            const bestEfficiency = Math.max(...efficienciesPercent);
+            const bestEfficiencyRun = runHistory[efficienciesPercent.indexOf(bestEfficiency)];
             const lowestPressure = Math.min(...pressures);
             const lowestPressureRun = runHistory[pressures.indexOf(lowestPressure)];
             const finestCut = Math.min(...cutDiameters);
             const finestCutRun = runHistory[cutDiameters.indexOf(finestCut)];
 
             const comparisonTexts = [
-                `**Multi-Run Comparison Analysis:**
+                `Multi-Run Comparison Analysis:
 
-📊 **Performance Leaders:**
+Performance Leaders:
 • Best Efficiency: "${bestEfficiencyRun.name}" with ${bestEfficiency.toFixed(1)}%
 • Lowest Pressure Drop: "${lowestPressureRun.name}" with ${lowestPressure.toFixed(0)} Pa
 • Finest Cut Diameter: "${finestCutRun.name}" with ${finestCut.toFixed(1)} μm
 
-📈 **Overall Trends:**
-• Efficiency Range: ${Math.min(...efficiencies).toFixed(1)}% - ${Math.max(...efficiencies).toFixed(1)}%
+Overall Trends:
+• Efficiency Range: ${Math.min(...efficienciesPercent).toFixed(1)}% - ${Math.max(...efficienciesPercent).toFixed(1)}%
 • Pressure Range: ${Math.min(...pressures).toFixed(0)} - ${Math.max(...pressures).toFixed(0)} Pa
 • Cut Diameter Range: ${Math.min(...cutDiameters).toFixed(1)} - ${Math.max(...cutDiameters).toFixed(1)} μm
 
-🎯 **Recommendation:** ${bestEfficiencyRun.name === lowestPressureRun.name ? 
+Recommendation: ${bestEfficiencyRun.name === lowestPressureRun.name ? 
     `"${bestEfficiencyRun.name}" offers the best balance of efficiency and pressure drop.` :
     `Consider "${bestEfficiencyRun.name}" for maximum efficiency or "${lowestPressureRun.name}" for energy savings.`}`,
 
-                `**Comparative Performance Analysis:**
+                `Comparative Performance Analysis:
 
 Your ${runHistory.length} design variations show interesting trade-offs:
 
-🔝 **Top Performers:**
-1. **Efficiency Champion:** "${bestEfficiencyRun.name}" (${bestEfficiency.toFixed(1)}%)
-2. **Energy Efficient:** "${lowestPressureRun.name}" (${lowestPressure.toFixed(0)} Pa)
-3. **Fine Particle Expert:** "${finestCutRun.name}" (d50: ${finestCut.toFixed(1)}μm)
+Top Performers:
+1. Efficiency Champion: "${bestEfficiencyRun.name}" (${bestEfficiency.toFixed(1)}%)
+2. Energy Efficient: "${lowestPressureRun.name}" (${lowestPressure.toFixed(0)} Pa)
+3. Fine Particle Expert: "${finestCutRun.name}" (d50: ${finestCut.toFixed(1)}μm)
 
-📊 **Design Space Analysis:**
-The efficiency spread of ${(Math.max(...efficiencies) - Math.min(...efficiencies)).toFixed(1)}% indicates ${
-    Math.max(...efficiencies) - Math.min(...efficiencies) > 15 ? 'significant design sensitivity' : 'relatively stable performance'
+Design Space Analysis:
+The efficiency spread of ${(Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent)).toFixed(1)}% indicates ${
+    Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent) > 15 ? 'significant design sensitivity' : 'relatively stable performance'
 } across your parameter variations.
 
-💡 **Engineering Insight:** ${
+Engineering Insight: ${
     Math.max(...pressures) / Math.min(...pressures) > 2 ? 
     'Large pressure drop variations suggest geometry has major impact on energy consumption.' :
     'Pressure drops are relatively consistent across designs.'
@@ -3662,12 +3665,13 @@ The efficiency spread of ${(Math.max(...efficiencies) - Math.min(...efficiencies
 
             const insights = [];
             const efficiencies = runHistory.map(run => 
-                run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length * 100
+                run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length
             );
+            const efficienciesPercent = efficiencies.map(eff => eff * 100);
             const pressures = runHistory.map(run => run.total_loss_pa);
 
             // Efficiency comparison
-            const effRange = Math.max(...efficiencies) - Math.min(...efficiencies);
+            const effRange = Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent);
             if (effRange > 15) {
                 insights.push({
                     type: 'insight',
@@ -3693,13 +3697,13 @@ The efficiency spread of ${(Math.max(...efficiencies) - Math.min(...efficiencies
             }
 
             // Best performers
-            const bestEffRun = runHistory[efficiencies.indexOf(Math.max(...efficiencies))];
+            const bestEffRun = runHistory[efficienciesPercent.indexOf(Math.max(...efficienciesPercent))];
             const bestPressRun = runHistory[pressures.indexOf(Math.min(...pressures))];
 
             insights.push({
                 type: 'info',
                 title: 'Performance Leaders',
-                message: `"${bestEffRun.name}" leads in efficiency (${Math.max(...efficiencies).toFixed(1)}%), while "${bestPressRun.name}" has lowest pressure drop (${Math.min(...pressures).toFixed(0)} Pa).`
+                message: `"${bestEffRun.name}" leads in efficiency (${Math.max(...efficienciesPercent).toFixed(1)}%), while "${bestPressRun.name}" has lowest pressure drop (${Math.min(...pressures).toFixed(0)} Pa).`
             });
 
             // Trade-off analysis
