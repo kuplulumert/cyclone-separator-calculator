@@ -292,11 +292,11 @@
                          </div>
                      </div>
                      <div id="sortable-column-2" class="sortable-column flex flex-col gap-8">
-                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Efficiency Comparison</h3></div></div><canvas id="efficiency-chart"></canvas></div>
-                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Dust Load &amp; Escaped Dust per Cyclone</h3></div></div><canvas id="per-cyclone-dust-chart"></canvas></div>
-                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Total Escaped Dust Comparison</h3></div></div><canvas id="escaped-dust-chart"></canvas></div>
-                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Pressure Drop Comparison</h3></div></div><canvas id="pressure-chart"></canvas></div>
-                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Airwatt Loss Comparison</h3></div></div><canvas id="airwatt-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Efficiency Comparison</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="efficiency-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="efficiency-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Dust Load &amp; Escaped Dust per Cyclone</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="per-cyclone-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="per-cyclone-dust-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Total Escaped Dust Comparison</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="escaped-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="escaped-dust-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Pressure Drop Comparison</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="pressure-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="pressure-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Airwatt Loss Comparison</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="airwatt-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="airwatt-chart"></canvas></div>
                          <div id="error-message" class="hidden sortable-card bg-red-100 border border-red-400 text-red-700 rounded-lg p-4"></div>
                      </div>
                 </div>
@@ -382,6 +382,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                                     <h3 class="text-2xl font-semibold">Parametric Efficiency</h3>
                                 </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-efficiency-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
                             </div>
                             <canvas id="param-efficiency-chart"></canvas>
                         </div>
@@ -391,6 +392,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                                     <h3 class="text-2xl font-semibold">Parametric Pressure Drop</h3>
                                 </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-pressure-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
                             </div>
                             <canvas id="param-pressure-chart"></canvas>
                         </div>
@@ -400,6 +402,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                                     <h3 class="text-2xl font-semibold">Parametric Dust Load</h3>
                                 </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-per-cyclone-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
                             </div>
                             <canvas id="param-per-cyclone-dust-chart"></canvas>
                         </div>
@@ -411,6 +414,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                                     <h3 class="text-2xl font-semibold">Parametric Escaped Dust</h3>
                                 </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-escaped-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
                             </div>
                             <canvas id="param-escaped-dust-chart"></canvas>
                         </div>
@@ -420,6 +424,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                                     <h3 class="text-2xl font-semibold">Parametric Airwatt Loss</h3>
                                 </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-airwatt-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
                             </div>
                             <canvas id="param-airwatt-chart"></canvas>
                         </div>
@@ -653,7 +658,10 @@
                     <div class="space-y-6">
                         <!-- Efficiency Chart -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
-                            <h3 class="text-xl font-semibold text-indigo-700 border-b border-indigo-200 pb-2 mb-4">📊 Live Efficiency Chart</h3>
+                            <div class="flex justify-between items-center border-b border-indigo-200 pb-2 mb-4">
+                                <h3 class="text-xl font-semibold text-indigo-700">📊 Live Efficiency Chart</h3>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="instant-efficiency-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
                             <div class="chart-container-fixed">
                                 <canvas id="instant-efficiency-chart"></canvas>
                             </div>
@@ -661,7 +669,10 @@
                         
                         <!-- Dust Load Chart -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
-                            <h3 class="text-xl font-semibold text-green-700 border-b border-green-200 pb-2 mb-4">🌪️ Dust Load & Escaped Dust</h3>
+                            <div class="flex justify-between items-center border-b border-green-200 pb-2 mb-4">
+                                <h3 class="text-xl font-semibold text-green-700">🌪️ Dust Load & Escaped Dust</h3>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="instant-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
                             <div class="chart-container-fixed">
                                 <canvas id="instant-dust-chart"></canvas>
                             </div>
@@ -793,6 +804,15 @@
         document.getElementById("save-to-file-btn").addEventListener("click", saveRunsToFile);
         document.getElementById("load-from-file-input").addEventListener("change", loadRunsFromFile);
         document.getElementById("export-all-runs-btn").addEventListener("click", exportAllRuns);
+
+        // Chart Export Operations
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.chart-export-btn')) {
+                const button = event.target.closest('.chart-export-btn');
+                const chartId = button.getAttribute('data-chart');
+                exportChartAsImage(chartId);
+            }
+        });
 
         async function saveRunsToFile() {
             if (runHistory.length === 0) {
@@ -1009,6 +1029,82 @@
             
             alert(`Successfully exported detailed analysis of ${runHistory.length} runs to file!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
         }
+
+        async function exportChartAsImage(chartId) {
+            try {
+                const canvas = document.getElementById(chartId);
+                if (!canvas) {
+                    alert(`Chart with ID "${chartId}" not found.`);
+                    return;
+                }
+                
+                // Get the chart title for filename
+                const chartContainer = canvas.closest('.sortable-card, .bg-white');
+                let chartTitle = 'chart';
+                
+                if (chartContainer) {
+                    const titleElement = chartContainer.querySelector('h3');
+                    if (titleElement) {
+                        chartTitle = titleElement.textContent.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                    }
+                }
+                
+                // Convert canvas to blob
+                canvas.toBlob(async function(blob) {
+                    if (!blob) {
+                        alert('Failed to generate image from chart.');
+                        return;
+                    }
+                    
+                    const filename = `${chartTitle}_${new Date().toISOString().split('T')[0]}.png`;
+                    
+                    // Try to use the modern File System Access API first
+                    if ('showSaveFilePicker' in window) {
+                        try {
+                            const fileHandle = await window.showSaveFilePicker({
+                                suggestedName: filename,
+                                types: [{
+                                    description: 'PNG Images',
+                                    accept: {
+                                        'image/png': ['.png']
+                                    }
+                                }]
+                            });
+                            
+                            const writable = await fileHandle.createWritable();
+                            await writable.write(blob);
+                            await writable.close();
+                            
+                            alert(`Chart exported successfully to your chosen location!`);
+                            return;
+                        } catch (error) {
+                            if (error.name === 'AbortError') {
+                                return; // User cancelled
+                            }
+                            console.error('File System Access API failed:', error);
+                            // Fall back to download method
+                        }
+                    }
+                    
+                    // Fallback for browsers that don't support File System Access API
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    alert(`Chart exported as ${filename}!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
+                }, 'image/png', 1.0);
+                
+            } catch (error) {
+                console.error('Chart export error:', error);
+                alert(`Failed to export chart: ${error.message}`);
+            }
+        }
+
         function updateComparisonTable(){const tableBody=document.getElementById("comparison-body");const comparisonSection=document.getElementById("comparison-section");tableBody.innerHTML="";if(runHistory.length===0){comparisonSection.classList.add("hidden");return}comparisonSection.classList.remove("hidden");runHistory.forEach(run=>{const row=document.createElement("tr");row.innerHTML=`<td>${run.id}</td><td>${run.name}</td><td>${(run.d50).toFixed(2)}</td><td>${run.total_loss_pa.toFixed(2)}</td><td>${run.airwatt_loss.toFixed(3)}</td><td>${run.escaped_dust.toFixed(2)}</td>`;tableBody.appendChild(row)});updateAllTextSizes()}
         function updateChartsForNewRun(runData){const newEffColor=chartColors[(runHistory.length-1)%chartColors.length];efficiencyChart.data.datasets.push({label:runData.name,data:runData.efficiencies,borderColor:newEffColor,backgroundColor:"transparent",borderWidth:2,tension:.1,pointBackgroundColor:newEffColor});pressureChart.data.labels.push(runData.name);pressureChart.data.datasets[0].data.push(runData.pressure_components.dPe);pressureChart.data.datasets[1].data.push(runData.pressure_components.dPk);pressureChart.data.datasets[2].data.push(runData.pressure_components.dPf);pressureChart.data.datasets[3].data.push(runData.pressure_components.dPr);pressureChart.data.datasets[4].data.push(runData.pressure_components.dPo);escapedDustChart.data.labels.push(runData.name);escapedDustChart.data.datasets[0].data.push(runData.escaped_dust);airwattChart.data.labels.push(runData.name);airwattChart.data.datasets[0].data.push(runData.airwatt_loss);perCycloneDustChart.data.labels.push(runData.name);perCycloneDustChart.data.datasets[0].data.push(runData.dust_per_cyclone);perCycloneDustChart.data.datasets[1].data.push(runData.escaped_per_cyclone);        [efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(c=>{c.update();c.draw()})}
        
