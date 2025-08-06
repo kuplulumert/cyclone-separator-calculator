@@ -3367,11 +3367,13 @@
             return insights;
         }
 
-        // Update design analysis when calculations are performed
-        const originalUpdateChartsForNewRun = updateChartsForNewRun;
-        function updateChartsForNewRun(results, inputs) {
-            originalUpdateChartsForNewRun(results, inputs);
-            updateDesignAnalysis();
+        // Hook into the calculate button to update design analysis after calculation
+        const originalCalculateBtn = document.getElementById("calculate-btn");
+        if (originalCalculateBtn) {
+            originalCalculateBtn.addEventListener("click", function() {
+                // Wait for calculation to complete before updating analysis
+                setTimeout(updateDesignAnalysis, 500);
+            });
         }
 
     </script>
