@@ -3672,7 +3672,7 @@
             if (totalPressureDrop > 2500) {
                 analysis += `, which is quite high and may result in significant energy costs. Consider increasing the outlet diameter or adjusting the cyclone height to reduce the pressure requirements.</p>`;
             } else if (totalPressureDrop > 2000) {
-                analysis += `, which is moderately high. While acceptable for many applications, monitoring energy consumption would be advisable.</p>`;
+                analysis += `, which is moderately high but still within acceptable operational range.</p>`;
             } else if (totalPressureDrop > 1000) {
                 analysis += `, which represents a good balance between separation performance and energy efficiency.</p>`;
             } else {
@@ -3893,7 +3893,7 @@ The efficiency spread of ${(Math.max(...efficienciesPercent) - Math.min(...effic
 
 Engineering Insight: ${
     Math.max(...pressures) / Math.min(...pressures) > 2 ? 
-    'Large pressure drop variations suggest geometry has major impact on energy consumption.' :
+    'Large pressure drop variations suggest geometry has significant impact on operational requirements.' :
     'Pressure drops are relatively consistent across designs.'
 }`
             ];
@@ -4001,13 +4001,8 @@ Engineering Insight: ${
                                 totalPressure < 2000 ? 'Moderate' :
                                 totalPressure < 3000 ? 'High' : 'Very High';
             
-            // Calculate energy consumption
-            const powerConsumption = (totalPressure * 0.001 * 1.0) / 0.75; // Assuming 1 m³/s flow and 75% fan efficiency
-            const annualEnergyCost = powerConsumption * 8760 * 0.10; // 8760 hours/year, $0.10/kWh
-            
-            // Environmental impact assessment
+            // Report calculations
             const dustCaptureRate = totalMassEfficiency;
-            const annualDustCaptured = dustCaptureRate * runData.dust_per_cyclone * 8760; // kg/year
             
             return `
 CYCLONE SEPARATOR PERFORMANCE REPORT
@@ -4070,47 +4065,10 @@ Performance by Particle Size Category:
 
 ═══════════════════════════════════════════════════════════════════════════════
 
-ENERGY CONSUMPTION & ECONOMIC ANALYSIS
-═══════════════════════════════════════════════════════════════════════════════
-
-Power Requirements:
-  • Estimated Power Consumption: ${powerConsumption.toFixed(2)} kW
-  • Annual Energy Consumption: ${(powerConsumption * 8760).toFixed(0)} kWh/year
-  • Estimated Annual Energy Cost: $${annualEnergyCost.toFixed(0)}
-
-Economic Considerations:
-  • Pressure Drop Impact: ${pressureGrade} - ${totalPressure > 2000 ? 'High energy costs expected' : 'Reasonable energy consumption'}
-  • Efficiency Impact: ${efficiencyGrade} - ${totalEfficiencyPercent > 80 ? 'Minimal downstream filtration needed' : 'Additional filtration may be required'}
-  • Payback Period: ${totalEfficiencyPercent > 80 && totalPressure < 1500 ? 'Favorable' : 'Evaluate carefully'}
-
-═══════════════════════════════════════════════════════════════════════════════
-
-ENVIRONMENTAL IMPACT ASSESSMENT
-═══════════════════════════════════════════════════════════════════════════════
-
-Dust Collection Performance:
-  • Annual Dust Captured: ${(annualDustCaptured/1000).toFixed(1)} kg/year
-  • Annual Dust Escaped: ${(runData.escaped_per_cyclone * 8760/1000).toFixed(1)} kg/year
-  • Environmental Efficiency: ${(dustCaptureRate * 100).toFixed(1)}%
-
-Emissions Compliance:
-  • Fine Particle Control: ${runData.efficiencies.slice(1,6).reduce((a,b) => a+b) / 5 > 70 ? 'Meets typical standards' : 'May require additional control'}
-  • Ultrafine Emissions: ${runData.efficiencies[0] > 30 ? 'Moderate control' : 'Limited control - consider pre-filtration'}
-  • Overall Compliance: ${totalEfficiencyPercent > 85 ? 'Excellent for most regulations' : totalEfficiencyPercent > 70 ? 'Adequate for basic requirements' : 'May not meet strict standards'}
-
-═══════════════════════════════════════════════════════════════════════════════
-
 ENGINEERING RECOMMENDATIONS
 ═══════════════════════════════════════════════════════════════════════════════
 
 ${generateEngineeeringRecommendations(runData, totalEfficiencyPercent, totalPressure)}
-
-═══════════════════════════════════════════════════════════════════════════════
-
-DESIGN OPTIMIZATION OPPORTUNITIES
-═══════════════════════════════════════════════════════════════════════════════
-
-${generateOptimizationRecommendations(runData, totalEfficiencyPercent, totalPressure)}
 
 ═══════════════════════════════════════════════════════════════════════════════
 
@@ -4131,8 +4089,7 @@ totalEfficiencyPercent > 65 ?
 Key Performance Indicators:
   • Efficiency Grade: ${efficiencyGrade}
   • Pressure Grade: ${pressureGrade}
-  • Energy Cost: $${annualEnergyCost.toFixed(0)}/year
-  • Environmental Impact: ${(dustCaptureRate * 100).toFixed(1)}% capture rate
+  • Dust Capture Rate: ${(dustCaptureRate * 100).toFixed(1)}%
 
 ═══════════════════════════════════════════════════════════════════════════════
 
@@ -4166,44 +4123,12 @@ Analysis based on established cyclone separator engineering principles
             
             if (recommendations.length === 0) {
                 recommendations.push("• OPTIMAL DESIGN: Current design parameters are well-balanced for the intended application.");
-                recommendations.push("• MAINTENANCE: Focus on regular maintenance to maintain performance levels.");
             }
             
             return recommendations.join('\n');
         }
 
-        function generateOptimizationRecommendations(runData, efficiency, pressure) {
-            const optimizations = [];
-            
-            // Performance-based optimizations
-            if (efficiency < 80) {
-                optimizations.push("1. GEOMETRY OPTIMIZATION:");
-                optimizations.push("   - Reduce cyclone diameter to increase tangential velocity");
-                optimizations.push("   - Optimize inlet width-to-height ratio for better swirl generation");
-                optimizations.push("   - Consider dual-inlet configuration for improved flow distribution");
-            }
-            
-            if (pressure > 2000) {
-                optimizations.push("2. PRESSURE DROP REDUCTION:");
-                optimizations.push("   - Increase vortex finder diameter to reduce exit velocity");
-                optimizations.push("   - Smooth internal surfaces to minimize frictional losses");
-                optimizations.push("   - Optimize cone angle for reduced turbulence");
-            }
-            
-            if (runData.efficiencies[0] < 30) {
-                optimizations.push("3. FINE PARTICLE ENHANCEMENT:");
-                optimizations.push("   - Consider pre-classification or multi-stage separation");
-                optimizations.push("   - Implement high-efficiency inlet design");
-                optimizations.push("   - Evaluate surface treatment for enhanced particle-wall interaction");
-            }
-            
-            optimizations.push("4. OPERATIONAL CONSIDERATIONS:");
-            optimizations.push("   - Monitor inlet dust loading for optimal performance");
-            optimizations.push("   - Implement regular cleaning schedule for dust discharge");
-            optimizations.push("   - Consider variable speed fan control for energy optimization");
-            
-            return optimizations.join('\n');
-        }
+
 
         function displayDetailedReport(report, runData) {
             // Switch to reports tab first
@@ -4416,10 +4341,10 @@ Analysis based on established cyclone separator engineering principles
             <h3>Application-Specific Recommendations:</h3>
             <ul>
                 <li><strong>For Maximum Efficiency:</strong> Choose "${bestEfficiencyRun.name}" (${bestEfficiency.toFixed(1)}% efficiency)</li>
-                <li><strong>For Energy Savings:</strong> Choose "${lowestPressureRun.name}" (${lowestPressure.toFixed(0)} Pa pressure drop)</li>
+                <li><strong>For Lowest Pressure Drop:</strong> Choose "${lowestPressureRun.name}" (${lowestPressure.toFixed(0)} Pa pressure drop)</li>
                 <li><strong>Balanced Performance:</strong> ${bestEfficiencyRun.name === lowestPressureRun.name ? 
                     `"${bestEfficiencyRun.name}" provides optimal balance` : 
-                    'Consider trade-offs between efficiency and energy consumption'}</li>
+                    'Consider trade-offs between efficiency and pressure drop requirements'}</li>
             </ul>
         </div>`;
     })()}
@@ -4605,7 +4530,6 @@ Analysis based on established cyclone separator engineering principles
             
             if (recommendations.length === 0) {
                 recommendations.push('<div class="success"><strong>OPTIMAL DESIGN:</strong> Current design parameters are well-balanced for the intended application.</div>');
-                recommendations.push('<div class="success"><strong>MAINTENANCE:</strong> Focus on regular maintenance to maintain performance levels.</div>');
             }
             
             return recommendations.join('');
@@ -4738,7 +4662,7 @@ ${Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent) > 15 ?
     'Relatively stable efficiency across designs suggests robust performance in this parameter range.'}
 
 ${Math.max(...pressures) / Math.min(...pressures) > 2 ? 
-    'Large pressure drop variations suggest geometry has major impact on energy consumption.' :
+    'Large pressure drop variations suggest geometry has significant impact on operational requirements.' :
     'Pressure drops are relatively consistent across designs.'}
 
 ═══════════════════════════════════════════════════════════════════════════════
