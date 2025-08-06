@@ -288,6 +288,36 @@
                                         Export All Runs
                                     </button>
                                 </div>
+
+                                <!-- Input History Section -->
+                                <div class="mt-6 flex justify-center items-center gap-4 flex-wrap">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-medium text-gray-600">🕐 Input History:</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <select id="input-history-select" class="p-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white">
+                                            <option value="">Select previous parameters...</option>
+                                        </select>
+                                        <button id="load-history-btn" class="bg-amber-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-amber-700 transition-transform transform hover:scale-105 flex items-center gap-2" disabled>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                            Load
+                                        </button>
+                                        <button id="save-current-params-btn" class="bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-teal-700 transition-transform transform hover:scale-105 flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                            </svg>
+                                            Save Current
+                                        </button>
+                                        <button id="clear-history-btn" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 transition-transform transform hover:scale-105 flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Clear
+                                        </button>
+                                    </div>
+                                </div>
                              </div>
                          </div>
                      </div>
@@ -329,7 +359,7 @@
                             <div class="bg-yellow-50 p-4 rounded-lg shadow-sm col-span-1 md:col-span-2"><h3 class="font-bold text-xl text-yellow-800">Dust Emission</h3><div class="text-center mt-2"><p class="text-lg text-gray-600">Dust Load per Cyclone: <span id="result-dust-per-cyclone" class="font-semibold"></span> g</p><p class="text-lg text-gray-600">Escaped Dust per Cyclone: <span id="result-escaped-per-cyclone" class="font-semibold"></span> g</p><hr class="my-2"><h4 class="font-semibold text-yellow-800 text-xl">Total System Escaped Dust</h4><p class="text-4xl font-mono text-yellow-700 pt-1"><span id="result-escaped-dust"></span> g</p></div></div>
                         </div>
                         <div id="efficiency-section" class="mt-10"><h3 class="text-2xl font-semibold mb-4">Particle Separation Efficiency Details</h3><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Particle Size (dp, µm)</th><th>Mass Fraction (%)</th><th>Separation Efficiency (%)</th><th>Weighted Efficiency (%)</th></tr></thead><tbody id="efficiency-body"></tbody></table></div></div>
-                        <div id="comparison-section" class="hidden mt-10"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-semibold">Comparison History</h2><button id="clear-history-btn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600">Clear History</button></div><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Run</th><th>Name</th><th>d50 (µm)</th><th>Total ΔP (Pa)</th><th>Airwatt Loss (W)</th><th>Escaped Dust (g)</th></tr></thead><tbody id="comparison-body"></tbody></table></div></div>
+                        <div id="comparison-section" class="hidden mt-10"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-semibold">Comparison History</h2><button id="clear-runs-btn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600">Clear Runs</button></div><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Run</th><th>Name</th><th>d50 (µm)</th><th>Total ΔP (Pa)</th><th>Airwatt Loss (W)</th><th>Escaped Dust (g)</th></tr></thead><tbody id="comparison-body"></tbody></table></div></div>
                      </div>
                 </div>
             </div>
@@ -686,6 +716,8 @@
     <script>
         // --- GLOBAL VARIABLES & UNTOUCHED NORMAL CALCULATION CODE ---
         let runHistory = []; let runCounter = 1;
+        let inputHistory = [];
+        const MAX_HISTORY_ENTRIES = 20;
         const particle_sizes_microns = [0.5, 1.5, 2.5, 3.5, 4.5, 6, 8.5, 15, 30, 60, 100];
         const mass_fractions = [0.025, 0.075, 0.085, 0.070, 0.055, 0.100, 0.090, 0.200, 0.180, 0.115, 0.005];
         let efficiencyChart, pressureChart, escapedDustChart, perCycloneDustChart, airwattChart;
@@ -796,14 +828,20 @@
         const dust_per_cyclone=initial_dust/num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*num_cyclones;lastCalculatedData={d50:d50_microns,total_loss_pa:pressureResults.total_loss,airwatt_loss:airwatt_loss,escaped_dust:total_escaped_dust,dust_per_cyclone:dust_per_cyclone,escaped_per_cyclone:escaped_per_cyclone,pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po},efficiencies:currentEfficiencies};
         document.getElementById("result-Vin").textContent=V_in.toFixed(2);document.getElementById("result-V1").textContent=V1.toFixed(4);document.getElementById("result-L1_mm").textContent=(L1*1e3).toFixed(2);document.getElementById("result-Ne1").textContent=Ne1.toFixed(2);document.getElementById("result-V2").textContent=isFinite(average_V2)?average_V2.toFixed(4):"N/A";document.getElementById("result-L2_mm").textContent=(L2*1e3).toFixed(2);document.getElementById("result-Ne2").textContent=Ne2.toFixed(2);document.getElementById("result-Ne_total").textContent=Ne_total.toFixed(2);
         document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
-        document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
+        document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
         document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);runCounter++;document.getElementById("run-name-input").value=""});
-        document.getElementById("clear-history-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()})});
+        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()})});
 
         // File Operations
         document.getElementById("save-to-file-btn").addEventListener("click", saveRunsToFile);
         document.getElementById("load-from-file-input").addEventListener("change", loadRunsFromFile);
         document.getElementById("export-all-runs-btn").addEventListener("click", exportAllRuns);
+
+        // Input History Operations
+        document.getElementById("save-current-params-btn").addEventListener("click", saveCurrentParameters);
+        document.getElementById("load-history-btn").addEventListener("click", loadSelectedHistory);
+        document.getElementById("clear-history-btn").addEventListener("click", clearInputHistory);
+        document.getElementById("input-history-select").addEventListener("change", toggleLoadButton);
 
         // Chart Export Operations
         document.addEventListener('click', function(event) {
@@ -1304,6 +1342,209 @@
             return csvRows.join('\n');
         }
 
+        // Input History Functions
+        function getCurrentParameters() {
+            return {
+                Dc_mm: parseFloat(document.getElementById("Dc_mm").value),
+                Lc_mm: parseFloat(document.getElementById("Lc_mm").value),
+                Zc_mm: parseFloat(document.getElementById("Zc_mm").value),
+                De_mm: parseFloat(document.getElementById("De_mm").value),
+                Dd_mm: parseFloat(document.getElementById("Dd_mm").value),
+                Bc_mm: parseFloat(document.getElementById("Bc_mm").value),
+                Hc_mm: parseFloat(document.getElementById("Hc_mm").value),
+                Q_lps: parseFloat(document.getElementById("Q_lps").value),
+                mu: parseFloat(document.getElementById("mu").value),
+                rho_p: parseFloat(document.getElementById("rho_p").value),
+                rho_g: parseFloat(document.getElementById("rho_g").value),
+                e_um: parseFloat(document.getElementById("e_um").value),
+                initial_dust: parseFloat(document.getElementById("initial_dust").value),
+                num_cyclones: parseInt(document.getElementById("num_cyclones").value)
+            };
+        }
+
+        function saveCurrentParameters() {
+            const currentParams = getCurrentParameters();
+            
+            // Check if any values are invalid
+            const hasInvalidValues = Object.values(currentParams).some(value => 
+                isNaN(value) || value === null || value === undefined
+            );
+            
+            if (hasInvalidValues) {
+                alert("Please ensure all parameters have valid values before saving.");
+                return;
+            }
+            
+            const timestamp = new Date().toISOString();
+            const parameterSet = {
+                id: Date.now(), // Use timestamp as unique ID
+                timestamp: timestamp,
+                displayName: `Parameters ${timestamp.split('T')[0]} ${timestamp.split('T')[1].split('.')[0]}`,
+                parameters: currentParams
+            };
+            
+            // Check if this exact parameter set already exists
+            const exists = inputHistory.some(entry => 
+                JSON.stringify(entry.parameters) === JSON.stringify(currentParams)
+            );
+            
+            if (exists) {
+                alert("These exact parameters are already saved in history.");
+                return;
+            }
+            
+            // Add to beginning of array (most recent first)
+            inputHistory.unshift(parameterSet);
+            
+            // Limit history size
+            if (inputHistory.length > MAX_HISTORY_ENTRIES) {
+                inputHistory = inputHistory.slice(0, MAX_HISTORY_ENTRIES);
+            }
+            
+            // Save to localStorage
+            saveInputHistoryToStorage();
+            
+            // Update UI
+            updateHistoryDropdown();
+            
+            alert(`Current parameters saved to history!`);
+        }
+
+        function loadSelectedHistory() {
+            const selectedId = document.getElementById("input-history-select").value;
+            if (!selectedId) return;
+            
+            const historyEntry = inputHistory.find(entry => entry.id.toString() === selectedId);
+            if (!historyEntry) {
+                alert("Selected parameter set not found.");
+                return;
+            }
+            
+            const confirmMessage = `Load parameters from ${historyEntry.displayName}?\n\nThis will replace all current input values.`;
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            // Load parameters into form
+            Object.entries(historyEntry.parameters).forEach(([key, value]) => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = value;
+                }
+            });
+            
+            // Reset dropdown selection
+            document.getElementById("input-history-select").value = "";
+            document.getElementById("load-history-btn").disabled = true;
+            
+            alert(`Parameters loaded from ${historyEntry.displayName}`);
+        }
+
+        function clearInputHistory() {
+            if (inputHistory.length === 0) {
+                alert("Input history is already empty.");
+                return;
+            }
+            
+            const confirmMessage = `Clear all ${inputHistory.length} saved parameter sets?\n\nThis action cannot be undone.`;
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            inputHistory = [];
+            saveInputHistoryToStorage();
+            updateHistoryDropdown();
+            
+            alert("Input history cleared.");
+        }
+
+        function toggleLoadButton() {
+            const selectedId = document.getElementById("input-history-select").value;
+            document.getElementById("load-history-btn").disabled = !selectedId;
+        }
+
+        function updateHistoryDropdown() {
+            const select = document.getElementById("input-history-select");
+            
+            // Clear existing options except the first one
+            select.innerHTML = '<option value="">Select previous parameters...</option>';
+            
+            // Add history entries
+            inputHistory.forEach(entry => {
+                const option = document.createElement("option");
+                option.value = entry.id;
+                option.textContent = entry.displayName;
+                select.appendChild(option);
+            });
+            
+            // Update placeholder text
+            if (inputHistory.length === 0) {
+                select.children[0].textContent = "No saved parameters...";
+            } else {
+                select.children[0].textContent = `Select from ${inputHistory.length} saved parameter sets...`;
+            }
+        }
+
+        function saveInputHistoryToStorage() {
+            try {
+                localStorage.setItem('cycloneInputHistory', JSON.stringify(inputHistory));
+            } catch (error) {
+                console.warn('Failed to save input history to localStorage:', error);
+            }
+        }
+
+        function loadInputHistoryFromStorage() {
+            try {
+                const stored = localStorage.getItem('cycloneInputHistory');
+                if (stored) {
+                    inputHistory = JSON.parse(stored);
+                    updateHistoryDropdown();
+                }
+            } catch (error) {
+                console.warn('Failed to load input history from localStorage:', error);
+                inputHistory = [];
+            }
+        }
+
+        function autoSaveCurrentParameters() {
+            // Auto-save parameters when calculate button is pressed
+            const currentParams = getCurrentParameters();
+            
+            // Check if parameters are valid
+            const hasInvalidValues = Object.values(currentParams).some(value => 
+                isNaN(value) || value === null || value === undefined
+            );
+            
+            if (hasInvalidValues) return;
+            
+            // Check if this exact parameter set already exists
+            const exists = inputHistory.some(entry => 
+                JSON.stringify(entry.parameters) === JSON.stringify(currentParams)
+            );
+            
+            if (exists) return; // Don't auto-save duplicates
+            
+            const timestamp = new Date().toISOString();
+            const parameterSet = {
+                id: Date.now(),
+                timestamp: timestamp,
+                displayName: `Auto-saved ${timestamp.split('T')[0]} ${timestamp.split('T')[1].split('.')[0]}`,
+                parameters: currentParams,
+                autoSaved: true
+            };
+            
+            // Add to beginning of array
+            inputHistory.unshift(parameterSet);
+            
+            // Limit history size
+            if (inputHistory.length > MAX_HISTORY_ENTRIES) {
+                inputHistory = inputHistory.slice(0, MAX_HISTORY_ENTRIES);
+            }
+            
+            saveInputHistoryToStorage();
+            updateHistoryDropdown();
+        }
+
         function updateComparisonTable(){const tableBody=document.getElementById("comparison-body");const comparisonSection=document.getElementById("comparison-section");tableBody.innerHTML="";if(runHistory.length===0){comparisonSection.classList.add("hidden");return}comparisonSection.classList.remove("hidden");runHistory.forEach(run=>{const row=document.createElement("tr");row.innerHTML=`<td>${run.id}</td><td>${run.name}</td><td>${(run.d50).toFixed(2)}</td><td>${run.total_loss_pa.toFixed(2)}</td><td>${run.airwatt_loss.toFixed(3)}</td><td>${run.escaped_dust.toFixed(2)}</td>`;tableBody.appendChild(row)});updateAllTextSizes()}
         function updateChartsForNewRun(runData){const newEffColor=chartColors[(runHistory.length-1)%chartColors.length];efficiencyChart.data.datasets.push({label:runData.name,data:runData.efficiencies,borderColor:newEffColor,backgroundColor:"transparent",borderWidth:2,tension:.1,pointBackgroundColor:newEffColor});pressureChart.data.labels.push(runData.name);pressureChart.data.datasets[0].data.push(runData.pressure_components.dPe);pressureChart.data.datasets[1].data.push(runData.pressure_components.dPk);pressureChart.data.datasets[2].data.push(runData.pressure_components.dPf);pressureChart.data.datasets[3].data.push(runData.pressure_components.dPr);pressureChart.data.datasets[4].data.push(runData.pressure_components.dPo);escapedDustChart.data.labels.push(runData.name);escapedDustChart.data.datasets[0].data.push(runData.escaped_dust);airwattChart.data.labels.push(runData.name);airwattChart.data.datasets[0].data.push(runData.airwatt_loss);perCycloneDustChart.data.labels.push(runData.name);perCycloneDustChart.data.datasets[0].data.push(runData.dust_per_cyclone);perCycloneDustChart.data.datasets[1].data.push(runData.escaped_per_cyclone);        [efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(c=>{c.update();c.draw()})}
        
@@ -1314,6 +1555,7 @@
             initParametricStudyCharts();
             setupControls();
             populateParamSelect();
+            loadInputHistoryFromStorage();
             updateAllTextSizes(); 
 
             const col1 = document.getElementById('sortable-column-1');
