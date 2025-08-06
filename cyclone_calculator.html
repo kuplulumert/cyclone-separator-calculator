@@ -187,6 +187,12 @@
         .tab-content.active {
             display: block;
         }
+        
+        /* Zoom out all tabs to 80% except AI Assistant */
+        .tab-content:not(#ml-assistant-tab) {
+            zoom: 0.8;
+            transform-origin: top left;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
