@@ -244,6 +244,11 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             z-index: 1000;
+            display: none;
+        }
+        
+        .mini-chart.show {
+            display: block;
         }
         
         .mini-chart-header {
@@ -1152,6 +1157,9 @@
                     tabContents.forEach(content => {
                         content.classList.toggle('active', content.id === tab.dataset.tab);
                     });
+                    
+                    // Show/hide mini chart based on active tab
+                    showMiniChart();
                 });
             });
         }
@@ -1188,7 +1196,7 @@
         document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
         document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
         document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);updateMiniChart();runCounter++;document.getElementById("run-name-input").value=""});
-        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()});updateMiniChart()});
+        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()});hideMiniChart()});
 
         // File Operations
         document.getElementById("save-to-file-btn").addEventListener("click", saveRunsToFile);
@@ -4876,12 +4884,27 @@ Comparative analysis based on ${runHistory.length} design variations
                     },
                     scales: {
                         x: {
-                            display: false
+                            display: true,
+                            ticks: {
+                                font: { size: 8 },
+                                maxRotation: 45
+                            },
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
                         },
                         y: {
-                            display: false,
+                            display: true,
                             min: 0,
-                            max: 100
+                            max: 100,
+                            ticks: {
+                                font: { size: 8 }
+                            },
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
                         }
                     }
                 }
@@ -4901,7 +4924,24 @@ Comparative analysis based on ${runHistory.length} design variations
             if (mainChart && mainChart.data.datasets.length > 0) {
                 miniChart.data.datasets = [...mainChart.data.datasets];
                 miniChart.update('none');
+                showMiniChart();
             }
+        }
+        
+        function showMiniChart() {
+            const currentTab = document.querySelector('.tab-content.active');
+            const miniChartDiv = document.getElementById('mini-chart');
+            
+            if (currentTab && currentTab.id === 'single-calc-tab') {
+                miniChartDiv.classList.add('show');
+            } else {
+                miniChartDiv.classList.remove('show');
+            }
+        }
+        
+        function hideMiniChart() {
+            const miniChartDiv = document.getElementById('mini-chart');
+            miniChartDiv.classList.remove('show');
         }
 
     </script>
