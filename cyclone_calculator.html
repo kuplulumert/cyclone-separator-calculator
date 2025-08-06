@@ -830,15 +830,49 @@
                         
                         <!-- AI Insights Panel -->
                         <div class="space-y-6">
-                            <!-- Current Design Analysis -->
+                            <!-- Run Selector -->
+                            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                                    <span class="text-blue-500">🎯</span>
+                                    Select Run for Analysis
+                                </h4>
+                                <div class="space-y-3">
+                                    <select id="run-selector" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="updateSelectedRunAnalysis()">
+                                        <option value="">Select a run to analyze...</option>
+                                    </select>
+                                    <div class="flex gap-2">
+                                        <button onclick="analyzeSelectedRun()" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                                            Analyze Selected Run
+                                        </button>
+                                        <button onclick="compareAllRuns()" class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                                            Compare All Runs
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Selected Run Analysis -->
                             <div class="bg-white p-6 rounded-2xl shadow-lg">
                                 <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                                     <span class="text-green-500">📊</span>
-                                    Current Design Analysis
+                                    Selected Run Analysis
                                 </h4>
                                 <div id="design-analysis" class="space-y-3">
                                     <div class="p-3 bg-gray-50 rounded-lg">
-                                        <p class="text-sm text-gray-600">Run a calculation to get AI-powered design insights</p>
+                                        <p class="text-sm text-gray-600">Select a run to get AI-powered design insights</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Multi-Run Comparison -->
+                            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                                    <span class="text-purple-500">📈</span>
+                                    Multi-Run Comparison
+                                </h4>
+                                <div id="comparison-analysis" class="space-y-3">
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">Run multiple calculations and click "Compare All Runs" for insights</p>
                                     </div>
                                 </div>
                             </div>
@@ -850,17 +884,17 @@
                                     Quick Suggestions
                                 </h4>
                                 <div class="space-y-2">
-                                    <button onclick="askPredefinedQuestion('How can I improve efficiency?')" class="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-lg text-sm text-blue-700 transition-colors">
+                                    <button onclick="askPredefinedQuestion('How can I improve efficiency for the selected run?')" class="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-lg text-sm text-blue-700 transition-colors">
                                         How can I improve efficiency?
                                     </button>
-                                    <button onclick="askPredefinedQuestion('What are the pressure drop trade-offs?')" class="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg text-sm text-green-700 transition-colors">
+                                    <button onclick="askPredefinedQuestion('What are the pressure drop trade-offs in my runs?')" class="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg text-sm text-green-700 transition-colors">
                                         What are the pressure drop trade-offs?
                                     </button>
-                                    <button onclick="askPredefinedQuestion('Suggest optimal dimensions')" class="w-full text-left p-3 bg-purple-50 hover:bg-purple-100 rounded-lg text-sm text-purple-700 transition-colors">
-                                        Suggest optimal dimensions
+                                    <button onclick="askPredefinedQuestion('Which run has the best overall performance?')" class="w-full text-left p-3 bg-purple-50 hover:bg-purple-100 rounded-lg text-sm text-purple-700 transition-colors">
+                                        Which run performs best?
                                     </button>
-                                    <button onclick="askPredefinedQuestion('Explain current performance')" class="w-full text-left p-3 bg-orange-50 hover:bg-orange-100 rounded-lg text-sm text-orange-700 transition-colors">
-                                        Explain current performance
+                                    <button onclick="askPredefinedQuestion('Compare efficiency vs pressure drop across all runs')" class="w-full text-left p-3 bg-orange-50 hover:bg-orange-100 rounded-lg text-sm text-orange-700 transition-colors">
+                                        Compare all runs
                                     </button>
                                 </div>
                             </div>
@@ -3275,15 +3309,64 @@
         function generateAIResponse(message) {
             const lowerMessage = message.toLowerCase();
             
+            // Handle run-specific questions
+            if (lowerMessage.includes('selected run') || lowerMessage.includes('for the selected')) {
+                const runSelector = document.getElementById('run-selector');
+                const selectedRunId = parseInt(runSelector.value);
+                if (!selectedRunId) {
+                    return "Please select a run first, then I can provide specific analysis for that design.";
+                }
+                const selectedRun = runHistory.find(run => run.id === selectedRunId);
+                if (selectedRun) {
+                    return generateComprehensiveRunAnalysis(selectedRun);
+                }
+            }
+            
+            // Handle comparison questions
+            if (lowerMessage.includes('compare') || lowerMessage.includes('all runs') || lowerMessage.includes('which run')) {
+                if (runHistory.length < 2) {
+                    return "You need at least 2 saved runs to perform comparisons. Please run some calculations and save them first.";
+                }
+                return generateMultiRunComparison();
+            }
+            
+            // Handle efficiency questions
             if (lowerMessage.includes('efficiency') || lowerMessage.includes('improve')) {
+                if (runHistory.length > 0) {
+                    const avgEfficiencies = runHistory.map(run => 
+                        run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length * 100
+                    );
+                    const bestRun = runHistory[avgEfficiencies.indexOf(Math.max(...avgEfficiencies))];
+                    return `For improving efficiency, I recommend examining "${bestRun.name}" which achieved ${Math.max(...avgEfficiencies).toFixed(1)}% efficiency. ${getRandomResponse('efficiency')}`;
+                }
                 return getRandomResponse('efficiency');
-            } else if (lowerMessage.includes('pressure') || lowerMessage.includes('drop')) {
+            } 
+            
+            // Handle pressure drop questions
+            else if (lowerMessage.includes('pressure') || lowerMessage.includes('drop') || lowerMessage.includes('trade-off')) {
+                if (runHistory.length > 0) {
+                    const pressures = runHistory.map(run => run.total_loss_pa);
+                    const bestPressureRun = runHistory[pressures.indexOf(Math.min(...pressures))];
+                    return `Regarding pressure drop, "${bestPressureRun.name}" achieved the lowest pressure drop of ${Math.min(...pressures).toFixed(0)} Pa. ${getRandomResponse('pressure')}`;
+                }
                 return getRandomResponse('pressure');
-            } else if (lowerMessage.includes('dimension') || lowerMessage.includes('size') || lowerMessage.includes('optimal')) {
+            } 
+            
+            // Handle dimensional questions
+            else if (lowerMessage.includes('dimension') || lowerMessage.includes('size') || lowerMessage.includes('optimal')) {
                 return getRandomResponse('dimensions');
-            } else if (lowerMessage.includes('performance') || lowerMessage.includes('explain')) {
+            } 
+            
+            // Handle performance questions
+            else if (lowerMessage.includes('performance') || lowerMessage.includes('explain')) {
+                if (runHistory.length > 0) {
+                    return generateMultiRunComparison();
+                }
                 return getRandomResponse('performance');
-            } else {
+            } 
+            
+            // Default responses
+            else {
                 return getRandomResponse('general');
             }
         }
@@ -3293,36 +3376,125 @@
             return responses[Math.floor(Math.random() * responses.length)];
         }
 
-        function updateDesignAnalysis() {
-            if (!lastCalculatedData.results) {
+        function updateRunSelector() {
+            const runSelector = document.getElementById('run-selector');
+            if (!runSelector) return;
+            
+            // Clear existing options except the first one
+            runSelector.innerHTML = '<option value="">Select a run to analyze...</option>';
+            
+            // Add options for each run
+            runHistory.forEach(run => {
+                const option = document.createElement('option');
+                option.value = run.id;
+                option.textContent = `${run.name} (Eff: ${(run.efficiencies.reduce((a,b) => a+b, 0) / run.efficiencies.length * 100).toFixed(1)}%)`;
+                runSelector.appendChild(option);
+            });
+        }
+
+        function analyzeSelectedRun() {
+            const runSelector = document.getElementById('run-selector');
+            const selectedRunId = parseInt(runSelector.value);
+            
+            if (!selectedRunId) {
+                addMessage("Please select a run to analyze first.", 'ai');
                 return;
             }
-
-            const analysis = document.getElementById('design-analysis');
-            const results = lastCalculatedData.results;
-            const params = lastCalculatedData.inputs;
-
-            // Generate AI insights based on current design
-            const insights = generateDesignInsights(results, params);
             
-            analysis.innerHTML = insights.map(insight => `
+            const selectedRun = runHistory.find(run => run.id === selectedRunId);
+            if (!selectedRun) {
+                addMessage("Selected run not found.", 'ai');
+                return;
+            }
+            
+            // Generate comprehensive analysis for the selected run
+            const analysis = generateComprehensiveRunAnalysis(selectedRun);
+            addMessage(analysis, 'ai');
+            
+            // Update the design analysis panel
+            updateDesignAnalysisForRun(selectedRun);
+        }
+
+        function compareAllRuns() {
+            if (runHistory.length < 2) {
+                addMessage("You need at least 2 runs to perform a comparison analysis.", 'ai');
+                return;
+            }
+            
+            // Generate comparison analysis
+            const comparison = generateMultiRunComparison();
+            addMessage(comparison, 'ai');
+            
+            // Update the comparison analysis panel
+            updateComparisonAnalysis();
+        }
+
+        function updateSelectedRunAnalysis() {
+            const runSelector = document.getElementById('run-selector');
+            const selectedRunId = parseInt(runSelector.value);
+            
+            if (!selectedRunId) {
+                const analysis = document.getElementById('design-analysis');
+                analysis.innerHTML = '<div class="p-3 bg-gray-50 rounded-lg"><p class="text-sm text-gray-600">Select a run to get AI-powered design insights</p></div>';
+                return;
+            }
+            
+            const selectedRun = runHistory.find(run => run.id === selectedRunId);
+            if (selectedRun) {
+                updateDesignAnalysisForRun(selectedRun);
+            }
+        }
+
+        function updateDesignAnalysisForRun(runData) {
+            const analysis = document.getElementById('design-analysis');
+            
+            // Generate AI insights based on selected run
+            const insights = generateDesignInsights(runData, runData);
+            
+            analysis.innerHTML = `
+                <div class="mb-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                    <p class="text-sm font-medium text-blue-800">${runData.name}</p>
+                    <p class="text-sm text-blue-600">Average Efficiency: ${(runData.efficiencies.reduce((a,b) => a+b, 0) / runData.efficiencies.length * 100).toFixed(1)}% | Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa</p>
+                </div>
+                ${insights.map(insight => `
+                    <div class="p-3 rounded-lg ${insight.type === 'good' ? 'bg-green-50 border-l-4 border-green-400' : 
+                        insight.type === 'warning' ? 'bg-yellow-50 border-l-4 border-yellow-400' : 
+                        'bg-blue-50 border-l-4 border-blue-400'}">
+                        <p class="text-sm font-medium ${insight.type === 'good' ? 'text-green-800' : 
+                            insight.type === 'warning' ? 'text-yellow-800' : 'text-blue-800'}">${insight.title}</p>
+                        <p class="text-sm ${insight.type === 'good' ? 'text-green-600' : 
+                            insight.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'} mt-1">${insight.message}</p>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function updateComparisonAnalysis() {
+            const comparisonDiv = document.getElementById('comparison-analysis');
+            if (runHistory.length < 2) return;
+            
+            const comparison = generateDetailedComparison();
+            comparisonDiv.innerHTML = comparison.map(insight => `
                 <div class="p-3 rounded-lg ${insight.type === 'good' ? 'bg-green-50 border-l-4 border-green-400' : 
                     insight.type === 'warning' ? 'bg-yellow-50 border-l-4 border-yellow-400' : 
-                    'bg-blue-50 border-l-4 border-blue-400'}">
+                    insight.type === 'info' ? 'bg-blue-50 border-l-4 border-blue-400' :
+                    'bg-purple-50 border-l-4 border-purple-400'}">
                     <p class="text-sm font-medium ${insight.type === 'good' ? 'text-green-800' : 
-                        insight.type === 'warning' ? 'text-yellow-800' : 'text-blue-800'}">${insight.title}</p>
+                        insight.type === 'warning' ? 'text-yellow-800' : 
+                        insight.type === 'info' ? 'text-blue-800' : 'text-purple-800'}">${insight.title}</p>
                     <p class="text-sm ${insight.type === 'good' ? 'text-green-600' : 
-                        insight.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'} mt-1">${insight.message}</p>
+                        insight.type === 'warning' ? 'text-yellow-600' : 
+                        insight.type === 'info' ? 'text-blue-600' : 'text-purple-600'} mt-1">${insight.message}</p>
                 </div>
             `).join('');
         }
 
-        function generateDesignInsights(results, params) {
+        function generateDesignInsights(runData, params) {
             const insights = [];
-            const avgEfficiency = results.efficiencies.reduce((a, b) => a + b, 0) / results.efficiencies.length;
-            const totalPressureDrop = results.pressure_entries[0] + results.pressure_kinetic[0] + 
-                                    results.pressure_frictional[0] + results.pressure_rotational[0] + 
-                                    results.pressure_exit[0];
+            const avgEfficiency = runData.efficiencies ? 
+                runData.efficiencies.reduce((a, b) => a + b, 0) / runData.efficiencies.length * 100 :
+                0;
+            const totalPressureDrop = runData.total_loss_pa || 0;
 
             // Efficiency analysis
             if (avgEfficiency > 85) {
@@ -3336,6 +3508,12 @@
                     type: 'warning',
                     title: 'Low Efficiency',
                     message: `Efficiency of ${avgEfficiency.toFixed(1)}% could be improved. Consider reducing cyclone diameter or optimizing inlet velocity.`
+                });
+            } else {
+                insights.push({
+                    type: 'info',
+                    title: 'Good Efficiency',
+                    message: `Average efficiency of ${avgEfficiency.toFixed(1)}% is acceptable for most industrial applications.`
                 });
             }
 
@@ -3352,27 +3530,196 @@
                     title: 'Low Pressure Drop',
                     message: `Pressure drop of ${totalPressureDrop.toFixed(0)} Pa is low. You might be able to increase efficiency slightly.`
                 });
+            } else {
+                insights.push({
+                    type: 'good',
+                    title: 'Balanced Pressure Drop',
+                    message: `Pressure drop of ${totalPressureDrop.toFixed(0)} Pa is well-balanced for the achieved efficiency.`
+                });
             }
 
-            // Geometry analysis
-            const aspectRatio = params.height_cyclone / params.diameter_cyclone;
-            if (aspectRatio < 3) {
+            // Cut diameter analysis
+            if (runData.d50) {
+                if (runData.d50 < 5) {
+                    insights.push({
+                        type: 'good',
+                        title: 'Fine Particle Separation',
+                        message: `Cut diameter of ${runData.d50.toFixed(1)}μm indicates excellent fine particle separation capability.`
+                    });
+                } else if (runData.d50 > 20) {
+                    insights.push({
+                        type: 'warning',
+                        title: 'Coarse Cut Diameter',
+                        message: `Cut diameter of ${runData.d50.toFixed(1)}μm suggests limited fine particle capture. Consider design optimization.`
+                    });
+                }
+            }
+
+            return insights;
+        }
+
+        function generateComprehensiveRunAnalysis(runData) {
+            const avgEfficiency = runData.efficiencies ? 
+                runData.efficiencies.reduce((a, b) => a + b, 0) / runData.efficiencies.length * 100 : 0;
+            
+            const analysisTexts = [
+                `Detailed analysis of "${runData.name}":
+
+**Performance Metrics:**
+• Average Efficiency: ${avgEfficiency.toFixed(1)}%
+• Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa
+• Cut Diameter (d50): ${runData.d50.toFixed(1)} μm
+• Dust per Cyclone: ${runData.dust_per_cyclone.toFixed(2)} g
+• Escaped Dust: ${runData.escaped_per_cyclone.toFixed(2)} g per cyclone
+
+**AI Assessment:**`,
+
+                `Performance analysis for "${runData.name}":
+
+This design achieves ${avgEfficiency.toFixed(1)}% efficiency with a ${runData.total_loss_pa.toFixed(0)} Pa pressure drop. The cut diameter of ${runData.d50.toFixed(1)}μm indicates ${runData.d50 < 10 ? 'excellent fine particle capture' : 'moderate particle separation'}.
+
+**Key Insights:**
+${avgEfficiency > 85 ? '✅ Excellent efficiency for industrial applications' : avgEfficiency > 70 ? '✓ Good efficiency, some optimization possible' : '⚠️ Efficiency below optimal range'}
+${runData.total_loss_pa < 1500 ? '✅ Acceptable pressure drop' : '⚠️ High pressure drop may increase operating costs'}
+${runData.d50 < 15 ? '✅ Good fine particle separation' : '⚠️ Limited fine particle capture capability'}`,
+
+                `Engineering analysis of "${runData.name}":
+
+**Efficiency Breakdown:**
+- Fine particles (<5μm): ${runData.efficiencies[0] ? (runData.efficiencies[0]*100).toFixed(1) : 'N/A'}%
+- Medium particles (5-20μm): Average ~${runData.efficiencies.slice(3,7).reduce((a,b) => a+b, 0)/4*100 || 0}%
+- Coarse particles (>20μm): ${runData.efficiencies[runData.efficiencies.length-1] ? (runData.efficiencies[runData.efficiencies.length-1]*100).toFixed(1) : 'N/A'}%
+
+**Design Assessment:**
+${avgEfficiency > 80 ? 'This is a well-optimized design suitable for most dust collection applications.' : 'There is room for improvement in this design. Consider adjusting key parameters.'}
+
+**Recommendations:**
+${runData.total_loss_pa > 2000 ? '• Reduce pressure drop by increasing outlet diameter' : ''}
+${avgEfficiency < 75 ? '• Improve efficiency by optimizing inlet velocity or cyclone diameter' : ''}
+${runData.d50 > 15 ? '• Enhance fine particle capture by reducing cyclone dimensions' : ''}`
+            ];
+
+            return analysisTexts[Math.floor(Math.random() * analysisTexts.length)];
+        }
+
+        function generateMultiRunComparison() {
+            const efficiencies = runHistory.map(run => 
+                run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length * 100
+            );
+            const pressures = runHistory.map(run => run.total_loss_pa);
+            const cutDiameters = runHistory.map(run => run.d50);
+
+            const bestEfficiency = Math.max(...efficiencies);
+            const bestEfficiencyRun = runHistory[efficiencies.indexOf(bestEfficiency)];
+            const lowestPressure = Math.min(...pressures);
+            const lowestPressureRun = runHistory[pressures.indexOf(lowestPressure)];
+            const finestCut = Math.min(...cutDiameters);
+            const finestCutRun = runHistory[cutDiameters.indexOf(finestCut)];
+
+            const comparisonTexts = [
+                `**Multi-Run Comparison Analysis:**
+
+📊 **Performance Leaders:**
+• Best Efficiency: "${bestEfficiencyRun.name}" with ${bestEfficiency.toFixed(1)}%
+• Lowest Pressure Drop: "${lowestPressureRun.name}" with ${lowestPressure.toFixed(0)} Pa
+• Finest Cut Diameter: "${finestCutRun.name}" with ${finestCut.toFixed(1)} μm
+
+📈 **Overall Trends:**
+• Efficiency Range: ${Math.min(...efficiencies).toFixed(1)}% - ${Math.max(...efficiencies).toFixed(1)}%
+• Pressure Range: ${Math.min(...pressures).toFixed(0)} - ${Math.max(...pressures).toFixed(0)} Pa
+• Cut Diameter Range: ${Math.min(...cutDiameters).toFixed(1)} - ${Math.max(...cutDiameters).toFixed(1)} μm
+
+🎯 **Recommendation:** ${bestEfficiencyRun.name === lowestPressureRun.name ? 
+    `"${bestEfficiencyRun.name}" offers the best balance of efficiency and pressure drop.` :
+    `Consider "${bestEfficiencyRun.name}" for maximum efficiency or "${lowestPressureRun.name}" for energy savings.`}`,
+
+                `**Comparative Performance Analysis:**
+
+Your ${runHistory.length} design variations show interesting trade-offs:
+
+🔝 **Top Performers:**
+1. **Efficiency Champion:** "${bestEfficiencyRun.name}" (${bestEfficiency.toFixed(1)}%)
+2. **Energy Efficient:** "${lowestPressureRun.name}" (${lowestPressure.toFixed(0)} Pa)
+3. **Fine Particle Expert:** "${finestCutRun.name}" (d50: ${finestCut.toFixed(1)}μm)
+
+📊 **Design Space Analysis:**
+The efficiency spread of ${(Math.max(...efficiencies) - Math.min(...efficiencies)).toFixed(1)}% indicates ${
+    Math.max(...efficiencies) - Math.min(...efficiencies) > 15 ? 'significant design sensitivity' : 'relatively stable performance'
+} across your parameter variations.
+
+💡 **Engineering Insight:** ${
+    Math.max(...pressures) / Math.min(...pressures) > 2 ? 
+    'Large pressure drop variations suggest geometry has major impact on energy consumption.' :
+    'Pressure drops are relatively consistent across designs.'
+}`
+            ];
+
+            return comparisonTexts[Math.floor(Math.random() * comparisonTexts.length)];
+        }
+
+        function generateDetailedComparison() {
+            if (runHistory.length < 2) return [];
+
+            const insights = [];
+            const efficiencies = runHistory.map(run => 
+                run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length * 100
+            );
+            const pressures = runHistory.map(run => run.total_loss_pa);
+
+            // Efficiency comparison
+            const effRange = Math.max(...efficiencies) - Math.min(...efficiencies);
+            if (effRange > 15) {
                 insights.push({
-                    type: 'info',
-                    title: 'Short Cyclone',
-                    message: 'Consider increasing height for better particle separation. H/D ratio should typically be 3-4.'
+                    type: 'insight',
+                    title: 'High Efficiency Variation',
+                    message: `Efficiency varies by ${effRange.toFixed(1)}% across runs, indicating significant design sensitivity.`
+                });
+            } else {
+                insights.push({
+                    type: 'good',
+                    title: 'Consistent Efficiency',
+                    message: `Efficiency variation of ${effRange.toFixed(1)}% shows stable performance across designs.`
+                });
+            }
+
+            // Pressure comparison
+            const pressureRatio = Math.max(...pressures) / Math.min(...pressures);
+            if (pressureRatio > 2) {
+                insights.push({
+                    type: 'warning',
+                    title: 'Large Pressure Variations',
+                    message: `Pressure drop varies by ${(pressureRatio * 100 - 100).toFixed(0)}%, significantly affecting energy costs.`
+                });
+            }
+
+            // Best performers
+            const bestEffRun = runHistory[efficiencies.indexOf(Math.max(...efficiencies))];
+            const bestPressRun = runHistory[pressures.indexOf(Math.min(...pressures))];
+
+            insights.push({
+                type: 'info',
+                title: 'Performance Leaders',
+                message: `"${bestEffRun.name}" leads in efficiency (${Math.max(...efficiencies).toFixed(1)}%), while "${bestPressRun.name}" has lowest pressure drop (${Math.min(...pressures).toFixed(0)} Pa).`
+            });
+
+            // Trade-off analysis
+            if (bestEffRun.id !== bestPressRun.id) {
+                insights.push({
+                    type: 'insight',
+                    title: 'Efficiency-Pressure Trade-off',
+                    message: 'Different runs optimize for different objectives. Consider operational priorities when selecting design.'
                 });
             }
 
             return insights;
         }
 
-        // Hook into the calculate button to update design analysis after calculation
-        const originalCalculateBtn = document.getElementById("calculate-btn");
-        if (originalCalculateBtn) {
-            originalCalculateBtn.addEventListener("click", function() {
-                // Wait for calculation to complete before updating analysis
-                setTimeout(updateDesignAnalysis, 500);
+        // Hook into the save-run button to update run selector
+        const originalSaveBtn = document.getElementById("save-run-btn");
+        if (originalSaveBtn) {
+            originalSaveBtn.addEventListener("click", function() {
+                // Update run selector after saving
+                setTimeout(updateRunSelector, 100);
             });
         }
 
