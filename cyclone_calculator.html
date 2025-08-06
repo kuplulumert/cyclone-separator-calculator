@@ -915,14 +915,22 @@
                         <!-- Center - Chat Interface (5 columns) -->
                         <div class="col-span-5">
                             <div class="bg-white rounded-xl shadow-md h-full flex flex-col">
-                                <div class="flex items-center gap-3 border-b border-gray-200 p-4">
-                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                        <span class="text-white text-sm">🤖</span>
+                                <div class="flex items-center justify-between border-b border-gray-200 p-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                            <span class="text-white text-sm">🤖</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-gray-800">AI Design Assistant</h3>
+                                            <p class="text-xs text-gray-500">ML-powered cyclone optimization</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-800">AI Design Assistant</h3>
-                                        <p class="text-xs text-gray-500">ML-powered cyclone optimization</p>
-                                    </div>
+                                    <button onclick="clearChat()" class="px-3 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition-colors flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H9a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        Clear Chat
+                                    </button>
                                 </div>
                                 
                                 <!-- Chat Messages -->
@@ -4714,6 +4722,38 @@ Comparative analysis based on ${runHistory.length} design variations
             // Set initial state
             setZoom(1.0);
         });
+
+        // Clear Chat Function
+        function clearChat() {
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // Reset to initial welcome message
+            chatMessages.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span class="text-white text-xs">🤖</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm max-w-lg">
+                        <p class="text-gray-800 text-sm">Hello! I'm your AI design assistant. I can help you:</p>
+                        <ul class="mt-2 text-xs text-gray-600 space-y-1">
+                            <li>• Optimize cyclone parameters for better efficiency</li>
+                            <li>• Analyze design trade-offs and recommendations</li>
+                            <li>• Generate professional engineering reports</li>
+                            <li>• Compare multiple designs and suggest improvements</li>
+                        </ul>
+                        <p class="mt-2 text-xs text-gray-600">Select a run above or ask me anything!</p>
+                    </div>
+                </div>
+            `;
+            
+            // Clear the input field
+            document.getElementById('chat-input').value = '';
+            
+            // Optional: Add a confirmation message
+            setTimeout(() => {
+                addMessage("Chat history cleared. How can I help you?", 'ai');
+            }, 300);
+        }
 
     </script>
 </body>
