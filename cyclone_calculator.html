@@ -1039,7 +1039,7 @@
         const D_c=D_c_mm/1e3;const L_c=L_c_mm/1e3;const Z_c=Z_c_mm/1e3;const D_e=D_e_mm/1e3;const D_d=D_d_mm/1e3;const B_c=B_c_mm/1e3;const H_c=H_c_mm/1e3;const e=e_um/1e6;const Q_m3s=Q_lps/1e3;const A_in=B_c*H_c;if(A_in<=0)throw new Error("Inlet area (Bc * Hc) must be positive.");const V_in=Q_m3s/A_in;if(!(D_c>D_e&&D_e>D_d&&D_d>0&&L_c>0&&Z_c>=0&&V_in>0&&B_c>0&&H_c>0))throw new Error("Dimensions must be positive. The following must hold: Dc > De > Dd > 0.");
         const{V1,L1,Ne1}=calculate_barrel_parameters(V_in,D_c,D_e,L_c,B_c,H_c);const{average_V2,L2,Ne2}=calculate_cone_parameters(V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const Ne_total=Ne1+Ne2;const d50=calculate_lapple_cut_diameter(mu,B_c,rho_p,rho_g,V_in,Ne_total);const d50_microns=d50*1e6;const pressureResults=calculate_pressure_loss(V_in,D_c,D_e,L_c,Z_c,D_d,B_c,H_c,rho_g,mu,e);const airwatt_loss=pressureResults.total_loss*Q_m3s;const efficiencyTableBody=document.getElementById("efficiency-body");efficiencyTableBody.innerHTML="";let totalMassEfficiency=0;let currentEfficiencies=[];
         particle_sizes_microns.forEach((dp,index)=>{const massFraction=mass_fractions[index];const efficiency=calculate_separation_efficiency(d50_microns,dp);currentEfficiencies.push(efficiency*100);const weightedEfficiency=efficiency*massFraction;totalMassEfficiency+=weightedEfficiency;const row=document.createElement("tr");row.innerHTML=`<td>${dp}</td><td>${(massFraction*100).toFixed(1)}</td><td>${(efficiency*100).toFixed(2)}</td><td>${(weightedEfficiency*100).toFixed(2)}</td>`;efficiencyTableBody.appendChild(row)});
-        const dust_per_cyclone=initial_dust/num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*num_cyclones;lastCalculatedData={d50:d50_microns,total_loss_pa:pressureResults.total_loss,airwatt_loss:airwatt_loss,escaped_dust:total_escaped_dust,dust_per_cyclone:dust_per_cyclone,escaped_per_cyclone:escaped_per_cyclone,pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po},efficiencies:currentEfficiencies};
+        const dust_per_cyclone=initial_dust/num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*num_cyclones;lastCalculatedData={d50:d50_microns,total_loss_pa:pressureResults.total_loss,airwatt_loss:airwatt_loss,escaped_dust:total_escaped_dust,dust_per_cyclone:dust_per_cyclone,escaped_per_cyclone:escaped_per_cyclone,total_mass_efficiency:totalMassEfficiency,pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po},efficiencies:currentEfficiencies};
         document.getElementById("result-Vin").textContent=V_in.toFixed(2);document.getElementById("result-V1").textContent=V1.toFixed(4);document.getElementById("result-L1_mm").textContent=(L1*1e3).toFixed(2);document.getElementById("result-Ne1").textContent=Ne1.toFixed(2);document.getElementById("result-V2").textContent=isFinite(average_V2)?average_V2.toFixed(4):"N/A";document.getElementById("result-L2_mm").textContent=(L2*1e3).toFixed(2);document.getElementById("result-Ne2").textContent=Ne2.toFixed(2);document.getElementById("result-Ne_total").textContent=Ne_total.toFixed(2);
         document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
         document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
@@ -3333,12 +3333,10 @@
             // Handle efficiency questions
             if (lowerMessage.includes('efficiency') || lowerMessage.includes('improve')) {
                 if (runHistory.length > 0) {
-                    const avgEfficiencies = runHistory.map(run => 
-                        run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length
-                    );
-                    const avgEfficienciesPercent = avgEfficiencies.map(eff => eff * 100);
-                    const bestRun = runHistory[avgEfficienciesPercent.indexOf(Math.max(...avgEfficienciesPercent))];
-                    return `For improving efficiency, I recommend examining "${bestRun.name}" which achieved ${Math.max(...avgEfficienciesPercent).toFixed(1)}% efficiency. ${getRandomResponse('efficiency')}`;
+                    const totalEfficiencies = runHistory.map(run => run.total_mass_efficiency || 0);
+                    const totalEfficienciesPercent = totalEfficiencies.map(eff => eff * 100);
+                    const bestRun = runHistory[totalEfficienciesPercent.indexOf(Math.max(...totalEfficienciesPercent))];
+                    return `For improving total mass efficiency, I recommend examining "${bestRun.name}" which achieved ${Math.max(...totalEfficienciesPercent).toFixed(1)}% total mass efficiency. ${getRandomResponse('efficiency')}`;
                 }
                 return getRandomResponse('efficiency');
             } 
@@ -3388,8 +3386,8 @@
             runHistory.forEach(run => {
                 const option = document.createElement('option');
                 option.value = run.id;
-                const avgEfficiency = run.efficiencies.reduce((a,b) => a+b, 0) / run.efficiencies.length;
-                option.textContent = `${run.name} (Eff: ${(avgEfficiency * 100).toFixed(1)}%)`;
+                const totalEfficiency = run.total_mass_efficiency || 0;
+                option.textContent = `${run.name} (Eff: ${(totalEfficiency * 100).toFixed(1)}%)`;
                 runSelector.appendChild(option);
             });
         }
@@ -3453,11 +3451,11 @@
             // Generate AI insights based on selected run
             const insights = generateDesignInsights(runData, runData);
             
-            const avgEfficiency = runData.efficiencies.reduce((a,b) => a+b, 0) / runData.efficiencies.length;
+            const totalEfficiency = runData.total_mass_efficiency || 0;
             analysis.innerHTML = `
                 <div class="mb-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
                     <p class="text-sm font-medium text-blue-800">${runData.name}</p>
-                    <p class="text-sm text-blue-600">Average Efficiency: ${(avgEfficiency * 100).toFixed(1)}% | Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa</p>
+                    <p class="text-sm text-blue-600">Total Mass Efficiency: ${(totalEfficiency * 100).toFixed(1)}% | Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa</p>
                 </div>
                 ${insights.map(insight => `
                     <div class="p-3 rounded-lg ${insight.type === 'good' ? 'bg-green-50 border-l-4 border-green-400' : 
@@ -3494,29 +3492,28 @@
 
         function generateDesignInsights(runData, params) {
             const insights = [];
-            const avgEfficiency = runData.efficiencies ? 
-                runData.efficiencies.reduce((a, b) => a + b, 0) / runData.efficiencies.length * 100 :
-                0;
+            const totalMassEfficiency = runData.total_mass_efficiency || 0;
+            const totalEfficiencyPercent = totalMassEfficiency * 100;
             const totalPressureDrop = runData.total_loss_pa || 0;
 
             // Efficiency analysis
-            if (avgEfficiency > 85) {
+            if (totalEfficiencyPercent > 85) {
                 insights.push({
                     type: 'good',
                     title: 'Excellent Efficiency',
-                    message: `Average efficiency of ${avgEfficiency.toFixed(1)}% is excellent for this particle size distribution.`
+                    message: `Total mass efficiency of ${totalEfficiencyPercent.toFixed(1)}% is excellent for this particle size distribution.`
                 });
-            } else if (avgEfficiency < 70) {
+            } else if (totalEfficiencyPercent < 70) {
                 insights.push({
                     type: 'warning',
                     title: 'Low Efficiency',
-                    message: `Efficiency of ${avgEfficiency.toFixed(1)}% could be improved. Consider reducing cyclone diameter or optimizing inlet velocity.`
+                    message: `Total mass efficiency of ${totalEfficiencyPercent.toFixed(1)}% could be improved. Consider reducing cyclone diameter or optimizing inlet velocity.`
                 });
             } else {
                 insights.push({
                     type: 'info',
                     title: 'Good Efficiency',
-                    message: `Average efficiency of ${avgEfficiency.toFixed(1)}% is acceptable for most industrial applications.`
+                    message: `Total mass efficiency of ${totalEfficiencyPercent.toFixed(1)}% is acceptable for most industrial applications.`
                 });
             }
 
@@ -3562,28 +3559,27 @@
         }
 
         function generateComprehensiveRunAnalysis(runData) {
-            const avgEfficiency = runData.efficiencies ? 
-                runData.efficiencies.reduce((a, b) => a + b, 0) / runData.efficiencies.length : 0;
-            const avgEfficiencyPercent = avgEfficiency * 100;
+            const totalMassEfficiency = runData.total_mass_efficiency || 0;
+            const totalEfficiencyPercent = totalMassEfficiency * 100;
             
             const analysisTexts = [
                 `Detailed analysis of "${runData.name}":
 
 Performance Metrics:
-• Average Efficiency: ${avgEfficiencyPercent.toFixed(1)}%
+• Total Mass Efficiency: ${totalEfficiencyPercent.toFixed(1)}%
 • Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa
 • Cut Diameter (d50): ${runData.d50.toFixed(1)} μm
 • Dust per Cyclone: ${runData.dust_per_cyclone.toFixed(2)} g
 • Escaped Dust: ${runData.escaped_per_cyclone.toFixed(2)} g per cyclone
 
-AI Assessment: ${avgEfficiencyPercent > 85 ? 'This design demonstrates excellent separation performance with well-balanced operating characteristics.' : avgEfficiencyPercent > 70 ? 'This design shows good performance with potential for further optimization.' : 'This design has moderate performance and would benefit from parameter adjustments.'}`,
+AI Assessment: ${totalEfficiencyPercent > 85 ? 'This design demonstrates excellent separation performance with well-balanced operating characteristics.' : totalEfficiencyPercent > 70 ? 'This design shows good performance with potential for further optimization.' : 'This design has moderate performance and would benefit from parameter adjustments.'}`,
 
                 `Performance analysis for "${runData.name}":
 
-This design achieves ${avgEfficiencyPercent.toFixed(1)}% efficiency with a ${runData.total_loss_pa.toFixed(0)} Pa pressure drop. The cut diameter of ${runData.d50.toFixed(1)}μm indicates ${runData.d50 < 10 ? 'excellent fine particle capture capability' : 'moderate particle separation performance'}.
+This design achieves ${totalEfficiencyPercent.toFixed(1)}% total mass efficiency with a ${runData.total_loss_pa.toFixed(0)} Pa pressure drop. The cut diameter of ${runData.d50.toFixed(1)}μm indicates ${runData.d50 < 10 ? 'excellent fine particle capture capability' : 'moderate particle separation performance'}.
 
 Key Insights:
-${avgEfficiencyPercent > 85 ? 'Excellent efficiency for industrial applications' : avgEfficiencyPercent > 70 ? 'Good efficiency, some optimization possible' : 'Efficiency below optimal range - consider design modifications'}
+${totalEfficiencyPercent > 85 ? 'Excellent total mass efficiency for industrial applications' : totalEfficiencyPercent > 70 ? 'Good total mass efficiency, some optimization possible' : 'Total mass efficiency below optimal range - consider design modifications'}
 ${runData.total_loss_pa < 1500 ? 'Acceptable pressure drop for most applications' : 'High pressure drop may increase operating costs significantly'}
 ${runData.d50 < 15 ? 'Good fine particle separation capability' : 'Limited fine particle capture - consider geometry optimization'}`,
 
@@ -3595,19 +3591,17 @@ Efficiency Breakdown:
 - Coarse particles (100μm): ${runData.efficiencies[runData.efficiencies.length-1] ? (runData.efficiencies[runData.efficiencies.length-1]*100).toFixed(1) : 'N/A'}%
 
 Design Assessment:
-${avgEfficiencyPercent > 80 ? 'This is a well-optimized design suitable for most dust collection applications.' : 'There is room for improvement in this design. Consider adjusting key parameters.'}
+${totalEfficiencyPercent > 80 ? 'This is a well-optimized design suitable for most dust collection applications.' : 'There is room for improvement in this design. Consider adjusting key parameters.'}
 
 Recommendations:
-${runData.total_loss_pa > 2000 ? 'Consider reducing pressure drop by increasing outlet diameter or adjusting inlet geometry. ' : ''}${avgEfficiencyPercent < 75 ? 'Improve efficiency by optimizing inlet velocity or reducing cyclone diameter. ' : ''}${runData.d50 > 15 ? 'Enhance fine particle capture by reducing overall cyclone dimensions.' : ''}`
+${runData.total_loss_pa > 2000 ? 'Consider reducing pressure drop by increasing outlet diameter or adjusting inlet geometry. ' : ''}${totalEfficiencyPercent < 75 ? 'Improve total mass efficiency by optimizing inlet velocity or reducing cyclone diameter. ' : ''}${runData.d50 > 15 ? 'Enhance fine particle capture by reducing overall cyclone dimensions.' : ''}`
             ];
 
             return analysisTexts[Math.floor(Math.random() * analysisTexts.length)];
         }
 
         function generateMultiRunComparison() {
-            const efficiencies = runHistory.map(run => 
-                run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length
-            );
+            const efficiencies = runHistory.map(run => run.total_mass_efficiency || 0);
             const efficienciesPercent = efficiencies.map(eff => eff * 100);
             const pressures = runHistory.map(run => run.total_loss_pa);
             const cutDiameters = runHistory.map(run => run.d50);
@@ -3664,9 +3658,7 @@ Engineering Insight: ${
             if (runHistory.length < 2) return [];
 
             const insights = [];
-            const efficiencies = runHistory.map(run => 
-                run.efficiencies.reduce((a, b) => a + b, 0) / run.efficiencies.length
-            );
+            const efficiencies = runHistory.map(run => run.total_mass_efficiency || 0);
             const efficienciesPercent = efficiencies.map(eff => eff * 100);
             const pressures = runHistory.map(run => run.total_loss_pa);
 
@@ -3675,14 +3667,14 @@ Engineering Insight: ${
             if (effRange > 15) {
                 insights.push({
                     type: 'insight',
-                    title: 'High Efficiency Variation',
-                    message: `Efficiency varies by ${effRange.toFixed(1)}% across runs, indicating significant design sensitivity.`
+                    title: 'High Total Mass Efficiency Variation',
+                    message: `Total mass efficiency varies by ${effRange.toFixed(1)}% across runs, indicating significant design sensitivity.`
                 });
             } else {
                 insights.push({
                     type: 'good',
-                    title: 'Consistent Efficiency',
-                    message: `Efficiency variation of ${effRange.toFixed(1)}% shows stable performance across designs.`
+                    title: 'Consistent Total Mass Efficiency',
+                    message: `Total mass efficiency variation of ${effRange.toFixed(1)}% shows stable performance across designs.`
                 });
             }
 
@@ -3703,14 +3695,14 @@ Engineering Insight: ${
             insights.push({
                 type: 'info',
                 title: 'Performance Leaders',
-                message: `"${bestEffRun.name}" leads in efficiency (${Math.max(...efficienciesPercent).toFixed(1)}%), while "${bestPressRun.name}" has lowest pressure drop (${Math.min(...pressures).toFixed(0)} Pa).`
+                message: `"${bestEffRun.name}" leads in total mass efficiency (${Math.max(...efficienciesPercent).toFixed(1)}%), while "${bestPressRun.name}" has lowest pressure drop (${Math.min(...pressures).toFixed(0)} Pa).`
             });
 
             // Trade-off analysis
             if (bestEffRun.id !== bestPressRun.id) {
                 insights.push({
                     type: 'insight',
-                    title: 'Efficiency-Pressure Trade-off',
+                    title: 'Total Mass Efficiency-Pressure Trade-off',
                     message: 'Different runs optimize for different objectives. Consider operational priorities when selecting design.'
                 });
             }
