@@ -291,14 +291,14 @@
                                                             Save Project to File
                                                         </button>
                                                         <label for="load-from-file-input" class="w-full text-left px-3 py-2 text-sm hover:bg-orange-50 rounded-md flex items-center gap-2 text-gray-700 cursor-pointer">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                                                             </svg>
                                                             Load Project from File
                                                         </label>
                                                         <input type="file" id="load-from-file-input" accept=".json" style="display: none;">
                                                         <button id="export-all-runs-btn" class="w-full text-left px-3 py-2 text-sm hover:bg-purple-50 rounded-md flex items-center gap-2 text-gray-700">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                                             </svg>
                                                             Export Analysis Report
@@ -318,3 +318,2585 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Collapsible History Panel -->
+                                <div id="history-panel" class="hidden mt-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+                                    <div class="p-4 border-b border-gray-100">
+                                        <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Saved Parameter Sets
+                                        </h3>
+                                        <p class="text-sm text-gray-600 mt-1">Quickly load previously used parameter configurations</p>
+                                    </div>
+                                    <div class="p-4 space-y-4">
+                                        <!-- Load Section -->
+                                        <div class="flex items-center gap-3 flex-wrap">
+                                            <select id="input-history-select" class="flex-1 min-w-80 p-3 border border-gray-300 rounded-lg shadow-sm text-sm bg-white">
+                                                <option value="">Select previous parameters...</option>
+                                            </select>
+                                            <button id="load-history-btn" class="bg-amber-600 text-white font-medium py-3 px-4 rounded-lg shadow-sm hover:bg-amber-700 transition-colors flex items-center gap-2" disabled>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                </svg>
+                                                Load
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Save Section -->
+                                        <div class="flex items-center gap-3 flex-wrap">
+                                            <input type="text" id="param-save-name-input" placeholder="Enter name for current parameters..." class="flex-1 min-w-60 p-3 border border-gray-300 rounded-lg shadow-sm text-sm">
+                                            <button id="save-current-params-btn" class="bg-teal-600 text-white font-medium py-3 px-4 rounded-lg shadow-sm hover:bg-teal-700 transition-colors flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                                </svg>
+                                                Save Current
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Management Section -->
+                                        <div class="flex items-center gap-3 pt-2 border-t border-gray-100">
+                                            <span class="text-sm text-gray-500 font-medium">Manage:</span>
+                                            <button id="delete-selected-params-btn" class="text-orange-600 hover:text-orange-700 font-medium py-1 px-3 rounded transition-colors flex items-center gap-1 text-sm" disabled>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                                Delete Selected
+                                            </button>
+                                            <button id="clear-history-btn" class="text-red-600 hover:text-red-700 font-medium py-1 px-3 rounded transition-colors flex items-center gap-1 text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                                Clear All
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                         </div>
+                     </div>
+                     <div id="sortable-column-2" class="sortable-column flex flex-col gap-8">
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Efficiency Comparison</h3></div><div class="flex gap-2"><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="efficiency-chart" data-type="image" title="Export as Image"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></button><button class="chart-export-btn bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-lg transition-colors" data-chart="efficiency-chart" data-type="csv" title="Export as CSV"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div></div><canvas id="efficiency-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Dust Load &amp; Escaped Dust per Cyclone</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="per-cyclone-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="per-cyclone-dust-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Total Escaped Dust Comparison</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="escaped-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="escaped-dust-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Pressure Drop Comparison</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="pressure-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="pressure-chart"></canvas></div>
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Airwatt Loss Comparison</h3></div><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="airwatt-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div><canvas id="airwatt-chart"></canvas></div>
+                         <div id="error-message" class="hidden sortable-card bg-red-100 border border-red-400 text-red-700 rounded-lg p-4"></div>
+                     </div>
+                </div>
+                <div id="results-container" class="mt-8">
+                     <div id="results" class="hidden bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                         <div class="card-header mb-6 border-b pb-3">
+                            <div class="flex items-center gap-4">
+                                <h2 class="text-3xl font-semibold">Calculation Results</h2>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-indigo-700">Inlet Velocity</h3><p class="text-3xl font-mono"><span id="result-Vin"></span> m/s</p></div>
+                            <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-indigo-700">Total Number of Turns (Ne)</h3><p class="text-3xl font-mono"><span id="result-Ne_total"></span></p></div>
+                            <div class="bg-green-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-green-800">Lapple Model Cut Diameter (d50)</h3><p class="text-4xl font-mono text-center text-green-700 pt-2"><span id="result-d50"></span> µm</p></div>
+                            <div class="bg-blue-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-blue-800">Total Mass Separation Efficiency</h3><p class="text-4xl font-mono text-center text-blue-700 pt-2"><span id="result-total-efficiency"></span> %</p></div>
+                            <div class="bg-red-50 p-6 rounded-lg shadow-sm col-span-1 md:col-span-2">
+                                <h3 class="font-bold text-xl text-red-800 mb-3 text-center">Pressure Drop & Power Consumption</h3>
+                                <div class="grid grid-cols-2 gap-x-8 gap-y-2 max-w-lg mx-auto text-lg">
+                                    <span>Entry Loss (ΔPe):</span><span class="font-mono text-right"><span id="result-dPe"></span> Pa</span>
+                                    <span>Kinetic Loss (ΔPk):</span><span class="font-mono text-right"><span id="result-dPk"></span> Pa</span>
+                                    <span>Frictional Loss (ΔPf):</span><span class="font-mono text-right"><span id="result-dPf"></span> Pa</span>
+                                    <span>Rotational Loss (ΔPr):</span><span class="font-mono text-right"><span id="result-dPr"></span> Pa</span>
+                                    <span>Exit Loss (ΔPo):</span><span class="font-mono text-right"><span id="result-dPo"></span> Pa</span>
+                                </div>
+                                <div class="text-center mt-4 pt-4 border-t border-red-200"><h4 class="font-semibold text-gray-600">Total Pressure Loss</h4><p class="text-4xl font-bold text-red-700 my-1"><span id="result-total-pa"></span> Pa</p><p class="text-lg text-red-600">(<span id="result-total-h2o"></span> in H₂O)</p></div>
+                                <div class="text-center mt-4 pt-4 border-t border-red-200"><h4 class="font-semibold text-gray-600">Airwatt Loss</h4><p class="text-4xl font-bold text-red-700 my-1"><span id="result-airwatt-loss"></span> W</p></div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-gray-700">Barrel Section</h3><ul class="mt-2 space-y-1 text-lg"><li><strong>Avg. Velocity (V1):</strong> <span id="result-V1" class="font-mono"></span> m/s</li><li><strong>Travel Distance (L1):</strong> <span id="result-L1_mm" class="font-mono"></span> mm</li><li><strong>Number of Turns (Ne1):</strong> <span id="result-Ne1" class="font-mono"></span></li></ul></div>
+                            <div class="bg-gray-50 p-4 rounded-lg shadow-sm"><h3 class="font-bold text-xl text-gray-700">Cone Section</h3><ul class="mt-2 space-y-1 text-lg"><li><strong>Avg. Velocity (V2):</strong> <span id="result-V2" class="font-mono"></span> m/s</li><li><strong>Travel Distance (L2):</strong> <span id="result-L2_mm" class="font-mono"></span> mm</li><li><strong>Number of Turns (Ne2):</strong> <span id="result-Ne2" class="font-mono"></span></li></ul></div>
+                            <div class="bg-yellow-50 p-4 rounded-lg shadow-sm col-span-1 md:col-span-2"><h3 class="font-bold text-xl text-yellow-800">Dust Emission</h3><div class="text-center mt-2"><p class="text-lg text-gray-600">Dust Load per Cyclone: <span id="result-dust-per-cyclone" class="font-semibold"></span> g</p><p class="text-lg text-gray-600">Escaped Dust per Cyclone: <span id="result-escaped-per-cyclone" class="font-semibold"></span> g</p><hr class="my-2"><h4 class="font-semibold text-yellow-800 text-xl">Total System Escaped Dust</h4><p class="text-4xl font-mono text-yellow-700 pt-1"><span id="result-escaped-dust"></span> g</p></div></div>
+                        </div>
+                        <div id="efficiency-section" class="mt-10"><h3 class="text-2xl font-semibold mb-4">Particle Separation Efficiency Details</h3><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Particle Size (dp, µm)</th><th>Mass Fraction (%)</th><th>Separation Efficiency (%)</th><th>Weighted Efficiency (%)</th></tr></thead><tbody id="efficiency-body"></tbody></table></div></div>
+                        <div id="comparison-section" class="hidden mt-10"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-semibold">Comparison History</h2><button id="clear-runs-btn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600">Clear Runs</button></div><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Run</th><th>Name</th><th>d50 (µm)</th><th>Total ΔP (Pa)</th><th>Airwatt Loss (W)</th><th>Escaped Dust (g)</th></tr></thead><tbody id="comparison-body"></tbody></table></div></div>
+                     </div>
+                </div>
+            </div>
+
+            <div id="param-study-tab" class="tab-content">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-8">
+                    <div class="card-header mb-6 border-b pb-3">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-3xl font-semibold">Parametric Study Setup</h2>
+                        </div>
+                        <div class="control-container">
+                            <div class="control-group">
+                                <button id="param-layout-1-col" class="layout-btn">1 Column</button>
+                                <button id="param-layout-2-col" class="layout-btn active">2 Columns</button>
+                            </div>
+                            <div class="control-group">
+                                <button class="font-down-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg></button>
+                                <span class="text-sm font-medium">Text Size</span>
+                                <button class="font-up-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="param-study-form" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                        <div>
+                            <label for="param-select" class="block text-sm font-medium text-gray-700 mb-1">Parameter to Study</label>
+                            <select id="param-select" class="w-full p-2 border border-gray-300 rounded-md shadow-sm"></select>
+                        </div>
+                        <div>
+                            <label for="param-start" class="block text-sm font-medium text-gray-700 mb-1">Start Value</label>
+                            <input type="number" id="param-start" value="1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div>
+                            <label for="param-end" class="block text-sm font-medium text-gray-700 mb-1">End Value</label>
+                            <input type="number" id="param-end" value="5" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div>
+                            <label for="param-step" class="block text-sm font-medium text-gray-700 mb-1">Step</label>
+                            <input type="number" id="param-step" value="1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="md:col-span-4 flex justify-center mt-4">
+                            <button id="run-study-btn" class="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-purple-700 transition-transform transform hover:scale-105">Run Study</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="param-grid-container" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div id="param-sortable-column-1" class="sortable-column flex flex-col gap-8">
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Efficiency</h3>
+                                </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-efficiency-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
+                            <canvas id="param-efficiency-chart"></canvas>
+                        </div>
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Pressure Drop</h3>
+                                </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-pressure-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
+                            <canvas id="param-pressure-chart"></canvas>
+                        </div>
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Dust Load</h3>
+                                </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-per-cyclone-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
+                            <canvas id="param-per-cyclone-dust-chart"></canvas>
+                        </div>
+                    </div>
+                    <div id="param-sortable-column-2" class="sortable-column flex flex-col gap-8">
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Escaped Dust</h3>
+                                </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-escaped-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
+                            <canvas id="param-escaped-dust-chart"></canvas>
+                        </div>
+                        <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <div class="card-header mb-4">
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <h3 class="text-2xl font-semibold">Parametric Airwatt Loss</h3>
+                                </div>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-airwatt-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
+                            <canvas id="param-airwatt-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ======================= -->
+            <!-- = NEW OPTIMIZER TAB = -->
+            <!-- ======================= -->
+            <div id="optimization-tab" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Column 1: Setup -->
+                    <div class="lg:col-span-1 flex flex-col gap-8">
+                        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                            <h2 class="text-3xl font-semibold border-b pb-3 mb-6">Optimization Setup</h2>
+                            <div class="mb-6">
+                                <label for="opt-objective" class="block text-lg font-medium text-gray-700 mb-2">Optimization Goal</label>
+                                <select id="opt-objective" class="w-full p-2 border border-gray-300 rounded-md shadow-sm text-lg">
+                                    <option value="maximize_efficiency">Maximize Total Efficiency (%)</option>
+                                    <option value="minimize_pressure_drop">Minimize Pressure Drop (Pa)</option>
+                                    <option value="minimize_escaped_dust">Minimize Escaped Dust (g)</option>
+                                </select>
+                            </div>
+                            <div class="mb-6">
+                                <h3 class="text-lg font-medium text-gray-700 mb-3">Parameters to Optimize</h3>
+                                <div id="opt-variables-container" class="space-y-4">
+                                    <!-- JS will populate this -->
+                                </div>
+                            </div>
+                             <div class="mb-6">
+                                <h3 class="text-lg font-medium text-gray-700 mb-3">Constraints</h3>
+                                <div class="input-group">
+                                     <label for="opt-constraint-max-pressure" class="input-label">Max Pressure Drop</label>
+                                     <input type="number" id="opt-constraint-max-pressure" placeholder="e.g., 500" class="input-field p-2 border border-gray-300 rounded-md shadow-sm">
+                                     <span class="unit-text text-gray-500">Pa</span>
+                                </div>
+                            </div>
+                            <div class="mt-8 text-center">
+                                <button id="run-optimization-btn" class="bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-emerald-700 w-full">Run Optimization</button>
+                            </div>
+                        </div>
+                        <div id="opt-progress-container" class="hidden bg-white p-6 rounded-2xl shadow-lg text-center">
+                             <h3 class="text-2xl font-semibold text-gray-800 mb-4">Optimization in Progress...</h3>
+                             <div class="w-full bg-gray-200 rounded-full h-4"><div id="opt-progress-bar" class="bg-emerald-500 h-4 rounded-full" style="width: 0%"></div></div>
+                             <p id="opt-progress-text" class="mt-2 text-gray-600">Calculating...</p>
+                        </div>
+                    </div>
+                    <!-- Column 2: Results -->
+                    <div class="lg:col-span-2 flex flex-col gap-8">
+                        <div id="opt-results-container" class="hidden">
+                            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-8">
+                                <h2 class="text-3xl font-semibold border-b pb-3 mb-6 text-emerald-700">🏆 Best Result Found</h2>
+                                <div id="opt-best-result-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg"></div>
+                            </div>
+                            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                                 <div class="flex justify-between items-center border-b pb-3 mb-6">
+                                     <h2 class="text-3xl font-semibold">All Valid Results</h2>
+                                     <div class="flex gap-3">
+                                         <button id="export-all-designs-csv" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105 flex items-center gap-2">
+                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                             </svg>
+                                             Export All Designs (CSV)
+                                         </button>
+                                         <span id="total-designs-count" class="text-sm text-gray-600 px-3 py-2 bg-gray-100 rounded-lg font-medium"></span>
+                                     </div>
+                                 </div>
+                                 <div class="overflow-x-auto"><table id="opt-results-table" class="data-table"><thead></thead><tbody></tbody></table></div>
+                            </div>
+                        </div>
+                        <div id="opt-welcome-message" class="bg-white p-8 rounded-2xl shadow-lg text-center">
+                            <h2 class="text-3xl font-semibold text-gray-800">Optimization Tool</h2>
+                            <p class="mt-4 text-lg text-gray-600">Select parameters, define their ranges, set your goal, and find the best design for your needs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ======================= -->
+            <!-- = INSTANT RESULT TAB = -->
+            <!-- ======================= -->
+            <div id="instant-result-tab" class="tab-content">
+                <!-- Main Results Row -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+                    <div class="result-card">
+                        <h3 class="result-title">D50</h3>
+                        <p class="result-value" id="instant-d50">--</p>
+                        <span class="result-unit">μm</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Efficiency</h3>
+                        <p class="result-value" id="instant-efficiency">--</p>
+                        <span class="result-unit">%</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Pressure</h3>
+                        <p class="result-value" id="instant-pressure">--</p>
+                        <span class="result-unit">Pa</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Airwatt</h3>
+                        <p class="result-value" id="instant-airwatt">--</p>
+                        <span class="result-unit">W</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Escaped</h3>
+                        <p class="result-value" id="instant-escaped">--</p>
+                        <span class="result-unit">g</span>
+                    </div>
+                    <div class="result-card">
+                        <h3 class="result-title">Velocity</h3>
+                        <p class="result-value" id="instant-velocity">--</p>
+                        <span class="result-unit">m/s</span>
+                    </div>
+                </div>
+
+                <!-- Status Row -->
+                <div class="bg-white p-4 rounded-lg shadow-sm mb-8 text-center">
+                    <p class="result-status" id="instant-status">Ready for calculations</p>
+                </div>
+
+                <!-- Parameters and Chart Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column: Input Parameters -->
+                    <div class="space-y-6">
+                        <!-- Flow Parameters -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-blue-700 border-b border-blue-200 pb-2 mb-4">🌊 Flow Parameters</h3>
+                                                         <div class="grid grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label for="instant-Q_lps" class="input-label">Flow Rate</label>
+                                    <input type="number" id="instant-Q_lps" value="1" step="0.1" class="input-field instant-input">
+                                    <span class="unit-text">L/s</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-num_cyclones" class="input-label">Cyclones</label>
+                                    <input type="number" id="instant-num_cyclones" value="1" min="1" step="1" class="input-field instant-input">
+                                    <span class="unit-text">units</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Dimensions -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-green-700 border-b border-green-200 pb-2 mb-4">📏 Main Dimensions</h3>
+                                                         <div class="grid grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label for="instant-Dc_mm" class="input-label">Cyclone Ø (Dc)</label>
+                                    <input type="number" id="instant-Dc_mm" value="20" step="1" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-Lc_mm" class="input-label">Length (Lc)</label>
+                                    <input type="number" id="instant-Lc_mm" value="20" step="1" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-De_mm" class="input-label">Exit Ø (De)</label>
+                                    <input type="number" id="instant-De_mm" value="10" step="1" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-Dd_mm" class="input-label">Dust Ø (Dd)</label>
+                                    <input type="number" id="instant-Dd_mm" value="5" step="1" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inlet Parameters -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-purple-700 border-b border-purple-200 pb-2 mb-4">🔄 Inlet & Exit</h3>
+                                                         <div class="grid grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label for="instant-Bc_mm" class="input-label">Inlet Width (Bc)</label>
+                                    <input type="number" id="instant-Bc_mm" value="5" step="1" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-Hc_mm" class="input-label">Inlet Height (Hc)</label>
+                                    <input type="number" id="instant-Hc_mm" value="9" step="1" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-Zc_mm" class="input-label">Exit Length (Zc)</label>
+                                    <input type="number" id="instant-Zc_mm" value="50" step="1" class="input-field instant-input">
+                                    <span class="unit-text">mm</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="instant-initial_dust" class="input-label">Dust Load</label>
+                                    <input type="number" id="instant-initial_dust" value="200" step="10" class="input-field instant-input">
+                                    <span class="unit-text">g</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Material Properties -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <h3 class="text-xl font-semibold text-orange-700 border-b border-orange-200 pb-2 mb-4">🧪 Material Properties</h3>
+                            <div class="space-y-3">
+                                                                 <div class="grid grid-cols-2 gap-4">
+                                    <div class="input-group">
+                                        <label for="instant-rho_p" class="input-label">Particle Density</label>
+                                        <input type="number" id="instant-rho_p" value="2650" step="50" class="input-field instant-input">
+                                        <span class="unit-text">kg/m³</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="instant-rho_g" class="input-label">Gas Density</label>
+                                        <input type="number" id="instant-rho_g" value="1.225" step="0.01" class="input-field instant-input">
+                                        <span class="unit-text">kg/m³</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="input-group">
+                                        <label for="instant-mu" class="input-label">Gas Viscosity</label>
+                                        <input type="text" id="instant-mu" value="1.81e-5" class="input-field instant-input">
+                                        <span class="unit-text">Pa·s</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="instant-e_um" class="input-label">Roughness</label>
+                                        <input type="number" id="instant-e_um" value="45" step="5" class="input-field instant-input">
+                                        <span class="unit-text">μm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Charts -->
+                    <div class="space-y-6">
+                        <!-- Efficiency Chart -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <div class="flex justify-between items-center border-b border-indigo-200 pb-2 mb-4">
+                                <h3 class="text-xl font-semibold text-indigo-700">📊 Live Efficiency Chart</h3>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="instant-efficiency-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
+                            <div class="chart-container-fixed">
+                                <canvas id="instant-efficiency-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Dust Load Chart -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <div class="flex justify-between items-center border-b border-green-200 pb-2 mb-4">
+                                <h3 class="text-xl font-semibold text-green-700">🌪️ Dust Load & Escaped Dust</h3>
+                                <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="instant-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
+                            </div>
+                            <div class="chart-container-fixed">
+                                <canvas id="instant-dust-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- GLOBAL VARIABLES & UNTOUCHED NORMAL CALCULATION CODE ---
+        let runHistory = []; let runCounter = 1;
+        let inputHistory = [];
+        const MAX_HISTORY_ENTRIES = 20;
+        const particle_sizes_microns = [0.5, 1.5, 2.5, 3.5, 4.5, 6, 8.5, 15, 30, 60, 100];
+        const mass_fractions = [0.025, 0.075, 0.085, 0.070, 0.055, 0.100, 0.090, 0.200, 0.180, 0.115, 0.005];
+        let efficiencyChart, pressureChart, escapedDustChart, perCycloneDustChart, airwattChart;
+        let lastCalculatedData = {};
+        const chartColors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6b7280'];
+        const pressureColors = { dPe: '#60a5fa', dPk: '#fb923c', dPf: '#f87171', dPr: '#a78bfa', dPo: '#f472b6' };
+        const MIN_VELOCITY = 1e-6;
+        let globalFontSizeModifier = 0;
+       
+        function updateAllTextSizes() {
+            const baseBodySize = 1.1; const step = 0.05;
+            document.body.style.fontSize = `${baseBodySize + (globalFontSizeModifier * step)}rem`;
+            const charts = [efficiencyChart, pressureChart, escapedDustChart, perCycloneDustChart, airwattChart, paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart];
+            charts.forEach(chart => {
+                if (chart) {
+                    chart.options.scales.x.title.font.size = 16 + globalFontSizeModifier;
+                    chart.options.scales.x.ticks.font.size = 14 + globalFontSizeModifier;
+                    if (chart.options.scales.y) {
+                        chart.options.scales.y.ticks.font.size = 14 + globalFontSizeModifier;
+                        chart.options.scales.y.title.font.size = 16 + globalFontSizeModifier;
+                    }
+                    if (chart.options.plugins.legend) {
+                        chart.options.plugins.legend.labels.font.size = 14 + globalFontSizeModifier;
+                    }
+                    chart.update('none'); 
+                }
+            });
+        }
+        function setupControls() {
+            document.querySelectorAll('.font-up-btn').forEach(btn => btn.addEventListener('click', () => { globalFontSizeModifier++; updateAllTextSizes(); }));
+            document.querySelectorAll('.font-down-btn').forEach(btn => btn.addEventListener('click', () => { if (globalFontSizeModifier > -5) { globalFontSizeModifier--; updateAllTextSizes(); } }));
+            
+            // Single Calculation Tab Layout Controls
+            const grid = document.getElementById('main-grid-container');
+            const col1 = document.getElementById('sortable-column-1');
+            const col2 = document.getElementById('sortable-column-2');
+            const btn1Col = document.getElementById('layout-1-col');
+            const btn2Col = document.getElementById('layout-2-col');
+            btn1Col.addEventListener('click', () => { if (btn1Col.classList.contains('active')) return; grid.classList.remove('lg:grid-cols-2'); col2.style.display = 'none'; Array.from(col2.children).forEach(card => col1.appendChild(card)); btn1Col.classList.add('active'); btn2Col.classList.remove('active'); });
+            btn2Col.addEventListener('click', () => { if (btn2Col.classList.contains('active')) return; grid.classList.add('lg:grid-cols-2'); col2.style.display = 'flex'; const cards = Array.from(col1.children); const halfwayPoint = Math.ceil(cards.length / 2); cards.slice(halfwayPoint).forEach(card => col2.appendChild(card)); btn2Col.classList.add('active'); btn1Col.classList.remove('active'); });
+            
+            // Parametric Study Tab Layout Controls
+            const paramGridContainer = document.getElementById('param-grid-container');
+            const paramCol1 = document.getElementById('param-sortable-column-1');
+            const paramCol2 = document.getElementById('param-sortable-column-2');
+            const paramBtn1Col = document.getElementById('param-layout-1-col');
+            const paramBtn2Col = document.getElementById('param-layout-2-col');
+            paramBtn1Col.addEventListener('click', () => {
+                if (paramBtn1Col.classList.contains('active')) return;
+                paramGridContainer.classList.remove('lg:grid-cols-2');
+                paramCol2.style.display = 'none';
+                Array.from(paramCol2.children).forEach(card => paramCol1.appendChild(card));
+                paramBtn1Col.classList.add('active');
+                paramBtn2Col.classList.remove('active');
+            });
+            paramBtn2Col.addEventListener('click', () => {
+                if (paramBtn2Col.classList.contains('active')) return;
+                paramGridContainer.classList.add('lg:grid-cols-2');
+                paramCol2.style.display = 'flex';
+                const cards = Array.from(paramCol1.children);
+                const initialSplitPoint = 3; 
+                cards.slice(initialSplitPoint).forEach(card => paramCol2.appendChild(card));
+                paramBtn2Col.classList.add('active');
+                paramBtn1Col.classList.remove('active');
+            });
+
+            // Main Tab Controls
+            const tabs = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    tabContents.forEach(content => {
+                        content.classList.toggle('active', content.id === tab.dataset.tab);
+                    });
+                });
+            });
+        }
+        function simpson(f,a,b,n,args){if(a>=b)return 0;if(n%2!==0)n++;const h=(b-a)/n;let sum=f(a,...args)+f(b,...args);for(let i=1;i<n;i+=2){const y=f(a+i*h,...args);if(isFinite(y))sum+=4*y}for(let i=2;i<n-1;i+=2){const y=f(a+i*h,...args);if(isFinite(y))sum+=2*y}return sum*h/3}
+        const calculate_v_t1=(V_in)=>V_in;function calculate_v_z1(V_in,D_c,D_e,B_c,H_c){const Q_in=V_in*H_c*B_c;const annular_area=(Math.PI/4)*(D_c**2-D_e**2);if(annular_area<=0)return 0;return Q_in/annular_area}
+        function calculate_cone_radius_at_z(z,D_c,Z_c,D_d){const R_c=D_c/2;const R_d=D_d/2;if(Z_c===0)return R_c;return R_c-(z/Z_c)*(R_c-R_d)}
+        function calculate_v_t2(z,V_in,D_c,Z_c,D_d){const R_c=D_c/2;const r_at_z=calculate_cone_radius_at_z(z,D_c,Z_c,D_d);if(r_at_z<=0)return Infinity;return(R_c/r_at_z)*V_in}
+        function calculate_v_z2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c){if((D_c-D_d)<=0||Z_c<=0)return 0;let Z_o2=Z_c*(1-(D_e-D_d)/(D_c-D_d));if(Z_o2<=0)Z_o2=Z_c;const Q_in=V_in*H_c*B_c;let Q_z=0;if(z<=Z_o2){Q_z=Q_in*(1-z/Z_o2)}const r_cone_at_z=calculate_cone_radius_at_z(z,D_c,Z_c,D_d);const r_outlet=D_e/2;const annular_area_z=Math.PI*(r_cone_at_z**2-r_outlet**2);if(annular_area_z<=0)return Infinity;return Q_z/annular_area_z}
+        function calculate_v_r2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c){const V_z2_at_z=calculate_v_z2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);if(Z_c===0)return 0;const tan_theta=((D_c/2)-(D_d/2))/Z_c;return V_z2_at_z*tan_theta}
+        function integrand_l1(z,V_in,D_c,D_e,B_c,H_c){const V_t1=calculate_v_t1(V_in);const V_z1=calculate_v_z1(V_in,D_c,D_e,B_c,H_c);if(V_z1<MIN_VELOCITY)return 0;return Math.sqrt(V_t1**2+V_z1**2)/V_z1}
+        function integrand_l2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c){const V_t2=calculate_v_t2(z,V_in,D_c,Z_c,D_d);const V_z2=calculate_v_z2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_r2=calculate_v_r2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);if(V_z2<MIN_VELOCITY||!isFinite(V_z2))return 0;const total_velocity_V2=Math.sqrt(V_t2**2+V_z2**2+V_r2**2);return total_velocity_V2/V_z2}
+        function calculate_barrel_parameters(V_in,D_c,D_e,L_c,B_c,H_c){const V_t1=calculate_v_t1(V_in);const V_z1=calculate_v_z1(V_in,D_c,D_e,B_c,H_c);const V1=Math.sqrt(V_t1**2+V_z1**2);const L1=simpson(z=>integrand_l1(z,V_in,D_c,D_e,B_c,H_c),0,L_c,1e3,[]);const Ne1=L1/(Math.PI*D_c);return{V1,L1,Ne1}}
+        function calculate_cone_parameters(V_in,D_c,D_e,Z_c,D_d,B_c,H_c){const L2=simpson(z=>integrand_l2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c),0,Z_c,1e3,[]);const avg_diameter_for_turns=(D_c+D_e)/2;const Ne2=avg_diameter_for_turns>0?L2/(Math.PI*avg_diameter_for_turns):Infinity;const z_mid=Z_c/2;const V_t2_avg=calculate_v_t2(z_mid,V_in,D_c,Z_c,D_d);const V_z2_avg=calculate_v_z2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_r2_avg=calculate_v_r2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const average_V2=Math.sqrt(V_t2_avg**2+V_z2_avg**2+V_r2_avg**2);return{average_V2,L2,Ne2}}
+        function calculate_lapple_cut_diameter(mu,B_c,rho_p,rho_g,V_in,Ne_total){const numerator=9*mu*B_c;const denominator=2*Math.PI*(rho_p-rho_g)*V_in*Ne_total;if(denominator<=0)return Infinity;return Math.sqrt(numerator/denominator)}
+        function calculate_separation_efficiency(d50_microns,dp_microns){if(dp_microns<=0)return 0;return 1/(1+(d50_microns/dp_microns)**2)}
+        function swamee_jain_friction_factor(Re,e,D){if(Re<2300)return 64/Re;const log_term=e/(3.7*D)+5.74/(Re**.9);if(log_term<=0)return.02;return.25/(Math.log10(log_term))**2}
+        function calculate_pressure_loss(V_in,D_c,D_e,L_c,Z_c,D_d,B_c,H_c,rho_g,mu,e){const Q_in=V_in*B_c*H_c;const VP_in=.5*rho_g*V_in**2;const C5=1;const delta_Pe=C5*VP_in;const A_out=Math.PI*(D_e/2)**2;const V_out=Q_in/A_out;const VP_out=.5*rho_g*V_out**2;const delta_Pk=VP_in-VP_out;const R=D_c/2;const r0=D_e/2;const delta_Pr=r0>0?rho_g*V_in**2*(R/r0-1):Infinity;const C6=1.8;const delta_Po=C6*VP_out;const V_z1_val=calculate_v_z1(V_in,D_c,D_e,B_c,H_c);const V_s1=Math.sqrt(V_in**2+V_z1_val**2);const D_s1=V_s1>0?Math.sqrt(4*Q_in/(Math.PI*V_s1)):0;const Re1=D_s1>0?rho_g*V_s1*D_s1/mu:0;const f1=swamee_jain_friction_factor(Re1,e,D_s1);const VP_s1=.5*rho_g*V_s1**2;const L1=simpson(z=>integrand_l1(z,V_in,D_c,D_e,B_c,H_c),0,L_c,1e3,[]);const delta_Pf1=D_s1>0?f1/2*(VP_s1/D_s1)*L1:0;let Z_o2=0;if(D_c-D_d>0&&Z_c>0){Z_o2=Z_c*(D_c-D_e)/(D_c-D_d)}
+        if(Z_o2<=0){Z_o2=Z_c}const z_mid=Z_o2/2;const V_t2_avg=calculate_v_t2(z_mid,V_in,D_c,Z_c,D_d);const V_z2_avg=calculate_v_z2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_r2_avg=calculate_v_r2(z_mid,V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const V_s2_avg=Math.sqrt(V_t2_avg**2+V_z2_avg**2+V_r2_avg**2);const Q_z_avg=Q_in*(1-z_mid/Z_o2);const D_s2_avg=V_s2_avg>0?Math.sqrt(4*Q_z_avg/(Math.PI*V_s2_avg)):0;const Re2_avg=D_s2_avg>0?rho_g*V_s2_avg*D_s2_avg/mu:0;const f2_avg=swamee_jain_friction_factor(Re2_avg,e,D_s2_avg);const VP_s2_avg=.5*rho_g*V_s2_avg**2;const L2=simpson(z=>integrand_l2(z,V_in,D_c,D_e,Z_c,D_d,B_c,H_c),0,Z_c,1e3,[]);const delta_Pf2=D_s2_avg>0?f2_avg/2*(VP_s2_avg/D_s2_avg)*L2:0;const delta_Pf_total=delta_Pf1+delta_Pf2;const total_loss=delta_Pe+delta_Pk+delta_Pr+delta_Po+delta_Pf_total;return{total_loss,delta_Pe,delta_Pk,delta_Pf_total,delta_Pr,delta_Po}}
+        function initCharts() {
+            const chartOptionsTemplate={responsive:!0,maintainAspectRatio:!0,layout:{padding:{top:15}},plugins:{legend:{position:"bottom",labels:{font:{}}}}};
+            const effCtx=document.getElementById("efficiency-chart").getContext("2d");let effOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));effOptions.scales={x:{title:{display:!0,text:"Particle Size (µm)",font:{}},ticks:{font:{}},type:"logarithmic"},y:{title:{display:!0,text:"Separation Efficiency (%)",font:{}},min:0,max:110,ticks:{callback:value=>value<=100?value+"%":"",font:{}}}};effOptions.plugins.tooltip={callbacks:{label:context=>`${context.dataset.label||""}: ${context.parsed.y.toFixed(2)}%`}};efficiencyChart=new Chart(effCtx,{type:"line",data:{labels:particle_sizes_microns,datasets:[]},options:effOptions});
+            const pressureCtx=document.getElementById("pressure-chart").getContext("2d");let pressureOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));pressureOptions.scales={x:{stacked:!0,title:{font:{}},ticks:{font:{}}},y:{stacked:!0,title:{display:!0,text:"Pressure Loss (Pa)",font:{}},ticks:{font:{}}}};pressureChart=new Chart(pressureCtx,{type:"bar",data:{labels:[],datasets:[{label:"Entry Loss",data:[],backgroundColor:pressureColors.dPe},{label:"Kinetic Loss",data:[],backgroundColor:pressureColors.dPk},{label:"Frictional Loss",data:[],backgroundColor:pressureColors.dPf},{label:"Rotational Loss",data:[],backgroundColor:pressureColors.dPr},{label:"Exit Loss",data:[],backgroundColor:pressureColors.dPo}]},options:pressureOptions,plugins:[{id:'pressureValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()}}]});
+            const createBarChartWithLabels=(canvasId,yAxisTitle,datasets)=>{const ctx=document.getElementById(canvasId).getContext("2d");let options=JSON.parse(JSON.stringify(chartOptionsTemplate));options.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:yAxisTitle,font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};const chart=new Chart(ctx,{type:"bar",data:{labels:[],datasets:datasets},options:options});chart.options.plugins.afterDatasetsDraw=function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()};return chart};
+            const escapedDustCtx=document.getElementById("escaped-dust-chart").getContext("2d");let escapedDustOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));escapedDustOptions.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};escapedDustChart=new Chart(escapedDustCtx,{type:"bar",data:{labels:[],datasets:[{label:"Total Escaped Dust",data:[],backgroundColor:"#facc15"}]},options:escapedDustOptions,plugins:[{id:'escapedDustValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
+            const airwattCtx=document.getElementById("airwatt-chart").getContext("2d");let airwattOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));airwattOptions.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Airwatt Loss (W)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};airwattChart=new Chart(airwattCtx,{type:"bar",data:{labels:[],datasets:[{label:"Airwatt Loss",data:[],backgroundColor:"#8b5cf6"}]},options:airwattOptions,plugins:[{id:'airwattValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
+            const perCycloneCtx=document.getElementById("per-cyclone-dust-chart").getContext("2d");let perCycloneOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));perCycloneOptions.scales={x:{title:{font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};perCycloneDustChart=new Chart(perCycloneCtx,{type:"bar",data:{labels:[],datasets:[{label:"Dust Load per Cyclone",data:[],backgroundColor:"#3b82f6"},{label:"Escaped Dust per Cyclone",data:[],backgroundColor:"#dc2626"}]},options:perCycloneOptions,plugins:[{id:'perCycloneValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{chart.data.datasets.forEach((dataset,datasetIndex)=>{const value=dataset.data[index];if(value&&value>0){const meta=chart.getDatasetMeta(datasetIndex);if(meta&&meta.data&&meta.data[index]){const bar=meta.data[index];const text=value.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}})});ctx.restore()}}]});
+        }
+        document.getElementById("calculate-btn").addEventListener("click",()=>{const resultsContainer=document.getElementById("results-container");const resultsDiv=document.getElementById("results");const errorDiv=document.getElementById("error-message");resultsDiv.classList.add("hidden");errorDiv.classList.add("hidden");try{const Q_lps=parseFloat(document.getElementById("Q_lps").value);const D_c_mm=parseFloat(document.getElementById("Dc_mm").value);const L_c_mm=parseFloat(document.getElementById("Lc_mm").value);const Z_c_mm=parseFloat(document.getElementById("Zc_mm").value);const D_e_mm=parseFloat(document.getElementById("De_mm").value);const D_d_mm=parseFloat(document.getElementById("Dd_mm").value);const B_c_mm=parseFloat(document.getElementById("Bc_mm").value);const H_c_mm=parseFloat(document.getElementById("Hc_mm").value);const mu=parseFloat(document.getElementById("mu").value);const rho_p=parseFloat(document.getElementById("rho_p").value);const rho_g=parseFloat(document.getElementById("rho_g").value);const e_um=parseFloat(document.getElementById("e_um").value);const initial_dust=parseFloat(document.getElementById("initial_dust").value);const num_cyclones=parseInt(document.getElementById("num_cyclones").value)||1;
+        const D_c=D_c_mm/1e3;const L_c=L_c_mm/1e3;const Z_c=Z_c_mm/1e3;const D_e=D_e_mm/1e3;const D_d=D_d_mm/1e3;const B_c=B_c_mm/1e3;const H_c=H_c_mm/1e3;const e=e_um/1e6;const Q_m3s=Q_lps/1e3;const A_in=B_c*H_c;if(A_in<=0)throw new Error("Inlet area (Bc * Hc) must be positive.");const V_in=Q_m3s/A_in;if(!(D_c>D_e&&D_e>D_d&&D_d>0&&L_c>0&&Z_c>=0&&V_in>0&&B_c>0&&H_c>0))throw new Error("Dimensions must be positive. The following must hold: Dc > De > Dd > 0.");
+        const{V1,L1,Ne1}=calculate_barrel_parameters(V_in,D_c,D_e,L_c,B_c,H_c);const{average_V2,L2,Ne2}=calculate_cone_parameters(V_in,D_c,D_e,Z_c,D_d,B_c,H_c);const Ne_total=Ne1+Ne2;const d50=calculate_lapple_cut_diameter(mu,B_c,rho_p,rho_g,V_in,Ne_total);const d50_microns=d50*1e6;const pressureResults=calculate_pressure_loss(V_in,D_c,D_e,L_c,Z_c,D_d,B_c,H_c,rho_g,mu,e);const airwatt_loss=pressureResults.total_loss*Q_m3s;const efficiencyTableBody=document.getElementById("efficiency-body");efficiencyTableBody.innerHTML="";let totalMassEfficiency=0;let currentEfficiencies=[];
+        particle_sizes_microns.forEach((dp,index)=>{const massFraction=mass_fractions[index];const efficiency=calculate_separation_efficiency(d50_microns,dp);currentEfficiencies.push(efficiency*100);const weightedEfficiency=efficiency*massFraction;totalMassEfficiency+=weightedEfficiency;const row=document.createElement("tr");row.innerHTML=`<td>${dp}</td><td>${(massFraction*100).toFixed(1)}</td><td>${(efficiency*100).toFixed(2)}</td><td>${(weightedEfficiency*100).toFixed(2)}</td>`;efficiencyTableBody.appendChild(row)});
+        const dust_per_cyclone=initial_dust/num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*num_cyclones;lastCalculatedData={d50:d50_microns,total_loss_pa:pressureResults.total_loss,airwatt_loss:airwatt_loss,escaped_dust:total_escaped_dust,dust_per_cyclone:dust_per_cyclone,escaped_per_cyclone:escaped_per_cyclone,pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po},efficiencies:currentEfficiencies};
+        document.getElementById("result-Vin").textContent=V_in.toFixed(2);document.getElementById("result-V1").textContent=V1.toFixed(4);document.getElementById("result-L1_mm").textContent=(L1*1e3).toFixed(2);document.getElementById("result-Ne1").textContent=Ne1.toFixed(2);document.getElementById("result-V2").textContent=isFinite(average_V2)?average_V2.toFixed(4):"N/A";document.getElementById("result-L2_mm").textContent=(L2*1e3).toFixed(2);document.getElementById("result-Ne2").textContent=Ne2.toFixed(2);document.getElementById("result-Ne_total").textContent=Ne_total.toFixed(2);
+        document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
+        document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
+        document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);runCounter++;document.getElementById("run-name-input").value=""});
+        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()})});
+
+        // File Operations
+        document.getElementById("save-to-file-btn").addEventListener("click", saveRunsToFile);
+        document.getElementById("load-from-file-input").addEventListener("change", loadRunsFromFile);
+        document.getElementById("export-all-runs-btn").addEventListener("click", exportAllRuns);
+
+        // Input History Operations
+        document.getElementById("save-current-params-btn").addEventListener("click", saveCurrentParameters);
+        document.getElementById("load-history-btn").addEventListener("click", loadSelectedHistory);
+        document.getElementById("delete-selected-params-btn").addEventListener("click", deleteSelectedParameters);
+        document.getElementById("clear-history-btn").addEventListener("click", clearInputHistory);
+        document.getElementById("input-history-select").addEventListener("change", toggleHistoryButtons);
+        
+        // New UI Controls
+        document.getElementById("quick-menu-btn").addEventListener("click", toggleQuickMenu);
+        document.getElementById("history-toggle-btn").addEventListener("click", toggleHistoryPanel);
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function(event) {
+            if (!event.target.closest("#quick-menu-btn") && !event.target.closest("#quick-menu-dropdown")) {
+                document.getElementById("quick-menu-dropdown").classList.add("hidden");
+            }
+        });
+
+        // Chart Export Operations
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.chart-export-btn')) {
+                const button = event.target.closest('.chart-export-btn');
+                const chartId = button.getAttribute('data-chart');
+                const exportType = button.getAttribute('data-type') || 'image';
+                
+                if (exportType === 'csv') {
+                    exportChartAsCSV(chartId);
+                } else {
+                    exportChartAsImage(chartId);
+                }
+            }
+        });
+
+        async function saveRunsToFile() {
+            if (runHistory.length === 0) {
+                alert("No runs to save. Please calculate and save some runs first.");
+                return;
+            }
+            
+            // Get a meaningful filename
+            let projectName = prompt("Enter a name for this project:", "cyclone_project");
+            if (projectName === null) return; // User cancelled
+            if (projectName.trim() === "") projectName = "cyclone_project";
+            
+            // Clean filename
+            projectName = projectName.replace(/[^a-zA-Z0-9_-]/g, '_');
+            
+            const dataToSave = {
+                projectName: projectName,
+                runs: runHistory,
+                inputHistory: inputHistory, // Include parameter history
+                exportDate: new Date().toISOString(),
+                version: "1.0",
+                application: "Cyclone Calculator"
+            };
+            
+            const dataStr = JSON.stringify(dataToSave, null, 2);
+            const filename = `${projectName}_${new Date().toISOString().split('T')[0]}.json`;
+            
+            // Try to use the modern File System Access API first
+            if ('showSaveFilePicker' in window) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'Cyclone Run Data',
+                            accept: {
+                                'application/json': ['.json']
+                            }
+                        }]
+                    });
+                    
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(dataStr);
+                    await writable.close();
+                    
+                    alert(`Successfully saved ${runHistory.length} runs to your chosen location!`);
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return; // User cancelled
+                    }
+                    console.error('File System Access API failed:', error);
+                    // Fall back to download method
+                }
+            }
+            
+            // Fallback for browsers that don't support File System Access API
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert(`Successfully saved ${runHistory.length} runs to file!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
+        }
+
+        function loadRunsFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Validate the data structure
+                    if (!data.runs || !Array.isArray(data.runs)) {
+                        throw new Error("Invalid file format: missing runs array");
+                    }
+                    
+                    // Ask user if they want to replace or merge
+                    let shouldMerge = false;
+                    if (runHistory.length > 0 || inputHistory.length > 0) {
+                        shouldMerge = confirm(`You have ${runHistory.length} existing runs and ${inputHistory.length} saved parameter sets. Click OK to merge with loaded data, or Cancel to replace all data.`);
+                    }
+                    
+                    if (!shouldMerge) {
+                        runHistory = [];
+                        runCounter = 1;
+                        inputHistory = [];
+                    }
+                    
+                    // Load the runs
+                    const loadedRuns = data.runs;
+                    const startCounter = runCounter;
+                    
+                    loadedRuns.forEach((run, index) => {
+                        // Assign new IDs to avoid conflicts
+                        const newRun = {
+                            ...run,
+                            id: runCounter,
+                            name: run.name || `Loaded Run ${runCounter}`
+                        };
+                        runHistory.push(newRun);
+                        runCounter++;
+                    });
+                    
+                    // Update the display
+                    updateComparisonTable();
+                    
+                    // Clear charts and rebuild
+                    [efficiencyChart, pressureChart, escapedDustChart, perCycloneDustChart, airwattChart].forEach(chart => {
+                        chart.data.labels = [];
+                        chart.data.datasets.forEach(d => d.data = []);
+                        if (chart === efficiencyChart) {
+                            chart.data.datasets = [{
+                                label: 'Efficiency (%)',
+                                data: [],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                tension: 0.1
+                            }];
+                        }
+                        chart.update();
+                    });
+                    
+                    // Rebuild all charts with loaded data
+                    runHistory.forEach(runData => {
+                        updateChartsForNewRun(runData);
+                    });
+                    
+                    // Load input history if present
+                    if (data.inputHistory && Array.isArray(data.inputHistory)) {
+                        const loadedInputHistory = data.inputHistory;
+                        
+                        if (!shouldMerge) {
+                            inputHistory = loadedInputHistory;
+                        } else {
+                            // Merge input history, avoiding duplicates by name
+                            loadedInputHistory.forEach(paramSet => {
+                                const existingIndex = inputHistory.findIndex(existing => 
+                                    existing.displayName === paramSet.displayName
+                                );
+                                
+                                if (existingIndex >= 0) {
+                                    // Overwrite existing with same name
+                                    inputHistory[existingIndex] = { ...paramSet, id: Date.now() + Math.random() };
+                                } else {
+                                    // Add new parameter set
+                                    inputHistory.push({ ...paramSet, id: Date.now() + Math.random() });
+                                }
+                            });
+                        }
+                        
+                        // Limit history size
+                        if (inputHistory.length > MAX_HISTORY_ENTRIES) {
+                            inputHistory = inputHistory.slice(0, MAX_HISTORY_ENTRIES);
+                        }
+                        
+                        // Update UI and save to localStorage
+                        saveInputHistoryToStorage();
+                        updateHistoryDropdown();
+                    }
+                    
+                    const projectName = data.projectName || "Unknown Project";
+                    alert(`Successfully loaded project "${projectName}"!\n\nRuns: ${loadedRuns.length}${shouldMerge ? ` (Total: ${runHistory.length})` : ''}\nParameter Sets: ${data.inputHistory ? data.inputHistory.length : 0}${shouldMerge && data.inputHistory ? ` (Total: ${inputHistory.length})` : ''}`);
+                    
+                } catch (error) {
+                    alert(`Error loading file: ${error.message}`);
+                } finally {
+                    // Clear the file input
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function exportAllRuns() {
+            if (runHistory.length === 0) {
+                alert("No runs to export. Please calculate and save some runs first.");
+                return;
+            }
+            
+            // Get a meaningful filename for the export
+            let exportName = prompt("Enter a name for this detailed export:", "cyclone_analysis");
+            if (exportName === null) return; // User cancelled
+            if (exportName.trim() === "") exportName = "cyclone_analysis";
+            
+            // Clean filename
+            exportName = exportName.replace(/[^a-zA-Z0-9_-]/g, '_');
+            
+            // Create a formatted export with additional metadata
+            const exportData = {
+                exportName: exportName,
+                metadata: {
+                    exportDate: new Date().toISOString(),
+                    totalRuns: runHistory.length,
+                    totalParameterSets: inputHistory.length,
+                    application: "Cyclone Calculator",
+                    version: "1.0"
+                },
+                summary: {
+                    bestEfficiency: Math.max(...runHistory.map(r => r.total_loss_pa ? (100 - r.escaped_dust/200*100) : 0)),
+                    lowestPressureDrop: Math.min(...runHistory.map(r => r.total_loss_pa || Infinity)),
+                    averageD50: runHistory.reduce((sum, r) => sum + (r.d50 || 0), 0) / runHistory.length
+                },
+                runs: runHistory.map(run => ({
+                    id: run.id,
+                    name: run.name,
+                    d50_microns: run.d50,
+                    efficiency_percent: ((1 - run.escaped_dust/200) * 100).toFixed(2),
+                    pressure_drop_pa: run.total_loss_pa,
+                    airwatt_loss: run.airwatt_loss,
+                    escaped_dust_g: run.escaped_dust,
+                    dust_per_cyclone_g: run.dust_per_cyclone,
+                    escaped_per_cyclone_g: run.escaped_per_cyclone,
+                    pressure_components: run.pressure_components,
+                    efficiencies_by_particle_size: run.efficiencies
+                })),
+                inputHistory: inputHistory.map(paramSet => ({
+                    name: paramSet.displayName,
+                    timestamp: paramSet.timestamp,
+                    isAutoSaved: paramSet.autoSaved || false,
+                    isUserNamed: paramSet.userNamed || false,
+                    parameters: paramSet.parameters
+                }))
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const filename = `${exportName}_detailed_${new Date().toISOString().split('T')[0]}.json`;
+            
+            // Try to use the modern File System Access API first
+            if ('showSaveFilePicker' in window) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'Cyclone Analysis Export',
+                            accept: {
+                                'application/json': ['.json']
+                            }
+                        }]
+                    });
+                    
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(dataStr);
+                    await writable.close();
+                    
+                    alert(`Successfully exported detailed analysis!\n\n• ${runHistory.length} calculation runs\n• ${inputHistory.length} saved parameter sets\n\nSaved to your chosen location as "${filename}"`);
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return; // User cancelled
+                    }
+                    console.error('File System Access API failed:', error);
+                    // Fall back to download method
+                }
+            }
+            
+            // Fallback for browsers that don't support File System Access API
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert(`Successfully exported detailed analysis!\n\n• ${runHistory.length} calculation runs\n• ${inputHistory.length} saved parameter sets\n\nDownloaded as "${filename}"\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
+        }
+
+        async function exportChartAsImage(chartId) {
+            try {
+                const canvas = document.getElementById(chartId);
+                if (!canvas) {
+                    alert(`Chart with ID "${chartId}" not found.`);
+                    return;
+                }
+                
+                // Get the chart title for filename
+                const chartContainer = canvas.closest('.sortable-card, .bg-white');
+                let chartTitle = 'chart';
+                
+                if (chartContainer) {
+                    const titleElement = chartContainer.querySelector('h3');
+                    if (titleElement) {
+                        chartTitle = titleElement.textContent.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                    }
+                }
+                
+                // Convert canvas to blob
+                canvas.toBlob(async function(blob) {
+                    if (!blob) {
+                        alert('Failed to generate image from chart.');
+                        return;
+                    }
+                    
+                    const filename = `${chartTitle}_${new Date().toISOString().split('T')[0]}.png`;
+                    
+                    // Try to use the modern File System Access API first
+                    if ('showSaveFilePicker' in window) {
+                        try {
+                            const fileHandle = await window.showSaveFilePicker({
+                                suggestedName: filename,
+                                types: [{
+                                    description: 'PNG Images',
+                                    accept: {
+                                        'image/png': ['.png']
+                                    }
+                                }]
+                            });
+                            
+                            const writable = await fileHandle.createWritable();
+                            await writable.write(blob);
+                            await writable.close();
+                            
+                            alert(`Chart exported successfully to your chosen location!`);
+                            return;
+                        } catch (error) {
+                            if (error.name === 'AbortError') {
+                                return; // User cancelled
+                            }
+                            console.error('File System Access API failed:', error);
+                            // Fall back to download method
+                        }
+                    }
+                    
+                    // Fallback for browsers that don't support File System Access API
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    alert(`Chart exported as ${filename}!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
+                }, 'image/png', 1.0);
+                
+            } catch (error) {
+                console.error('Chart export error:', error);
+                alert(`Failed to export chart: ${error.message}`);
+            }
+        }
+
+        async function exportChartAsCSV(chartId) {
+            try {
+                // Get the chart data based on chartId
+                let csvData = getChartDataAsCSV(chartId);
+                
+                if (!csvData) {
+                    alert(`No data available for chart "${chartId}".`);
+                    return;
+                }
+                
+                // Get the chart title for filename
+                const canvas = document.getElementById(chartId);
+                const chartContainer = canvas.closest('.sortable-card, .bg-white');
+                let chartTitle = 'chart_data';
+                
+                if (chartContainer) {
+                    const titleElement = chartContainer.querySelector('h3');
+                    if (titleElement) {
+                        chartTitle = titleElement.textContent.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                    }
+                }
+                
+                const filename = `${chartTitle}_data_${new Date().toISOString().split('T')[0]}.csv`;
+                
+                // Try to use the modern File System Access API first
+                if ('showSaveFilePicker' in window) {
+                    try {
+                        const fileHandle = await window.showSaveFilePicker({
+                            suggestedName: filename,
+                            types: [{
+                                description: 'CSV Data Files',
+                                accept: {
+                                    'text/csv': ['.csv']
+                                }
+                            }]
+                        });
+                        
+                        const writable = await fileHandle.createWritable();
+                        await writable.write(csvData);
+                        await writable.close();
+                        
+                        alert(`Chart data exported successfully to your chosen location!`);
+                        return;
+                    } catch (error) {
+                        if (error.name === 'AbortError') {
+                            return; // User cancelled
+                        }
+                        console.error('File System Access API failed:', error);
+                        // Fall back to download method
+                    }
+                }
+                
+                // Fallback for browsers that don't support File System Access API
+                const dataBlob = new Blob([csvData], {type: 'text/csv;charset=utf-8;'});
+                const url = URL.createObjectURL(dataBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                alert(`Chart data exported as ${filename}!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
+                
+            } catch (error) {
+                console.error('Chart CSV export error:', error);
+                alert(`Failed to export chart data: ${error.message}`);
+            }
+        }
+
+        function getChartDataAsCSV(chartId) {
+            // Map chart IDs to their respective Chart.js instances
+            const chartMap = {
+                'efficiency-chart': efficiencyChart,
+                'per-cyclone-dust-chart': perCycloneDustChart,
+                'escaped-dust-chart': escapedDustChart,
+                'pressure-chart': pressureChart,
+                'airwatt-chart': airwattChart,
+                'param-efficiency-chart': paramEfficiencyChart,
+                'param-pressure-chart': paramPressureChart,
+                'param-per-cyclone-dust-chart': paramPerCycloneDustChart,
+                'param-escaped-dust-chart': paramEscapedDustChart,
+                'param-airwatt-chart': paramAirwattChart,
+                'instant-efficiency-chart': instantChart,
+                'instant-dust-chart': instantDustChart
+            };
+            
+            const chart = chartMap[chartId];
+            if (!chart || !chart.data) {
+                return null;
+            }
+            
+            const data = chart.data;
+            
+            // Handle different chart types
+            if (chartId === 'efficiency-chart') {
+                // Line chart with multiple datasets - efficiency by particle size
+                return exportEfficiencyChartData(data);
+            } else if (chartId.includes('param-efficiency')) {
+                // Parametric efficiency chart
+                return exportParametricEfficiencyData(data);
+            } else if (chartId === 'instant-efficiency-chart') {
+                // Instant efficiency chart
+                return exportInstantEfficiencyData(data);
+            } else {
+                // Bar charts - general format
+                return exportBarChartData(data, chartId);
+            }
+        }
+
+        function exportEfficiencyChartData(data) {
+            const headers = ['Particle_Size_microns'];
+            data.datasets.forEach(dataset => {
+                headers.push(`${dataset.label.replace(/,/g, '_')}_Efficiency_%`);
+            });
+            
+            const csvRows = [headers.join(',')];
+            
+            // Use particle sizes as base
+            if (data.labels && data.labels.length > 0) {
+                data.labels.forEach((label, index) => {
+                    const row = [label];
+                    data.datasets.forEach(dataset => {
+                        const value = dataset.data[index] || '';
+                        row.push(value);
+                    });
+                    csvRows.push(row.join(','));
+                });
+            }
+            
+            return csvRows.join('\n');
+        }
+
+        function exportParametricEfficiencyData(data) {
+            // Parametric studies typically have parameter values as labels
+            const headers = ['Parameter_Value'];
+            data.datasets.forEach(dataset => {
+                headers.push(`${dataset.label.replace(/,/g, '_')}_Value`);
+            });
+            
+            const csvRows = [headers.join(',')];
+            
+            if (data.labels && data.labels.length > 0) {
+                data.labels.forEach((label, index) => {
+                    const row = [label];
+                    data.datasets.forEach(dataset => {
+                        const value = dataset.data[index] || '';
+                        row.push(value);
+                    });
+                    csvRows.push(row.join(','));
+                });
+            }
+            
+            return csvRows.join('\n');
+        }
+
+        function exportInstantEfficiencyData(data) {
+            const csvRows = ['Particle_Size_microns,Efficiency_%'];
+            
+            if (data.labels && data.datasets[0] && data.datasets[0].data) {
+                data.labels.forEach((label, index) => {
+                    const efficiency = data.datasets[0].data[index] || '';
+                    csvRows.push(`${label},${efficiency}`);
+                });
+            }
+            
+            return csvRows.join('\n');
+        }
+
+        function exportBarChartData(data, chartId) {
+            const headers = ['Run_Name'];
+            data.datasets.forEach(dataset => {
+                headers.push(`${dataset.label.replace(/,/g, '_')}`);
+            });
+            
+            const csvRows = [headers.join(',')];
+            
+            if (data.labels && data.labels.length > 0) {
+                data.labels.forEach((label, index) => {
+                    const row = [label.replace(/,/g, '_')];
+                    data.datasets.forEach(dataset => {
+                        const value = dataset.data[index] || '';
+                        row.push(value);
+                    });
+                    csvRows.push(row.join(','));
+                });
+            }
+            
+            return csvRows.join('\n');
+        }
+
+        // Input History Functions
+        function getCurrentParameters() {
+            return {
+                Dc_mm: parseFloat(document.getElementById("Dc_mm").value),
+                Lc_mm: parseFloat(document.getElementById("Lc_mm").value),
+                Zc_mm: parseFloat(document.getElementById("Zc_mm").value),
+                De_mm: parseFloat(document.getElementById("De_mm").value),
+                Dd_mm: parseFloat(document.getElementById("Dd_mm").value),
+                Bc_mm: parseFloat(document.getElementById("Bc_mm").value),
+                Hc_mm: parseFloat(document.getElementById("Hc_mm").value),
+                Q_lps: parseFloat(document.getElementById("Q_lps").value),
+                mu: parseFloat(document.getElementById("mu").value),
+                rho_p: parseFloat(document.getElementById("rho_p").value),
+                rho_g: parseFloat(document.getElementById("rho_g").value),
+                e_um: parseFloat(document.getElementById("e_um").value),
+                initial_dust: parseFloat(document.getElementById("initial_dust").value),
+                num_cyclones: parseInt(document.getElementById("num_cyclones").value)
+            };
+        }
+
+        function saveCurrentParameters() {
+            const currentParams = getCurrentParameters();
+            
+            // Check if any values are invalid
+            const hasInvalidValues = Object.values(currentParams).some(value => 
+                isNaN(value) || value === null || value === undefined
+            );
+            
+            if (hasInvalidValues) {
+                alert("Please ensure all parameters have valid values before saving.");
+                return;
+            }
+            
+            // Get the name from input field
+            let paramName = document.getElementById("param-save-name-input").value.trim();
+            if (paramName === "") {
+                const timestamp = new Date().toISOString();
+                paramName = `Parameters ${timestamp.split('T')[0]} ${timestamp.split('T')[1].split('.')[0]}`;
+            }
+            
+            // Check if name already exists
+            const nameExists = inputHistory.some(entry => entry.displayName === paramName);
+            if (nameExists) {
+                const confirmOverwrite = confirm(`A parameter set named "${paramName}" already exists. Do you want to overwrite it?`);
+                if (!confirmOverwrite) {
+                    return;
+                }
+                // Remove existing entry with same name
+                inputHistory = inputHistory.filter(entry => entry.displayName !== paramName);
+            }
+            
+            const timestamp = new Date().toISOString();
+            const parameterSet = {
+                id: Date.now(), // Use timestamp as unique ID
+                timestamp: timestamp,
+                displayName: paramName,
+                parameters: currentParams,
+                userNamed: true
+            };
+            
+            // Add to beginning of array (most recent first)
+            inputHistory.unshift(parameterSet);
+            
+            // Limit history size
+            if (inputHistory.length > MAX_HISTORY_ENTRIES) {
+                inputHistory = inputHistory.slice(0, MAX_HISTORY_ENTRIES);
+            }
+            
+            // Save to localStorage
+            saveInputHistoryToStorage();
+            
+            // Update UI
+            updateHistoryDropdown();
+            
+            // Clear the input field
+            document.getElementById("param-save-name-input").value = "";
+            
+            alert(`Parameters saved as "${paramName}"!`);
+        }
+
+        function loadSelectedHistory() {
+            const selectedId = document.getElementById("input-history-select").value;
+            if (!selectedId) return;
+            
+            const historyEntry = inputHistory.find(entry => entry.id.toString() === selectedId);
+            if (!historyEntry) {
+                alert("Selected parameter set not found.");
+                return;
+            }
+            
+            const confirmMessage = `Load parameters from ${historyEntry.displayName}?\n\nThis will replace all current input values.`;
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            // Load parameters into form
+            Object.entries(historyEntry.parameters).forEach(([key, value]) => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = value;
+                }
+            });
+            
+            // Reset dropdown selection
+            document.getElementById("input-history-select").value = "";
+            document.getElementById("load-history-btn").disabled = true;
+            
+            alert(`Parameters loaded from ${historyEntry.displayName}`);
+        }
+
+        function clearInputHistory() {
+            if (inputHistory.length === 0) {
+                alert("Input history is already empty.");
+                return;
+            }
+            
+            const confirmMessage = `Clear all ${inputHistory.length} saved parameter sets?\n\nThis action cannot be undone.`;
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            inputHistory = [];
+            saveInputHistoryToStorage();
+            updateHistoryDropdown();
+            
+            alert("Input history cleared.");
+        }
+
+        function deleteSelectedParameters() {
+            const selectedId = document.getElementById("input-history-select").value;
+            if (!selectedId) return;
+            
+            const historyEntry = inputHistory.find(entry => entry.id.toString() === selectedId);
+            if (!historyEntry) {
+                alert("Selected parameter set not found.");
+                return;
+            }
+            
+            const confirmMessage = `Delete parameter set "${historyEntry.displayName}"?\n\nThis action cannot be undone.`;
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            // Remove from history
+            inputHistory = inputHistory.filter(entry => entry.id.toString() !== selectedId);
+            
+            // Save to localStorage
+            saveInputHistoryToStorage();
+            
+            // Update UI
+            updateHistoryDropdown();
+            
+            // Reset selection and buttons
+            document.getElementById("input-history-select").value = "";
+            toggleHistoryButtons();
+            
+            alert(`Parameter set "${historyEntry.displayName}" deleted.`);
+        }
+
+        function toggleHistoryButtons() {
+            const selectedId = document.getElementById("input-history-select").value;
+            document.getElementById("load-history-btn").disabled = !selectedId;
+            document.getElementById("delete-selected-params-btn").disabled = !selectedId;
+        }
+
+        function updateHistoryDropdown() {
+            const select = document.getElementById("input-history-select");
+            
+            // Clear existing options except the first one
+            select.innerHTML = '<option value="">Select previous parameters...</option>';
+            
+            // Add history entries with enhanced display
+            inputHistory.forEach(entry => {
+                const option = document.createElement("option");
+                option.value = entry.id;
+                
+                // Create a more informative display name
+                const date = new Date(entry.timestamp).toLocaleDateString();
+                const time = new Date(entry.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const autoFlag = entry.autoSaved ? " [Auto]" : "";
+                const paramInfo = `Q=${entry.parameters.Q_lps}L/s Dc=${entry.parameters.Dc_mm}mm`;
+                
+                option.textContent = `${entry.displayName}${autoFlag} (${date} ${time}) - ${paramInfo}`;
+                option.title = `Saved: ${date} ${time}\nQ: ${entry.parameters.Q_lps} L/s\nDc: ${entry.parameters.Dc_mm} mm\nLc: ${entry.parameters.Lc_mm} mm\nEfficiency: ${entry.parameters.initial_dust}g dust`;
+                select.appendChild(option);
+            });
+            
+            // Update placeholder text
+            if (inputHistory.length === 0) {
+                select.children[0].textContent = "No saved parameters...";
+            } else {
+                select.children[0].textContent = `Select from ${inputHistory.length} saved parameter sets...`;
+            }
+            
+            // Update history count badge
+            updateHistoryCount();
+        }
+
+        function updateHistoryCount() {
+            const countElement = document.getElementById("history-count");
+            if (countElement) {
+                countElement.textContent = inputHistory.length;
+            }
+        }
+
+        function toggleQuickMenu() {
+            const dropdown = document.getElementById("quick-menu-dropdown");
+            dropdown.classList.toggle("hidden");
+        }
+
+        function toggleHistoryPanel() {
+            const panel = document.getElementById("history-panel");
+            const button = document.getElementById("history-toggle-btn");
+            
+            panel.classList.toggle("hidden");
+            
+            // Update button appearance
+            if (panel.classList.contains("hidden")) {
+                button.classList.remove("bg-amber-200", "border-amber-400");
+                button.classList.add("bg-amber-100", "border-amber-300");
+            } else {
+                button.classList.remove("bg-amber-100", "border-amber-300");
+                button.classList.add("bg-amber-200", "border-amber-400");
+            }
+        }
+
+        function saveInputHistoryToStorage() {
+            try {
+                localStorage.setItem('cycloneInputHistory', JSON.stringify(inputHistory));
+            } catch (error) {
+                console.warn('Failed to save input history to localStorage:', error);
+            }
+        }
+
+        function loadInputHistoryFromStorage() {
+            try {
+                const stored = localStorage.getItem('cycloneInputHistory');
+                if (stored) {
+                    inputHistory = JSON.parse(stored);
+                    updateHistoryDropdown();
+                }
+            } catch (error) {
+                console.warn('Failed to load input history from localStorage:', error);
+                inputHistory = [];
+            }
+            // Make sure count is updated even if no history
+            updateHistoryCount();
+        }
+
+        function autoSaveCurrentParameters() {
+            // Auto-save parameters when calculate button is pressed
+            const currentParams = getCurrentParameters();
+            
+            // Check if parameters are valid
+            const hasInvalidValues = Object.values(currentParams).some(value => 
+                isNaN(value) || value === null || value === undefined
+            );
+            
+            if (hasInvalidValues) return;
+            
+            // Get the run name from the input field or generate one
+            let runName = document.getElementById("run-name-input").value.trim();
+            if (runName === "") {
+                const timestamp = new Date().toISOString();
+                runName = `Auto-saved ${timestamp.split('T')[0]} ${timestamp.split('T')[1].split('.')[0]}`;
+            } else {
+                runName = `Auto: ${runName}`;
+            }
+            
+            // Check if this exact parameter set with this name already exists
+            const exists = inputHistory.some(entry => 
+                entry.displayName === runName && 
+                JSON.stringify(entry.parameters) === JSON.stringify(currentParams)
+            );
+            
+            if (exists) return; // Don't auto-save duplicates
+            
+            const timestamp = new Date().toISOString();
+            const parameterSet = {
+                id: Date.now(),
+                timestamp: timestamp,
+                displayName: runName,
+                parameters: currentParams,
+                autoSaved: true
+            };
+            
+            // Add to beginning of array
+            inputHistory.unshift(parameterSet);
+            
+            // Limit history size
+            if (inputHistory.length > MAX_HISTORY_ENTRIES) {
+                inputHistory = inputHistory.slice(0, MAX_HISTORY_ENTRIES);
+            }
+            
+            saveInputHistoryToStorage();
+            updateHistoryDropdown();
+        }
+
+        function updateComparisonTable(){const tableBody=document.getElementById("comparison-body");const comparisonSection=document.getElementById("comparison-section");tableBody.innerHTML="";if(runHistory.length===0){comparisonSection.classList.add("hidden");return}comparisonSection.classList.remove("hidden");runHistory.forEach(run=>{const row=document.createElement("tr");row.innerHTML=`<td>${run.id}</td><td>${run.name}</td><td>${(run.d50).toFixed(2)}</td><td>${run.total_loss_pa.toFixed(2)}</td><td>${run.airwatt_loss.toFixed(3)}</td><td>${run.escaped_dust.toFixed(2)}</td>`;tableBody.appendChild(row)});updateAllTextSizes()}
+        function updateChartsForNewRun(runData){const newEffColor=chartColors[(runHistory.length-1)%chartColors.length];efficiencyChart.data.datasets.push({label:runData.name,data:runData.efficiencies,borderColor:newEffColor,backgroundColor:"transparent",borderWidth:2,tension:.1,pointBackgroundColor:newEffColor});pressureChart.data.labels.push(runData.name);pressureChart.data.datasets[0].data.push(runData.pressure_components.dPe);pressureChart.data.datasets[1].data.push(runData.pressure_components.dPk);pressureChart.data.datasets[2].data.push(runData.pressure_components.dPf);pressureChart.data.datasets[3].data.push(runData.pressure_components.dPr);pressureChart.data.datasets[4].data.push(runData.pressure_components.dPo);escapedDustChart.data.labels.push(runData.name);escapedDustChart.data.datasets[0].data.push(runData.escaped_dust);airwattChart.data.labels.push(runData.name);airwattChart.data.datasets[0].data.push(runData.airwatt_loss);perCycloneDustChart.data.labels.push(runData.name);perCycloneDustChart.data.datasets[0].data.push(runData.dust_per_cyclone);perCycloneDustChart.data.datasets[1].data.push(runData.escaped_per_cyclone);        [efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(c=>{c.update();c.draw()})}
+       
+        // --- PAGE INITIALIZATION & NEW PARAMETRIC STUDY CODE ---
+        let paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart;
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            initParametricStudyCharts();
+            setupControls();
+            populateParamSelect();
+            loadInputHistoryFromStorage();
+            updateAllTextSizes(); 
+
+            const col1 = document.getElementById('sortable-column-1');
+            const col2 = document.getElementById('sortable-column-2');
+            const paramCol1 = document.getElementById('param-sortable-column-1');
+            const paramCol2 = document.getElementById('param-sortable-column-2');
+
+            const sortableOptions = {group: 'shared-cards',animation: 150,handle: '.drag-handle',ghostClass: 'sortable-ghost'};
+            
+            new Sortable(col1, sortableOptions);
+            new Sortable(col2, sortableOptions);
+            new Sortable(paramCol1, sortableOptions);
+            new Sortable(paramCol2, sortableOptions);
+            
+            addExportButtonsToAllCharts();
+            document.getElementById('calculate-btn').click();
+        });
+
+        function addExportButtonsToAllCharts() {
+            // Only add buttons to charts that don't already have them
+            const chartConfigs = [
+                'per-cyclone-dust-chart', 'escaped-dust-chart', 'pressure-chart', 'airwatt-chart',
+                'param-efficiency-chart', 'param-pressure-chart', 'param-per-cyclone-dust-chart', 
+                'param-escaped-dust-chart', 'param-airwatt-chart'
+            ];
+
+            chartConfigs.forEach(chartId => {
+                const canvas = document.getElementById(chartId);
+                if (!canvas) return;
+
+                const container = canvas.closest('.sortable-card');
+                if (!container) return;
+
+                const headerElement = container.querySelector('.card-header');
+                if (!headerElement) return;
+
+                // Check if export buttons already exist
+                if (headerElement.querySelector('.chart-export-btn')) return;
+
+                // Find the existing single button and replace it with two buttons
+                const existingBtn = headerElement.querySelector('button');
+                if (existingBtn) {
+                    const exportContainer = document.createElement('div');
+                    exportContainer.className = 'flex gap-2';
+
+                    // Create image export button
+                    const imageBtn = document.createElement('button');
+                    imageBtn.className = 'chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors';
+                    imageBtn.setAttribute('data-chart', chartId);
+                    imageBtn.setAttribute('data-type', 'image');
+                    imageBtn.setAttribute('title', 'Export as Image');
+                    imageBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`;
+
+                    // Create CSV export button
+                    const csvBtn = document.createElement('button');
+                    csvBtn.className = 'chart-export-btn bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-lg transition-colors';
+                    csvBtn.setAttribute('data-chart', chartId);
+                    csvBtn.setAttribute('data-type', 'csv');
+                    csvBtn.setAttribute('title', 'Export as CSV');
+                    csvBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
+
+                    exportContainer.appendChild(imageBtn);
+                    exportContainer.appendChild(csvBtn);
+
+                    // Replace existing button with new container
+                    existingBtn.parentNode.replaceChild(exportContainer, existingBtn);
+                }
+            });
+        }
+
+        // --- PARAMETRIC STUDY FUNCTIONS ---
+        const studyableParams={'Dc_mm':'Body Diameter (mm)','Lc_mm':'Barrel Length (mm)','Zc_mm':'Cone Length (mm)','De_mm':'Outlet Diameter (mm)','Dd_mm':'Dust Outlet (mm)','Bc_mm':'Inlet Width (mm)','Hc_mm':'Inlet Height (mm)','Q_lps':'Inlet Flow Rate (L/s)','initial_dust':'Initial Dust Load (g)','num_cyclones':'# of Cyclones'};
+        function populateParamSelect(){const select=document.getElementById('param-select');for(const[key,value]of Object.entries(studyableParams)){const option=document.createElement('option');option.value=key;option.textContent=value;select.appendChild(option)}}
+        function getInputsFromDOM(){const inputs={};document.querySelectorAll('#calculator-form input').forEach(el=>{inputs[el.id]=parseFloat(el.value)});return inputs}
+       
+        function runParametricCalculationStep(inputs) {
+            const D_c=inputs.Dc_mm/1e3,L_c=inputs.Lc_mm/1e3,Z_c=inputs.Zc_mm/1e3,D_e=inputs.De_mm/1e3,D_d=inputs.Dd_mm/1e3,B_c=inputs.Bc_mm/1e3,H_c=inputs.Hc_mm/1e3,e=inputs.e_um/1e6,Q_m3s=inputs.Q_lps/1e3;
+            const A_in=B_c*H_c; if(A_in<=0)throw new Error("Inlet area must be positive."); const V_in=Q_m3s/A_in;
+            if(!(D_c>D_e&&D_e>D_d&&D_d>0&&L_c>0&&Z_c>=0&&V_in>0&&B_c>0&&H_c>0))throw new Error("Invalid dimensions. Must hold: Dc > De > Dd > 0.");
+            const{V1,L1,Ne1}=calculate_barrel_parameters(V_in,D_c,D_e,L_c,B_c,H_c); const{average_V2,L2,Ne2}=calculate_cone_parameters(V_in,D_c,D_e,Z_c,D_d,B_c,H_c);
+            const Ne_total=Ne1+Ne2; const d50=calculate_lapple_cut_diameter(inputs.mu,B_c,inputs.rho_p,inputs.rho_g,V_in,Ne_total);
+            const pressureResults=calculate_pressure_loss(V_in,D_c,D_e,L_c,Z_c,D_d,B_c,H_c,inputs.rho_g,inputs.mu,e);
+            const airwatt_loss=pressureResults.total_loss*Q_m3s; let totalMassEfficiency=0; let currentEfficiencies = [];
+            particle_sizes_microns.forEach((dp, index)=>{const eff=calculate_separation_efficiency(d50*1e6,dp); currentEfficiencies.push(eff*100); totalMassEfficiency+=eff*mass_fractions[index]});
+            const dust_per_cyclone=inputs.initial_dust/inputs.num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*inputs.num_cyclones;
+            return {d50_microns:d50*1e6, total_loss_pa:pressureResults.total_loss, airwatt_loss, total_escaped_dust, dust_per_cyclone, escaped_per_cyclone, pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po}, efficiencies: currentEfficiencies};
+        }
+
+        document.getElementById('run-study-btn').addEventListener('click', () => {
+            const paramKey = document.getElementById('param-select').value;
+            const paramLabel = studyableParams[paramKey];
+            const start = parseFloat(document.getElementById('param-start').value);
+            const end = parseFloat(document.getElementById('param-end').value);
+            const step = parseFloat(document.getElementById('param-step').value);
+            if (!paramKey || isNaN(start) || isNaN(end) || isNaN(step) || step <= 0) { alert("Please check parametric study inputs."); return; }
+
+            const baseInputs = getInputsFromDOM();
+            const originalValue = baseInputs[paramKey];
+            const studyResults = [];
+            const independentVar = [];
+
+            for (let i = start; i <= end; i += step) {
+                document.getElementById(paramKey).value = i; // Temporarily set input value for calculation
+                const currentInputs = getInputsFromDOM();
+                try {
+                    const result = runParametricCalculationStep(currentInputs);
+                    studyResults.push(result);
+                    independentVar.push(i.toFixed(2));
+                } catch (e) {
+                    console.warn(`Calculation failed for ${paramLabel}=${i}: ${e.message}`);
+                }
+            }
+            document.getElementById(paramKey).value = originalValue; // Restore original value
+
+            // Plot results
+            // For the line chart, we create a new dataset for each step of the study
+            paramEfficiencyChart.data.labels = particle_sizes_microns; // X-axis is particle size
+            paramEfficiencyChart.options.scales.x.title.text = "Particle Size (µm)";
+            paramEfficiencyChart.data.datasets = studyResults.map((result, i) => ({
+                label: `${paramLabel.split(' ')[0]} = ${independentVar[i]}`,
+                data: result.efficiencies,
+                borderColor: chartColors[i % chartColors.length],
+                backgroundColor: 'transparent',
+                fill: false,
+                borderWidth: 2
+            }));
+
+            // For bar charts, the independent variable is on the x-axis
+            [paramPressureChart, paramEscapedDustChart, paramAirwattChart, paramPerCycloneDustChart].forEach(chart => {
+                chart.data.labels = independentVar;
+                chart.options.scales.x.title.text = paramLabel;
+            });
+
+            paramPressureChart.data.datasets.forEach((dataset, i) => {
+                const key = Object.keys(pressureColors)[i];
+                dataset.data = studyResults.map(r => r.pressure_components[key]);
+            });
+
+            paramEscapedDustChart.data.datasets[0].data = studyResults.map(r => r.total_escaped_dust);
+            paramAirwattChart.data.datasets[0].data = studyResults.map(r => r.airwatt_loss);
+            paramPerCycloneDustChart.data.datasets[0].data = studyResults.map(r => r.dust_per_cyclone);
+            paramPerCycloneDustChart.data.datasets[1].data = studyResults.map(r => r.escaped_per_cyclone);
+
+            [paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart].forEach(c => {c.update();c.draw()});
+            document.getElementById('param-grid-container').classList.remove('hidden');
+        });
+
+        function initParametricStudyCharts() {
+            const chartOptionsTemplate={responsive:!0,maintainAspectRatio:!0,layout:{padding:{top:15}},plugins:{legend:{position:"bottom",labels:{font:{}}}}};
+            
+            // Parametric Efficiency Chart (Line)
+            const pEffCtx = document.getElementById("param-efficiency-chart").getContext("2d");
+            let pEffOptions = JSON.parse(JSON.stringify(chartOptionsTemplate));
+            pEffOptions.scales={x:{title:{display:!0,text:"Particle Size (µm)",font:{}},ticks:{font:{}},type:"logarithmic"},y:{title:{display:!0,text:"Separation Efficiency (%)",font:{}},min:0,max:110,ticks:{callback:value=>value<=100?value+"%":"",font:{}}}};
+            paramEfficiencyChart = new Chart(pEffCtx,{type:"line",data:{labels:particle_sizes_microns,datasets:[]},options:pEffOptions});
+
+            // Parametric Pressure Chart (Stacked Bar)
+            const pPressCtx = document.getElementById("param-pressure-chart").getContext("2d");
+            let pPressOptions = JSON.parse(JSON.stringify(chartOptionsTemplate));
+            pPressOptions.scales={x:{stacked:!0,title:{display:!0, font:{}},ticks:{font:{}}},y:{stacked:!0,title:{display:!0,text:"Pressure Loss (Pa)",font:{}},ticks:{font:{}}}};
+            paramPressureChart = new Chart(pPressCtx,{type:"bar",data:{labels:[],datasets:[{label:"Entry Loss",data:[],backgroundColor:pressureColors.dPe},{label:"Kinetic Loss",data:[],backgroundColor:pressureColors.dPk},{label:"Frictional Loss",data:[],backgroundColor:pressureColors.dPf},{label:"Rotational Loss",data:[],backgroundColor:pressureColors.dPr},{label:"Exit Loss",data:[],backgroundColor:pressureColors.dPo}]},options:pPressOptions,plugins:[{id:'paramPressureValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()}}]});
+
+            // Re-usable helper for simple bar charts
+            const createParamBarChart=(canvasId,yAxisTitle,datasets)=>{const ctx=document.getElementById(canvasId).getContext("2d");let options=JSON.parse(JSON.stringify(chartOptionsTemplate));options.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:yAxisTitle,font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};const chart=new Chart(ctx,{type:"bar",data:{labels:[],datasets:datasets},options:options});chart.options.plugins.afterDatasetsDraw=function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const lastMeta=chart.getDatasetMeta(chart.data.datasets.length-1);if(lastMeta&&lastMeta.data[index]){const topBar=lastMeta.data[index];const text=total.toFixed(1);ctx.strokeText(text,topBar.x,topBar.y-8);ctx.fillText(text,topBar.x,topBar.y-8)}}});ctx.restore()};return chart};
+
+            const paramEscapedDustCtx=document.getElementById("param-escaped-dust-chart").getContext("2d");let paramEscapedDustOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));paramEscapedDustOptions.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Total Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};paramEscapedDustChart=new Chart(paramEscapedDustCtx,{type:"bar",data:{labels:[],datasets:[{label:"Total Escaped Dust",data:[],backgroundColor:"#facc15"}]},options:paramEscapedDustOptions,plugins:[{id:'paramEscapedDustValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
+            const paramAirwattCtx=document.getElementById("param-airwatt-chart").getContext("2d");let paramAirwattOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));paramAirwattOptions.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Airwatt Loss (W)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};paramAirwattChart=new Chart(paramAirwattCtx,{type:"bar",data:{labels:[],datasets:[{label:"Airwatt Loss",data:[],backgroundColor:"#8b5cf6"}]},options:paramAirwattOptions,plugins:[{id:'paramAirwattValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
+           
+            // Parametric Per Cyclone Chart (Grouped Bar)
+            const pPerCtx = document.getElementById("param-per-cyclone-dust-chart").getContext("2d");
+            let pPerOptions = JSON.parse(JSON.stringify(chartOptionsTemplate));
+            pPerOptions.scales = {x:{title:{display:!0,font:{}},ticks:{font:{}}}, y:{title:{display:!0,text:"Dust Load (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}, y1:{type:"linear",display:!0,position:"right",title:{display:!0,text:"Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}},grid:{drawOnChartArea:!1}}};
+            paramPerCycloneDustChart = new Chart(pPerCtx,{type:"line",data:{labels:[],datasets:[{label:"Dust Load per Cyclone",data:[],backgroundColor:"#3b82f6",borderColor:"#3b82f6",type:"line",yAxisID:"y",pointRadius:6,fill:false,tension:0.1},{label:"Escaped Dust per Cyclone",data:[],backgroundColor:"#dc2626",borderColor:"#dc2626",type:"line",yAxisID:"y1",pointRadius:6,fill:false,tension:0.1}]},options:pPerOptions,plugins:[{id:'paramPerCycloneValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{chart.data.datasets.forEach((dataset,datasetIndex)=>{const value=dataset.data[index];if(value&&value>0){const meta=chart.getDatasetMeta(datasetIndex);if(meta&&meta.data&&meta.data[index]){const element=meta.data[index];const text=value.toFixed(1);ctx.strokeText(text,element.x,element.y-8);ctx.fillText(text,element.x,element.y-8)}}})});ctx.restore()}}]});
+        }
+
+        // ===========================
+        // OPTIMIZATION TAB FUNCTIONALITY
+        // ===========================
+        
+        let allOptimizationDesigns = []; // Store all designs for CSV export
+        
+        const optimizationParameters = [
+            {id: 'Dc_mm', label: 'Cyclone Diameter (Dc)', unit: 'mm', min: 100, max: 2000, default_min: 300, default_max: 800},
+            {id: 'Lc_mm', label: 'Cyclone Length (Lc)', unit: 'mm', min: 100, max: 3000, default_min: 500, default_max: 1500},
+            {id: 'De_mm', label: 'Exit Diameter (De)', unit: 'mm', min: 50, max: 1000, default_min: 150, default_max: 400},
+            {id: 'Dd_mm', label: 'Dust Outlet Diameter (Dd)', unit: 'mm', min: 20, max: 500, default_min: 75, default_max: 200},
+            {id: 'Bc_mm', label: 'Inlet Width (Bc)', unit: 'mm', min: 20, max: 500, default_min: 80, default_max: 200},
+            {id: 'Hc_mm', label: 'Inlet Height (Hc)', unit: 'mm', min: 20, max: 500, default_min: 160, default_max: 400},
+            {id: 'Zc_mm', label: 'Exit Length (Zc)', unit: 'mm', min: 0, max: 1000, default_min: 100, default_max: 300}
+        ];
+
+        function initOptimizationTab() {
+            populateOptimizationParameters();
+            setupOptimizationEventListeners();
+        }
+
+        function populateOptimizationParameters() {
+            const container = document.getElementById('opt-variables-container');
+            container.innerHTML = '';
+            
+            optimizationParameters.forEach(param => {
+                const paramDiv = document.createElement('div');
+                paramDiv.className = 'border border-gray-200 rounded-lg p-4';
+                paramDiv.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-medium text-gray-700">${param.label}</label>
+                        <input type="checkbox" id="opt-enable-${param.id}" class="opt-param-checkbox" 
+                               data-param="${param.id}" onchange="toggleParameterRange('${param.id}')">
+                    </div>
+                    <div id="opt-range-${param.id}" class="hidden grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Min ${param.unit}</label>
+                            <input type="number" id="opt-min-${param.id}" value="${param.default_min}" 
+                                   min="${param.min}" max="${param.max}" class="w-full p-1 text-sm border border-gray-300 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Max ${param.unit}</label>
+                            <input type="number" id="opt-max-${param.id}" value="${param.default_max}" 
+                                   min="${param.min}" max="${param.max}" class="w-full p-1 text-sm border border-gray-300 rounded">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(paramDiv);
+            });
+        }
+
+        function toggleParameterRange(paramId) {
+            const checkbox = document.getElementById(`opt-enable-${paramId}`);
+            const rangeDiv = document.getElementById(`opt-range-${paramId}`);
+            
+            if (checkbox.checked) {
+                rangeDiv.classList.remove('hidden');
+            } else {
+                rangeDiv.classList.add('hidden');
+            }
+        }
+
+        function setupOptimizationEventListeners() {
+            document.getElementById('run-optimization-btn').addEventListener('click', runOptimization);
+            document.getElementById('export-all-designs-csv').addEventListener('click', exportAllDesignsToCSV);
+        }
+
+        async function exportAllDesignsToCSV() {
+            if (allOptimizationDesigns.length === 0) {
+                alert("No optimization data to export. Please run an optimization first.");
+                return;
+            }
+            
+            // Create CSV header
+            const headers = [
+                'Design_ID',
+                'Objective',
+                'Is_Valid',
+                'Constraint_Violated',
+                'Error_Reason',
+                // Input parameters
+                'Dc_mm',
+                'Lc_mm', 
+                'Zc_mm',
+                'De_mm',
+                'Dd_mm',
+                'Bc_mm',
+                'Hc_mm',
+                'Q_lps',
+                'num_cyclones',
+                'mu',
+                'rho_p',
+                'rho_g',
+                'e_um',
+                'initial_dust',
+                // Output results
+                'Total_Efficiency_%',
+                'Pressure_Drop_Pa',
+                'Escaped_Dust_g',
+                'Dust_per_Cyclone_g',
+                'Escaped_per_Cyclone_g',
+                'Airwatt_Loss_W',
+                'D50_microns',
+                'Objective_Value'
+            ];
+            
+            // Convert data to CSV format
+            const csvRows = [headers.join(',')];
+            
+            allOptimizationDesigns.forEach(design => {
+                const row = [
+                    design.design_id,
+                    design.objective,
+                    design.is_valid,
+                    design.constraint_violated,
+                    design.error_reason || '',
+                    // Input parameters
+                    design.Dc_mm || design.Dc_mm || '',
+                    design.Lc_mm || design.Lc_mm || '',
+                    design.Zc_mm || design.Zc_mm || '',
+                    design.De_mm || design.De_mm || '',
+                    design.Dd_mm || design.Dd_mm || '',
+                    design.Bc_mm || design.Bc_mm || '',
+                    design.Hc_mm || design.Hc_mm || '',
+                    design.Q_lps || design.Q_lps || '',
+                    design.num_cyclones || design.num_cyclones || '',
+                    design.mu || design.mu || '',
+                    design.rho_p || design.rho_p || '',
+                    design.rho_g || design.rho_g || '',
+                    design.e_um || design.e_um || '',
+                    design.initial_dust || design.initial_dust || '',
+                    // Output results
+                    design.total_efficiency || '',
+                    design.pressure_drop || '',
+                    design.escaped_dust || '',
+                    design.dust_per_cyclone || '',
+                    design.escaped_per_cyclone || '',
+                    design.airwatt_loss || '',
+                    design.d50_microns || '',
+                    design.objective_value || ''
+                ];
+                
+                // Escape commas and quotes in CSV data
+                const escapedRow = row.map(field => {
+                    if (field === null || field === undefined) return '';
+                    const str = String(field);
+                    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                        return '"' + str.replace(/"/g, '""') + '"';
+                    }
+                    return str;
+                });
+                
+                csvRows.push(escapedRow.join(','));
+            });
+            
+            const csvContent = csvRows.join('\n');
+            const filename = `optimization_all_designs_${new Date().toISOString().split('T')[0]}.csv`;
+            
+            // Try to use the modern File System Access API first
+            if ('showSaveFilePicker' in window) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'CSV Data Files',
+                            accept: {
+                                'text/csv': ['.csv']
+                            }
+                        }]
+                    });
+                    
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(csvContent);
+                    await writable.close();
+                    
+                    alert(`Successfully exported ${allOptimizationDesigns.length} designs to your chosen location!`);
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return; // User cancelled
+                    }
+                    console.error('File System Access API failed:', error);
+                    // Fall back to download method
+                }
+            }
+            
+            // Fallback for browsers that don't support File System Access API
+            const dataBlob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert(`Successfully exported ${allOptimizationDesigns.length} designs to CSV file!\n\nNote: Your browser downloaded to the default folder. For directory selection, use Chrome, Edge, or other modern browsers.`);
+        }
+
+        async function runOptimization() {
+            const objective = document.getElementById('opt-objective').value;
+            const enabledParams = getEnabledParameters();
+            
+            if (enabledParams.length === 0) {
+                alert('Please select at least one parameter to optimize.');
+                return;
+            }
+
+            showOptimizationProgress();
+            const results = await performGridSearchOptimization(objective, enabledParams);
+            hideOptimizationProgress();
+            displayOptimizationResults(results, objective);
+        }
+
+        function getEnabledParameters() {
+            const enabled = [];
+            optimizationParameters.forEach(param => {
+                const checkbox = document.getElementById(`opt-enable-${param.id}`);
+                if (checkbox.checked) {
+                    const minVal = parseFloat(document.getElementById(`opt-min-${param.id}`).value);
+                    const maxVal = parseFloat(document.getElementById(`opt-max-${param.id}`).value);
+                    enabled.push({
+                        id: param.id,
+                        label: param.label,
+                        unit: param.unit,
+                        min: minVal,
+                        max: maxVal,
+                        steps: 5 // 5 steps for grid search
+                    });
+                }
+            });
+            return enabled;
+        }
+
+        function showOptimizationProgress() {
+            document.getElementById('opt-progress-container').classList.remove('hidden');
+            document.getElementById('opt-results-container').classList.add('hidden');
+            document.getElementById('opt-welcome-message').classList.add('hidden');
+        }
+
+        function hideOptimizationProgress() {
+            document.getElementById('opt-progress-container').classList.add('hidden');
+        }
+
+        function updateProgress(current, total, text) {
+            const percent = (current / total) * 100;
+            document.getElementById('opt-progress-bar').style.width = percent + '%';
+            document.getElementById('opt-progress-text').textContent = text || `${current}/${total} calculations completed`;
+        }
+
+        async function performGridSearchOptimization(objective, enabledParams) {
+            const baseInputs = getCurrentInputValues();
+            const maxPressureConstraint = parseFloat(document.getElementById('opt-constraint-max-pressure').value) || Infinity;
+            
+            // Generate all parameter combinations
+            const combinations = generateParameterCombinations(enabledParams);
+            const results = [];
+            allOptimizationDesigns = []; // Clear previous results
+            
+            for (let i = 0; i < combinations.length; i++) {
+                updateProgress(i, combinations.length, `Evaluating design ${i + 1}/${combinations.length}`);
+                
+                const inputs = { ...baseInputs, ...combinations[i] };
+                
+                try {
+                    const result = await evaluateDesign(inputs, objective, maxPressureConstraint);
+                    
+                    // Store ALL designs (valid and invalid) for CSV export
+                    const designRecord = {
+                        design_id: i + 1,
+                        objective: objective,
+                        ...combinations[i], // All input parameters
+                        ...inputs, // Include base inputs too
+                        is_valid: result ? result.isValid : false,
+                        constraint_violated: result ? (result.pressureDrop > maxPressureConstraint) : false,
+                        error_reason: result ? null : 'Calculation failed'
+                    };
+                    
+                    if (result) {
+                        // Add calculated results
+                        designRecord.total_efficiency = result.totalEfficiency;
+                        designRecord.pressure_drop = result.pressureDrop;
+                        designRecord.escaped_dust = result.escapedDust;
+                        designRecord.dust_per_cyclone = result.dustPerCyclone;
+                        designRecord.escaped_per_cyclone = result.escapedPerCyclone;
+                        designRecord.airwatt_loss = result.airwattLoss;
+                        designRecord.d50_microns = result.d50;
+                        designRecord.objective_value = result.objectiveValue;
+                    } else {
+                        // Add null values for failed calculations
+                        designRecord.total_efficiency = null;
+                        designRecord.pressure_drop = null;
+                        designRecord.escaped_dust = null;
+                        designRecord.dust_per_cyclone = null;
+                        designRecord.escaped_per_cyclone = null;
+                        designRecord.airwatt_loss = null;
+                        designRecord.d50_microns = null;
+                        designRecord.objective_value = null;
+                    }
+                    
+                    allOptimizationDesigns.push(designRecord);
+                    
+                    if (result && result.isValid) {
+                        results.push({ ...result, combination: combinations[i] });
+                    }
+                } catch (error) {
+                    console.warn('Design evaluation failed:', error);
+                    
+                    // Still record the failed design
+                    allOptimizationDesigns.push({
+                        design_id: i + 1,
+                        objective: objective,
+                        ...combinations[i],
+                        ...inputs,
+                        is_valid: false,
+                        constraint_violated: false,
+                        error_reason: error.message || 'Unknown error',
+                        total_efficiency: null,
+                        pressure_drop: null,
+                        escaped_dust: null,
+                        dust_per_cyclone: null,
+                        escaped_per_cyclone: null,
+                        airwatt_loss: null,
+                        d50_microns: null,
+                        objective_value: null
+                    });
+                }
+                
+                // Small delay to allow UI updates
+                if (i % 10 === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 1));
+                }
+            }
+            
+            // Sort results based on objective
+            results.sort((a, b) => {
+                if (objective === 'maximize_efficiency') {
+                    return b.objectiveValue - a.objectiveValue;
+                } else {
+                    return a.objectiveValue - b.objectiveValue;
+                }
+            });
+            
+            return results;
+        }
+
+        function generateParameterCombinations(enabledParams) {
+            if (enabledParams.length === 0) return [];
+            
+            const parameterValues = enabledParams.map(param => {
+                const values = [];
+                const step = (param.max - param.min) / (param.steps - 1);
+                for (let i = 0; i < param.steps; i++) {
+                    values.push(param.min + (step * i));
+                }
+                return { id: param.id, values };
+            });
+            
+            // Generate all combinations
+            function cartesianProduct(arrays) {
+                return arrays.reduce((acc, curr) => {
+                    const result = [];
+                    acc.forEach(a => {
+                        curr.values.forEach(b => {
+                            const combination = { ...a };
+                            combination[curr.id] = b;
+                            result.push(combination);
+                        });
+                    });
+                    return result;
+                }, [{}]);
+            }
+            
+            return cartesianProduct(parameterValues);
+        }
+
+        function getCurrentInputValues() {
+            return {
+                Q_lps: parseFloat(document.getElementById("Q_lps").value),
+                Dc_mm: parseFloat(document.getElementById("Dc_mm").value),
+                Lc_mm: parseFloat(document.getElementById("Lc_mm").value),
+                Zc_mm: parseFloat(document.getElementById("Zc_mm").value),
+                De_mm: parseFloat(document.getElementById("De_mm").value),
+                Dd_mm: parseFloat(document.getElementById("Dd_mm").value),
+                Bc_mm: parseFloat(document.getElementById("Bc_mm").value),
+                Hc_mm: parseFloat(document.getElementById("Hc_mm").value),
+                mu: parseFloat(document.getElementById("mu").value),
+                rho_p: parseFloat(document.getElementById("rho_p").value),
+                rho_g: parseFloat(document.getElementById("rho_g").value),
+                e_um: parseFloat(document.getElementById("e_um").value),
+                initial_dust: parseFloat(document.getElementById("initial_dust").value),
+                num_cyclones: parseInt(document.getElementById("num_cyclones").value) || 1
+            };
+        }
+
+        async function evaluateDesign(inputs, objective, maxPressureConstraint) {
+            try {
+                // Convert inputs to proper units (same as main calculation)
+                const D_c = inputs.Dc_mm / 1e3;
+                const L_c = inputs.Lc_mm / 1e3;
+                const Z_c = inputs.Zc_mm / 1e3;
+                const D_e = inputs.De_mm / 1e3;
+                const D_d = inputs.Dd_mm / 1e3;
+                const B_c = inputs.Bc_mm / 1e3;
+                const H_c = inputs.Hc_mm / 1e3;
+                const e = inputs.e_um / 1e6;
+                const Q_m3s = inputs.Q_lps / 1e3;
+                
+                // Validate dimensions (same as main calculation)
+                const A_in = B_c * H_c;
+                if (A_in <= 0) return null;
+                const V_in = Q_m3s / A_in;
+                if (!(D_c > D_e && D_e > D_d && D_d > 0 && L_c > 0 && Z_c >= 0 && V_in > 0 && B_c > 0 && H_c > 0)) {
+                    return null;
+                }
+                
+                // Perform calculation using the same approach as main calculation
+                const {V1, L1, Ne1} = calculate_barrel_parameters(V_in, D_c, D_e, L_c, B_c, H_c);
+                const {average_V2, L2, Ne2} = calculate_cone_parameters(V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
+                const Ne_total = Ne1 + Ne2;
+                const d50 = calculate_lapple_cut_diameter(inputs.mu, B_c, inputs.rho_p, inputs.rho_g, V_in, Ne_total);
+                const d50_microns = d50 * 1e6;
+                const pressureResults = calculate_pressure_loss(V_in, D_c, D_e, L_c, Z_c, D_d, B_c, H_c, inputs.rho_g, inputs.mu, e);
+                const airwatt_loss = pressureResults.total_loss * Q_m3s;
+                
+                // Check constraints
+                if (pressureResults.total_loss > maxPressureConstraint) {
+                    return null;
+                }
+                
+                // Calculate efficiency for each particle size (same as main calculation)
+                let totalMassEfficiency = 0;
+                particle_sizes_microns.forEach((dp, index) => {
+                    const massFraction = mass_fractions[index];
+                    const efficiency = calculate_separation_efficiency(d50_microns, dp);
+                    const weightedEfficiency = efficiency * massFraction;
+                    totalMassEfficiency += weightedEfficiency;
+                });
+                
+                // Calculate final results (same as main calculation)
+                const dust_per_cyclone = inputs.initial_dust / inputs.num_cyclones;
+                const escaped_per_cyclone = dust_per_cyclone * (1 - totalMassEfficiency);
+                const total_escaped_dust = escaped_per_cyclone * inputs.num_cyclones;
+                const totalEfficiencyPercent = totalMassEfficiency * 100;
+                
+                let objectiveValue;
+                switch (objective) {
+                    case 'maximize_efficiency':
+                        objectiveValue = totalEfficiencyPercent;
+                        break;
+                    case 'minimize_pressure_drop':
+                        objectiveValue = pressureResults.total_loss;
+                        break;
+                    case 'minimize_escaped_dust':
+                        objectiveValue = total_escaped_dust;
+                        break;
+                    default:
+                        objectiveValue = totalEfficiencyPercent;
+                }
+                
+                return {
+                    isValid: true,
+                    objectiveValue,
+                    totalEfficiency: totalEfficiencyPercent,
+                    pressureDrop: pressureResults.total_loss,
+                    escapedDust: total_escaped_dust,
+                    dustPerCyclone: dust_per_cyclone,
+                    escapedPerCyclone: escaped_per_cyclone,
+                    airwattLoss: airwatt_loss * 1000, // Convert to W
+                    d50: d50_microns,
+                    inputs
+                };
+                
+            } catch (error) {
+                console.error('Design evaluation error:', error);
+                return null;
+            }
+        }
+
+        function displayOptimizationResults(results, objective) {
+            document.getElementById('opt-results-container').classList.remove('hidden');
+            document.getElementById('opt-welcome-message').classList.add('hidden');
+            
+            // Update total designs count
+            const totalDesigns = allOptimizationDesigns.length;
+            const validDesigns = results.length;
+            const invalidDesigns = totalDesigns - validDesigns;
+            document.getElementById('total-designs-count').textContent = 
+                `${totalDesigns} total designs (${validDesigns} valid, ${invalidDesigns} invalid)`;
+            
+            if (results.length === 0) {
+                document.getElementById('opt-best-result-content').innerHTML = '<p class="text-red-600 text-center col-span-2">No valid designs found. Try adjusting your constraints or parameter ranges.</p>';
+                document.getElementById('opt-results-table').innerHTML = '';
+                return;
+            }
+            
+            // Display best result
+            const best = results[0];
+            displayBestResult(best, objective);
+            
+            // Display all results table
+            displayResultsTable(results, objective);
+        }
+
+        function displayBestResult(best, objective) {
+            const content = document.getElementById('opt-best-result-content');
+            content.innerHTML = `
+                <div><strong>Objective Value:</strong><br>${formatObjectiveValue(best.objectiveValue, objective)}</div>
+                <div><strong>Total Efficiency:</strong><br>${best.totalEfficiency.toFixed(2)}%</div>
+                <div><strong>Pressure Drop:</strong><br>${best.pressureDrop.toFixed(1)} Pa</div>
+                <div><strong>Escaped Dust:</strong><br>${best.escapedDust.toFixed(2)} g</div>
+                <div><strong>D50:</strong><br>${best.d50.toFixed(2)} μm</div>
+                <div><strong>Airwatt Loss:</strong><br>${best.airwattLoss.toFixed(2)} W</div>
+                <div class="md:col-span-2"><strong>Parameters:</strong><br>
+                    ${Object.entries(best.combination).map(([key, value]) => 
+                        `${key}: ${value.toFixed(1)} ${key.includes('mm') ? 'mm' : ''}`
+                    ).join(', ')}
+                </div>
+            `;
+        }
+
+        function displayResultsTable(results, objective) {
+            const table = document.getElementById('opt-results-table');
+            const enabledParams = getEnabledParameters();
+            
+            // Create header
+            let headerHTML = '<tr><th>Rank</th><th>Objective</th><th>Efficiency (%)</th><th>Pressure (Pa)</th><th>Escaped Dust (g)</th>';
+            enabledParams.forEach(param => {
+                headerHTML += `<th>${param.label}</th>`;
+            });
+            headerHTML += '</tr>';
+            
+            // Create rows
+            let bodyHTML = '';
+            results.slice(0, 20).forEach((result, index) => { // Show top 20 results
+                bodyHTML += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${formatObjectiveValue(result.objectiveValue, objective)}</td>
+                    <td>${result.totalEfficiency.toFixed(2)}</td>
+                    <td>${result.pressureDrop.toFixed(1)}</td>
+                    <td>${result.escapedDust.toFixed(2)}</td>`;
+                enabledParams.forEach(param => {
+                    bodyHTML += `<td>${result.combination[param.id].toFixed(1)}</td>`;
+                });
+                bodyHTML += '</tr>';
+            });
+            
+            table.innerHTML = `<thead>${headerHTML}</thead><tbody>${bodyHTML}</tbody>`;
+        }
+
+        function formatObjectiveValue(value, objective) {
+            switch (objective) {
+                case 'maximize_efficiency':
+                    return `${value.toFixed(2)}%`;
+                case 'minimize_pressure_drop':
+                    return `${value.toFixed(1)} Pa`;
+                case 'minimize_escaped_dust':
+                    return `${value.toFixed(2)} g`;
+                default:
+                    return value.toFixed(2);
+            }
+        }
+
+        // Initialize optimization tab when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initOptimizationTab();
+            initInstantResultTab();
+        });
+
+        // ===========================
+        // INSTANT RESULT TAB FUNCTIONALITY
+        // ===========================
+        
+        let instantChart = null;
+        let instantDustChart = null;
+        let instantCalculationTimeout = null;
+
+        function initInstantResultTab() {
+            setupInstantEventListeners();
+            initInstantChart();
+            initInstantDustChart();
+            performInstantCalculation(); // Initial calculation
+        }
+
+        function setupInstantEventListeners() {
+            // Add event listeners to all instant input fields
+            const instantInputs = document.querySelectorAll('.instant-input');
+            instantInputs.forEach(input => {
+                input.addEventListener('input', debounceInstantCalculation);
+                input.addEventListener('change', debounceInstantCalculation);
+            });
+        }
+
+        function debounceInstantCalculation() {
+            // Clear previous timeout
+            if (instantCalculationTimeout) {
+                clearTimeout(instantCalculationTimeout);
+            }
+            
+            // Set new timeout for 300ms delay
+            instantCalculationTimeout = setTimeout(() => {
+                performInstantCalculation();
+            }, 300);
+        }
+
+        function performInstantCalculation() {
+            try {
+                const inputs = getInstantInputValues();
+                const results = calculateInstantResults(inputs);
+                updateInstantDisplay(results);
+            } catch (error) {
+                displayInstantError(error.message);
+            }
+        }
+
+        function getInstantInputValues() {
+            return {
+                Q_lps: parseFloat(document.getElementById("instant-Q_lps").value) || 100,
+                Dc_mm: parseFloat(document.getElementById("instant-Dc_mm").value) || 500,
+                Lc_mm: parseFloat(document.getElementById("instant-Lc_mm").value) || 1000,
+                Zc_mm: parseFloat(document.getElementById("instant-Zc_mm").value) || 200,
+                De_mm: parseFloat(document.getElementById("instant-De_mm").value) || 250,
+                Dd_mm: parseFloat(document.getElementById("instant-Dd_mm").value) || 125,
+                Bc_mm: parseFloat(document.getElementById("instant-Bc_mm").value) || 125,
+                Hc_mm: parseFloat(document.getElementById("instant-Hc_mm").value) || 250,
+                mu: parseFloat(document.getElementById("instant-mu").value) || 1.81e-5,
+                rho_p: parseFloat(document.getElementById("instant-rho_p").value) || 2500,
+                rho_g: parseFloat(document.getElementById("instant-rho_g").value) || 1.225,
+                e_um: parseFloat(document.getElementById("instant-e_um").value) || 45,
+                initial_dust: parseFloat(document.getElementById("instant-initial_dust").value) || 100,
+                num_cyclones: parseInt(document.getElementById("instant-num_cyclones").value) || 1
+            };
+        }
+
+        function calculateInstantResults(inputs) {
+            // Convert to proper units (same as main calculation)
+            const D_c = inputs.Dc_mm / 1e3;
+            const L_c = inputs.Lc_mm / 1e3;
+            const Z_c = inputs.Zc_mm / 1e3;
+            const D_e = inputs.De_mm / 1e3;
+            const D_d = inputs.Dd_mm / 1e3;
+            const B_c = inputs.Bc_mm / 1e3;
+            const H_c = inputs.Hc_mm / 1e3;
+            const e = inputs.e_um / 1e6;
+            const Q_m3s = inputs.Q_lps / 1e3;
+
+            // Validate dimensions
+            const A_in = B_c * H_c;
+            if (A_in <= 0) throw new Error("Inlet area (Bc × Hc) must be positive");
+            const V_in = Q_m3s / A_in;
+            if (!(D_c > D_e && D_e > D_d && D_d > 0 && L_c > 0 && Z_c >= 0 && V_in > 0 && B_c > 0 && H_c > 0)) {
+                throw new Error("Invalid dimensions: Dc > De > Dd > 0");
+            }
+
+            // Perform calculations
+            const {V1, L1, Ne1} = calculate_barrel_parameters(V_in, D_c, D_e, L_c, B_c, H_c);
+            const {average_V2, L2, Ne2} = calculate_cone_parameters(V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
+            const Ne_total = Ne1 + Ne2;
+            const d50 = calculate_lapple_cut_diameter(inputs.mu, B_c, inputs.rho_p, inputs.rho_g, V_in, Ne_total);
+            const d50_microns = d50 * 1e6;
+            const pressureResults = calculate_pressure_loss(V_in, D_c, D_e, L_c, Z_c, D_d, B_c, H_c, inputs.rho_g, inputs.mu, e);
+            const airwatt_loss = pressureResults.total_loss * Q_m3s;
+
+            // Calculate efficiency for each particle size
+            let totalMassEfficiency = 0;
+            const efficiencies = [];
+            particle_sizes_microns.forEach((dp, index) => {
+                const massFraction = mass_fractions[index];
+                const efficiency = calculate_separation_efficiency(d50_microns, dp);
+                efficiencies.push(efficiency * 100);
+                const weightedEfficiency = efficiency * massFraction;
+                totalMassEfficiency += weightedEfficiency;
+            });
+
+            // Calculate final results
+            const dust_per_cyclone = inputs.initial_dust / inputs.num_cyclones;
+            const escaped_per_cyclone = dust_per_cyclone * (1 - totalMassEfficiency);
+            const total_escaped_dust = escaped_per_cyclone * inputs.num_cyclones;
+
+            return {
+                d50: d50_microns,
+                efficiency: totalMassEfficiency * 100,
+                pressure: pressureResults.total_loss,
+                airwatt: airwatt_loss * 1000,
+                escaped: total_escaped_dust,
+                velocity: V_in,
+                efficiencies: efficiencies,
+                dust_per_cyclone: dust_per_cyclone,
+                escaped_per_cyclone: escaped_per_cyclone,
+                num_cyclones: inputs.num_cyclones,
+                status: 'Valid Design'
+            };
+        }
+
+        function updateInstantDisplay(results) {
+            document.getElementById('instant-d50').textContent = results.d50.toFixed(2);
+            document.getElementById('instant-efficiency').textContent = results.efficiency.toFixed(2);
+            document.getElementById('instant-pressure').textContent = results.pressure.toFixed(1);
+            document.getElementById('instant-airwatt').textContent = results.airwatt.toFixed(2);
+            document.getElementById('instant-escaped').textContent = results.escaped.toFixed(2);
+            document.getElementById('instant-velocity').textContent = results.velocity.toFixed(2);
+            
+            const statusElement = document.getElementById('instant-status');
+            statusElement.textContent = results.status;
+            statusElement.className = 'result-status';
+            
+            // Update charts
+            updateInstantChart(results);
+            updateInstantDustChart(results);
+        }
+
+        function displayInstantError(message) {
+            document.getElementById('instant-d50').textContent = '--';
+            document.getElementById('instant-efficiency').textContent = '--';
+            document.getElementById('instant-pressure').textContent = '--';
+            document.getElementById('instant-airwatt').textContent = '--';
+            document.getElementById('instant-escaped').textContent = '--';
+            document.getElementById('instant-velocity').textContent = '--';
+            
+            const statusElement = document.getElementById('instant-status');
+            statusElement.textContent = message;
+            statusElement.className = 'result-status error';
+        }
+
+        function initInstantChart() {
+            const ctx = document.getElementById('instant-efficiency-chart').getContext('2d');
+            
+            instantChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: particle_sizes_microns,
+                    datasets: [{
+                        label: 'Efficiency (%)',
+                        data: new Array(particle_sizes_microns.length).fill(0),
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#4f46e5',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 20
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#4f46e5',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Efficiency: ${context.parsed.y.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: 'Particle Size (μm)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Efficiency (%)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 200
+                    }
+                }
+            });
+        }
+
+        function initInstantDustChart() {
+            const ctx = document.getElementById('instant-dust-chart').getContext('2d');
+            
+            instantDustChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Per Cyclone'],
+                    datasets: [{
+                        label: 'Dust Load per Cyclone',
+                        data: [0],
+                        backgroundColor: '#3b82f6'
+                    }, {
+                        label: 'Escaped Dust per Cyclone',
+                        data: [0],
+                        backgroundColor: '#dc2626'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 20
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}g`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: false
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Dust (g)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 200
+                    }
+                },
+                plugins: [{
+                    id: 'instantDustValues',
+                    afterDatasetsDraw: function(chart) {
+                        const ctx = chart.ctx;
+                        ctx.save();
+                        ctx.font = 'bold 14px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 3;
+                        ctx.fillStyle = '#000000';
+                        
+                        chart.data.datasets.forEach((dataset, datasetIndex) => {
+                            const value = dataset.data[0];
+                            if (value && value > 0) {
+                                const meta = chart.getDatasetMeta(datasetIndex);
+                                if (meta && meta.data && meta.data[0]) {
+                                    const bar = meta.data[0];
+                                    const text = value.toFixed(1);
+                                    ctx.strokeText(text, bar.x, bar.y - 8);
+                                    ctx.fillText(text, bar.x, bar.y - 8);
+                                }
+                            }
+                        });
+                        
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
+
+        function updateInstantChart(results) {
+            if (instantChart && results.efficiencies) {
+                instantChart.data.datasets[0].data = results.efficiencies;
+                instantChart.update('none');
+            }
+        }
+
+        function updateInstantDustChart(results) {
+            if (instantDustChart && results) {
+                instantDustChart.data.datasets[0].data = [results.dust_per_cyclone || 0];
+                instantDustChart.data.datasets[1].data = [results.escaped_per_cyclone || 0];
+                instantDustChart.update('none');
+            }
+        }
+
+    </script>
+</body>
+</html>
