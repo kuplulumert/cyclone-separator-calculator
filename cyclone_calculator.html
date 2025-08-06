@@ -247,9 +247,9 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             z-index: 999;
             transition: all 0.3s ease;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
         
         .results-preview.show {
@@ -328,12 +328,15 @@
     <!-- Floating Results Preview -->
     <div id="results-preview" class="results-preview">
         <div class="preview-header">
-            <span>📊 Efficiency Preview</span>
+            <span id="preview-title">📊 Efficiency Preview</span>
             <button class="preview-toggle-btn" onclick="togglePreview()">−</button>
         </div>
         <div class="preview-content">
             <div class="preview-chart-container">
                 <canvas id="preview-efficiency-chart"></canvas>
+                <div id="preview-placeholder" style="display: none; text-align: center; padding: 60px 20px; color: #6b7280; font-size: 12px;">
+                    Calculate and save runs to see efficiency comparison
+                </div>
             </div>
         </div>
         <div class="preview-toggle" style="display: none;">
@@ -4887,6 +4890,12 @@ Comparative analysis based on ${runHistory.length} design variations
         document.addEventListener('DOMContentLoaded', function() {
             // Set initial state
             setZoom(1.0);
+            
+            // Initialize preview if we're on single calculation tab
+            const singleTab = document.getElementById('single-calc-tab');
+            if (singleTab && singleTab.classList.contains('active')) {
+                showResultsPreview(null);
+            }
         });
 
         // Clear Chat Function
@@ -5026,13 +5035,25 @@ Comparative analysis based on ${runHistory.length} design variations
         function showResultsPreview(results) {
             const preview = document.getElementById('results-preview');
             const currentTab = document.querySelector('.tab-content.active');
+            const placeholder = document.getElementById('preview-placeholder');
+            const canvas = document.getElementById('preview-efficiency-chart');
             
-            // Only show preview in single calculation tab when there are saved runs
-            if (currentTab && currentTab.id === 'single-calc-tab' && runHistory.length > 0) {
-                updatePreviewChart();
+            // Show preview in single calculation tab
+            if (currentTab && currentTab.id === 'single-calc-tab') {
                 preview.classList.add('show');
+                
+                if (runHistory.length > 0) {
+                    // Show chart, hide placeholder
+                    canvas.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    updatePreviewChart();
+                } else {
+                    // Show placeholder, hide chart
+                    canvas.style.display = 'none';
+                    placeholder.style.display = 'block';
+                }
             } else {
-                // Hide preview for other tabs or when no runs exist
+                // Hide preview for other tabs
                 preview.classList.remove('show');
             }
         }
