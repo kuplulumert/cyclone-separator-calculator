@@ -208,7 +208,7 @@
             </div>
 
             <div id="single-calc-tab" class="tab-content active">
-                <div id="main-grid-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div id="main-grid-container" class="grid grid-cols-1 gap-8">
                      <div id="sortable-column-1" class="sortable-column flex flex-col gap-8">
                          <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
                              <div id="calculator-form">
@@ -218,10 +218,10 @@
                                          <h2 class="text-3xl font-semibold">Input Parameters</h2>
                                      </div>
                                      <div class="control-container">
-                                         <div class="control-group">
-                                             <button id="layout-1-col" class="layout-btn">1 Column</button>
-                                             <button id="layout-2-col" class="layout-btn active">2 Columns</button>
-                                         </div>
+                                                                                 <div class="control-group">
+                                            <button id="layout-1-col" class="layout-btn active">1 Column</button>
+                                            <button id="layout-2-col" class="layout-btn">2 Columns</button>
+                                        </div>
                                          <div class="control-group">
                                              <button class="font-down-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg></button>
                                              <span class="text-sm font-medium">Text Size</span>
@@ -375,7 +375,7 @@
                              </div>
                          </div>
                      </div>
-                     <div id="sortable-column-2" class="sortable-column flex flex-col gap-8">
+                     <div id="sortable-column-2" class="sortable-column flex flex-col gap-8" style="display: none;">
                          <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Efficiency Comparison</h3></div><div class="flex gap-2"><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="efficiency-chart" data-type="image" title="Export as Image"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></button><button class="chart-export-btn bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-lg transition-colors" data-chart="efficiency-chart" data-type="csv" title="Export as CSV"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div></div><canvas id="efficiency-chart"></canvas></div>
                          <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Dust Load &amp; Escaped Dust per Cyclone</h3></div><div class="flex gap-2"><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="per-cyclone-dust-chart" data-type="image" title="Export as Image"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></button><button class="chart-export-btn bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-lg transition-colors" data-chart="per-cyclone-dust-chart" data-type="csv" title="Export as CSV"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div></div><canvas id="per-cyclone-dust-chart"></canvas></div>
                          <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg"><div class="card-header mb-4"><div class="flex items-center gap-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg><h3 class="text-2xl font-semibold">Total Escaped Dust Comparison</h3></div><div class="flex gap-2"><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="escaped-dust-chart" data-type="image" title="Export as Image"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></button><button class="chart-export-btn bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-lg transition-colors" data-chart="escaped-dust-chart" data-type="csv" title="Export as CSV"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div></div><canvas id="escaped-dust-chart"></canvas></div>
@@ -425,10 +425,10 @@
                             <h2 class="text-3xl font-semibold">Parametric Study Setup</h2>
                         </div>
                         <div class="control-container">
-                            <div class="control-group">
-                                <button id="param-layout-1-col" class="layout-btn">1 Column</button>
-                                <button id="param-layout-2-col" class="layout-btn active">2 Columns</button>
-                            </div>
+                                                                    <div class="control-group">
+                                            <button id="param-layout-1-col" class="layout-btn active">1 Column</button>
+                                            <button id="param-layout-2-col" class="layout-btn">2 Columns</button>
+                                        </div>
                             <div class="control-group">
                                 <button class="font-down-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg></button>
                                 <span class="text-sm font-medium">Text Size</span>
@@ -458,7 +458,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="param-grid-container" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div id="param-grid-container" class="hidden grid grid-cols-1 gap-8">
                     <div id="param-sortable-column-1" class="sortable-column flex flex-col gap-8">
                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
                             <div class="card-header mb-4">
@@ -491,7 +491,7 @@
                             <canvas id="param-per-cyclone-dust-chart"></canvas>
                         </div>
                     </div>
-                    <div id="param-sortable-column-2" class="sortable-column flex flex-col gap-8">
+                    <div id="param-sortable-column-2" class="sortable-column flex flex-col gap-8" style="display: none;">
                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
                             <div class="card-header mb-4">
                                 <div class="flex items-center gap-4">
@@ -1852,6 +1852,10 @@
             const col2 = document.getElementById('sortable-column-2');
             const paramCol1 = document.getElementById('param-sortable-column-1');
             const paramCol2 = document.getElementById('param-sortable-column-2');
+
+            // Move all cards from column 2 to column 1 for initial 1-column layout
+            Array.from(col2.children).forEach(card => col1.appendChild(card));
+            Array.from(paramCol2.children).forEach(card => paramCol1.appendChild(card));
 
             const sortableOptions = {group: 'shared-cards',animation: 150,handle: '.drag-handle',ghostClass: 'sortable-ghost'};
             
