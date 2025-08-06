@@ -3555,26 +3555,85 @@
         function updateDesignAnalysisForRun(runData) {
             const analysis = document.getElementById('design-analysis');
             
-            // Generate AI insights based on selected run
-            const insights = generateDesignInsights(runData, runData);
+            // Generate user-friendly sentence-based analysis
+            const analysisText = generateUserFriendlyAnalysis(runData);
             
-            const totalEfficiency = runData.total_mass_efficiency || 0;
             analysis.innerHTML = `
-                <div class="mb-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-                    <p class="text-xs font-medium text-blue-800">${runData.name}</p>
-                    <p class="text-xs text-blue-600">Total Mass Efficiency: ${(totalEfficiency * 100).toFixed(1)}% | Pressure Drop: ${runData.total_loss_pa.toFixed(0)} Pa</p>
-                </div>
-                ${insights.map(insight => `
-                    <div class="p-3 rounded-lg ${insight.type === 'good' ? 'bg-green-50 border-l-4 border-green-400' : 
-                        insight.type === 'warning' ? 'bg-yellow-50 border-l-4 border-yellow-400' : 
-                        'bg-blue-50 border-l-4 border-blue-400'}">
-                        <p class="text-xs font-medium ${insight.type === 'good' ? 'text-green-800' : 
-                            insight.type === 'warning' ? 'text-yellow-800' : 'text-blue-800'}">${insight.title}</p>
-                        <p class="text-xs ${insight.type === 'good' ? 'text-green-600' : 
-                            insight.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'} mt-1">${insight.message}</p>
+                <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                            <span class="text-white text-xs">🔍</span>
+                        </div>
+                        <h4 class="text-sm font-semibold text-blue-900">Analysis: ${runData.name}</h4>
                     </div>
-                `).join('')}
+                    <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">
+                        ${analysisText}
+                    </div>
+                </div>
             `;
+        }
+
+        function generateUserFriendlyAnalysis(runData) {
+            const totalMassEfficiency = runData.total_mass_efficiency || 0;
+            const totalEfficiencyPercent = totalMassEfficiency * 100;
+            const totalPressureDrop = runData.total_loss_pa || 0;
+            const cutDiameter = runData.d50;
+            const dustPerCyclone = runData.dust_per_cyclone;
+            const escapedDust = runData.escaped_per_cyclone;
+            const captureRate = ((dustPerCyclone - escapedDust) / dustPerCyclone * 100);
+
+            let analysis = `<p class="mb-3"><strong>Your cyclone design "${runData.name}"</strong> achieves a total mass separation efficiency of <span class="font-semibold text-blue-700">${totalEfficiencyPercent.toFixed(1)}%</span>, which means it successfully captures ${captureRate.toFixed(1)}% of the incoming dust particles.</p>`;
+
+            // Efficiency assessment
+            if (totalEfficiencyPercent > 90) {
+                analysis += `<p class="mb-3">This is an <span class="font-semibold text-green-700">outstanding performance</span> that exceeds industry standards. Your design is well-optimized for the given particle size distribution and operating conditions.</p>`;
+            } else if (totalEfficiencyPercent > 80) {
+                analysis += `<p class="mb-3">This represents <span class="font-semibold text-green-600">excellent performance</span> that is suitable for most industrial dust collection applications. The efficiency level meets high performance standards.</p>`;
+            } else if (totalEfficiencyPercent > 70) {
+                analysis += `<p class="mb-3">This shows <span class="font-semibold text-blue-600">good performance</span> that is acceptable for many applications, though there may be opportunities for further optimization to reach higher efficiency levels.</p>`;
+            } else {
+                analysis += `<p class="mb-3">The current efficiency is <span class="font-semibold text-orange-600">below optimal levels</span>. Consider adjusting the cyclone diameter, inlet velocity, or other design parameters to improve particle separation performance.</p>`;
+            }
+
+            // Pressure drop assessment
+            analysis += `<p class="mb-3">The system operates with a pressure drop of <span class="font-semibold text-purple-700">${totalPressureDrop.toFixed(0)} Pa</span>`;
+            
+            if (totalPressureDrop > 2500) {
+                analysis += `, which is quite high and may result in significant energy costs. Consider increasing the outlet diameter or adjusting the cyclone height to reduce the pressure requirements.</p>`;
+            } else if (totalPressureDrop > 2000) {
+                analysis += `, which is moderately high. While acceptable for many applications, monitoring energy consumption would be advisable.</p>`;
+            } else if (totalPressureDrop > 1000) {
+                analysis += `, which represents a good balance between separation performance and energy efficiency.</p>`;
+            } else {
+                analysis += `, which is relatively low and energy-efficient. You might have room to optimize for higher efficiency if needed.</p>`;
+            }
+
+            // Cut diameter analysis
+            analysis += `<p class="mb-3">With a cut diameter (d50) of <span class="font-semibold text-indigo-700">${cutDiameter.toFixed(1)} μm</span>, your cyclone `;
+            
+            if (cutDiameter < 5) {
+                analysis += `demonstrates excellent fine particle separation capability, effectively capturing even very small particles.</p>`;
+            } else if (cutDiameter < 10) {
+                analysis += `shows good fine particle capture performance, suitable for applications requiring efficient removal of smaller particles.</p>`;
+            } else if (cutDiameter < 20) {
+                analysis += `provides moderate particle separation, most effective for medium to coarse particles.</p>`;
+            } else {
+                analysis += `is primarily effective for coarse particles. Fine particle capture could be improved through design modifications.</p>`;
+            }
+
+            // Performance summary
+            const overallGrade = totalEfficiencyPercent > 85 && totalPressureDrop < 2000 ? 'excellent' :
+                               totalEfficiencyPercent > 75 && totalPressureDrop < 2500 ? 'good' :
+                               totalEfficiencyPercent > 65 ? 'acceptable' : 'needs improvement';
+
+            analysis += `<p class="mt-3 p-3 bg-white rounded border-l-4 ${
+                overallGrade === 'excellent' ? 'border-green-500 bg-green-50' :
+                overallGrade === 'good' ? 'border-blue-500 bg-blue-50' :
+                overallGrade === 'acceptable' ? 'border-yellow-500 bg-yellow-50' :
+                'border-red-500 bg-red-50'
+            }"><strong>Overall Assessment:</strong> Your cyclone design shows <span class="font-semibold">${overallGrade}</span> performance characteristics for industrial dust collection applications.</p>`;
+
+            return analysis;
         }
 
         function updateComparisonAnalysis() {
