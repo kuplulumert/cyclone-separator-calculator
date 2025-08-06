@@ -2033,24 +2033,16 @@
             };
             
             paramPerCycloneDustChart = new Chart(pPerCtx, {
-                type: "line",
+                type: "bar",
                 data: {
                     labels: [],
                     datasets: [
                         {
                             label: "Escaped Dust per Cyclone", 
                             data: [],
-                            type: "line",
                             backgroundColor: "#ef4444",
                             borderColor: "#dc2626",
-                            borderWidth: 3,
-                            pointBackgroundColor: "#ef4444",
-                            pointBorderColor: "#ffffff",
-                            pointBorderWidth: 2,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            fill: false,
-                            tension: 0.3,
+                            borderWidth: 2,
                             yAxisID: "y"
                         },
                         {
@@ -2113,11 +2105,11 @@
                             ctx.fillText(totalText, chart.chartArea.left + padding, chart.chartArea.top + padding - 5);
                         }
                         
-                        // Draw escaped dust values on line points
+                        // Draw escaped dust values on bars
                         const escapedDataset = chart.data.datasets.find(d => d.label === 'Escaped Dust per Cyclone');
                         if (escapedDataset) {
                             const escapedMeta = chart.getDatasetMeta(chart.data.datasets.indexOf(escapedDataset));
-                            escapedMeta.data.forEach((point, index) => {
+                            escapedMeta.data.forEach((bar, index) => {
                                 const value = escapedDataset.data[index];
                                 if (value !== null && value !== undefined && value > 0) {
                                     ctx.fillStyle = '#ffffff';
@@ -2128,8 +2120,8 @@
                                     ctx.textBaseline = 'bottom';
                                     
                                     const text = value < 0.01 ? (value * 1000).toFixed(1) + 'mg' : value.toFixed(3) + 'g';
-                                    ctx.strokeText(text, point.x, point.y - 8);
-                                    ctx.fillText(text, point.x, point.y - 8);
+                                    ctx.strokeText(text, bar.x, bar.y - 8);
+                                    ctx.fillText(text, bar.x, bar.y - 8);
                                 }
                             });
                         }
