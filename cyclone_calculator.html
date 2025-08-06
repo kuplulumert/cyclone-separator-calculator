@@ -891,13 +891,23 @@
                                         <p class="text-sm text-gray-600">Select a run and click "Generate Detailed Report" for comprehensive engineering analysis</p>
                                     </div>
                                 </div>
-                                <div class="mt-4 flex gap-2">
-                                    <button onclick="downloadReportAsPDF()" class="flex-1 bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm" style="display: none;" id="download-pdf-btn">
-                                        📥 Download PDF
-                                    </button>
-                                    <button onclick="copyReportToClipboard()" class="flex-1 bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm" style="display: none;" id="copy-report-btn">
-                                        📋 Copy Report
-                                    </button>
+                                <div class="mt-4 space-y-2">
+                                    <div class="flex gap-2">
+                                        <button onclick="downloadReportAsWord()" class="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm" style="display: none;" id="download-word-btn">
+                                            📄 Download Word
+                                        </button>
+                                        <button onclick="downloadReportAsPDF()" class="flex-1 bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm" style="display: none;" id="download-pdf-btn">
+                                            📥 Download Text
+                                        </button>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button onclick="generateComparisonReport()" class="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                                            📊 Compare Runs Report
+                                        </button>
+                                        <button onclick="copyReportToClipboard()" class="flex-1 bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm" style="display: none;" id="copy-report-btn">
+                                            📋 Copy Report
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -3984,6 +3994,7 @@ Analysis based on established cyclone separator engineering principles
 
         function displayDetailedReport(report, runData) {
             const reportDiv = document.getElementById('detailed-report');
+            const downloadWordBtn = document.getElementById('download-word-btn');
             const downloadBtn = document.getElementById('download-pdf-btn');
             const copyBtn = document.getElementById('copy-report-btn');
             
@@ -3997,10 +4008,12 @@ Analysis based on established cyclone separator engineering principles
             window.currentReport = {
                 content: report,
                 runName: runData.name,
-                date: new Date().toISOString().split('T')[0]
+                date: new Date().toISOString().split('T')[0],
+                runData: runData
             };
             
             // Show action buttons
+            downloadWordBtn.style.display = 'block';
             downloadBtn.style.display = 'block';
             copyBtn.style.display = 'block';
         }
@@ -4036,6 +4049,534 @@ Analysis based on established cyclone separator engineering principles
             }).catch(() => {
                 addMessage("Failed to copy report to clipboard.", 'ai');
             });
+        }
+
+        function downloadReportAsWord() {
+            if (!window.currentReport) {
+                addMessage("No report available to download.", 'ai');
+                return;
+            }
+            
+            let wordContent;
+            if (window.currentReport.isComparison) {
+                wordContent = generateComparisonWordDocument();
+            } else {
+                wordContent = generateWordDocument(window.currentReport.runData);
+            }
+            
+            const blob = new Blob([wordContent], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Cyclone_Report_${window.currentReport.runName.replace(/\s+/g, '_')}_${window.currentReport.date}.doc`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            addMessage("Report downloaded successfully as Word document.", 'ai');
+        }
+
+        function generateComparisonWordDocument() {
+            const currentDate = new Date().toLocaleDateString();
+            const currentTime = new Date().toLocaleTimeString();
+            
+            // Calculate comparison metrics
+            const efficiencies = runHistory.map(run => run.total_mass_efficiency || 0);
+            const efficienciesPercent = efficiencies.map(eff => eff * 100);
+            const pressures = runHistory.map(run => run.total_loss_pa);
+            
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cyclone Separator Comparison Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #34495e; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; margin-top: 30px; }
+        h3 { color: #2980b9; margin-top: 25px; }
+        .header-info { background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .comparison-table th, .comparison-table td { border: 1px solid #bdc3c7; padding: 8px; text-align: left; font-size: 11px; }
+        .comparison-table th { background: #3498db; color: white; }
+        .stats-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .stats-table th, .stats-table td { border: 1px solid #bdc3c7; padding: 10px; text-align: left; }
+        .stats-table th { background: #27ae60; color: white; }
+        .ranking { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .recommendation { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 10px 0; }
+        .footer { margin-top: 40px; text-align: center; color: #7f8c8d; border-top: 1px solid #bdc3c7; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>CYCLONE SEPARATOR COMPARISON REPORT</h1>
+    
+    <div class="header-info">
+        <p><strong>Report Generated:</strong> ${currentDate} ${currentTime}</p>
+        <p><strong>Analysis Type:</strong> Multi-Design Comparison</p>
+        <p><strong>Number of Designs:</strong> ${runHistory.length}</p>
+    </div>
+
+    <h2>EXECUTIVE SUMMARY</h2>
+    <p>This comparative analysis evaluates <strong>${runHistory.length}</strong> cyclone separator designs to identify optimal 
+    performance characteristics and design trade-offs. The analysis covers efficiency, pressure drop, cut diameter, 
+    and overall performance assessment.</p>
+
+    <h2>PERFORMANCE COMPARISON</h2>
+    
+    <table class="comparison-table">
+        <tr>
+            <th>Design Name</th>
+            <th>Total Mass Efficiency (%)</th>
+            <th>Pressure Drop (Pa)</th>
+            <th>Cut Diameter (μm)</th>
+            <th>Dust/Cyclone (g)</th>
+            <th>Escaped Dust (g)</th>
+            <th>Grade</th>
+        </tr>
+        ${runHistory.map(run => {
+            const efficiency = (run.total_mass_efficiency || 0) * 100;
+            const grade = efficiency > 85 ? 'Excellent' : efficiency > 75 ? 'Good' : efficiency > 65 ? 'Moderate' : 'Poor';
+            return `<tr>
+                <td><strong>${run.name}</strong></td>
+                <td>${efficiency.toFixed(2)}</td>
+                <td>${run.total_loss_pa.toFixed(0)}</td>
+                <td>${run.d50.toFixed(1)}</td>
+                <td>${run.dust_per_cyclone.toFixed(2)}</td>
+                <td>${run.escaped_per_cyclone.toFixed(2)}</td>
+                <td>${grade}</td>
+            </tr>`;
+        }).join('')}
+    </table>
+
+    <h2>STATISTICAL ANALYSIS</h2>
+    
+    <table class="stats-table">
+        <tr><th>Metric</th><th>Minimum</th><th>Maximum</th><th>Average</th><th>Range</th></tr>
+        <tr>
+            <td>Total Mass Efficiency (%)</td>
+            <td>${Math.min(...efficienciesPercent).toFixed(1)}</td>
+            <td>${Math.max(...efficienciesPercent).toFixed(1)}</td>
+            <td>${(efficienciesPercent.reduce((a,b) => a+b, 0) / efficienciesPercent.length).toFixed(1)}</td>
+            <td>${(Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent)).toFixed(1)}</td>
+        </tr>
+        <tr>
+            <td>Pressure Drop (Pa)</td>
+            <td>${Math.min(...pressures).toFixed(0)}</td>
+            <td>${Math.max(...pressures).toFixed(0)}</td>
+            <td>${(pressures.reduce((a,b) => a+b, 0) / pressures.length).toFixed(0)}</td>
+            <td>${(Math.max(...pressures) - Math.min(...pressures)).toFixed(0)}</td>
+        </tr>
+    </table>
+
+    <h2>PERFORMANCE RANKING</h2>
+    
+    <div class="ranking">
+        <h3>Composite Performance Score</h3>
+        <p><em>Score = Efficiency% - (Pressure Drop / 50)</em></p>
+        <ol>
+        ${runHistory
+            .map(run => ({
+                ...run,
+                efficiency: (run.total_mass_efficiency || 0) * 100,
+                score: ((run.total_mass_efficiency || 0) * 100) - (run.total_loss_pa / 50)
+            }))
+            .sort((a, b) => b.score - a.score)
+            .map(run => `<li><strong>${run.name}</strong> - Score: ${run.score.toFixed(1)} (${run.efficiency.toFixed(1)}% efficiency, ${run.total_loss_pa.toFixed(0)} Pa)</li>`)
+            .join('')}
+        </ol>
+    </div>
+
+    <h2>DESIGN RECOMMENDATIONS</h2>
+    
+    ${(() => {
+        const bestEfficiency = Math.max(...efficienciesPercent);
+        const bestEfficiencyRun = runHistory[efficienciesPercent.indexOf(bestEfficiency)];
+        const lowestPressure = Math.min(...pressures);
+        const lowestPressureRun = runHistory[pressures.indexOf(lowestPressure)];
+        
+        return `
+        <div class="recommendation">
+            <h3>Application-Specific Recommendations:</h3>
+            <ul>
+                <li><strong>For Maximum Efficiency:</strong> Choose "${bestEfficiencyRun.name}" (${bestEfficiency.toFixed(1)}% efficiency)</li>
+                <li><strong>For Energy Savings:</strong> Choose "${lowestPressureRun.name}" (${lowestPressure.toFixed(0)} Pa pressure drop)</li>
+                <li><strong>Balanced Performance:</strong> ${bestEfficiencyRun.name === lowestPressureRun.name ? 
+                    `"${bestEfficiencyRun.name}" provides optimal balance` : 
+                    'Consider trade-offs between efficiency and energy consumption'}</li>
+            </ul>
+        </div>`;
+    })()}
+
+    <h2>CONCLUSION</h2>
+    <p>This comparative analysis of <strong>${runHistory.length}</strong> cyclone separator designs reveals important design 
+    trade-offs and optimization opportunities. The efficiency range spans 
+    <strong>${(Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent)).toFixed(1)}</strong> percentage points, 
+    indicating ${Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent) > 10 ? 'significant' : 'moderate'} design sensitivity.</p>
+
+    <div class="footer">
+        <p>Report generated by AI-Powered Cyclone Design Assistant</p>
+        <p>Date: ${currentDate} ${currentTime}</p>
+        <p>Comparative analysis based on ${runHistory.length} design variations</p>
+    </div>
+</body>
+</html>`;
+        }
+
+        function generateWordDocument(runData) {
+            const totalMassEfficiency = runData.total_mass_efficiency || 0;
+            const totalEfficiencyPercent = totalMassEfficiency * 100;
+            const currentDate = new Date().toLocaleDateString();
+            const currentTime = new Date().toLocaleTimeString();
+            const pressureComponents = runData.pressure_components || {};
+            const totalPressure = runData.total_loss_pa || 0;
+            
+            // Performance classification
+            const efficiencyGrade = totalEfficiencyPercent > 90 ? 'Excellent' : 
+                                  totalEfficiencyPercent > 80 ? 'Very Good' :
+                                  totalEfficiencyPercent > 70 ? 'Good' :
+                                  totalEfficiencyPercent > 60 ? 'Moderate' : 'Poor';
+            
+            const pressureGrade = totalPressure < 1000 ? 'Excellent' :
+                                totalPressure < 1500 ? 'Good' :
+                                totalPressure < 2000 ? 'Moderate' :
+                                totalPressure < 3000 ? 'High' : 'Very High';
+
+            // Generate Word-compatible HTML content
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cyclone Separator Performance Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #34495e; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; margin-top: 30px; }
+        h3 { color: #2980b9; margin-top: 25px; }
+        .header-info { background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .performance-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .performance-table th, .performance-table td { border: 1px solid #bdc3c7; padding: 10px; text-align: left; }
+        .performance-table th { background: #3498db; color: white; }
+        .metric-row { margin: 10px 0; }
+        .metric-label { font-weight: bold; color: #2c3e50; }
+        .metric-value { color: #27ae60; font-weight: bold; }
+        .recommendation { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 10px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px; margin: 10px 0; }
+        .success { background: #d4edda; border-left: 4px solid #28a745; padding: 10px; margin: 10px 0; }
+        .footer { margin-top: 40px; text-align: center; color: #7f8c8d; border-top: 1px solid #bdc3c7; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>CYCLONE SEPARATOR PERFORMANCE REPORT</h1>
+    
+    <div class="header-info">
+        <p><strong>Report Generated:</strong> ${currentDate} ${currentTime}</p>
+        <p><strong>Design Name:</strong> ${runData.name}</p>
+        <p><strong>Analysis Type:</strong> Comprehensive Performance Evaluation</p>
+    </div>
+
+    <h2>EXECUTIVE SUMMARY</h2>
+    
+    <div class="${efficiencyGrade === 'Excellent' || efficiencyGrade === 'Very Good' ? 'success' : 
+                  efficiencyGrade === 'Good' ? 'recommendation' : 'warning'}">
+        <p><strong>Performance Rating:</strong> ${efficiencyGrade} (${totalEfficiencyPercent.toFixed(2)}% total mass efficiency)</p>
+        <p><strong>Pressure Drop Rating:</strong> ${pressureGrade} (${totalPressure.toFixed(0)} Pa)</p>
+        <p><strong>Overall Assessment:</strong> ${totalEfficiencyPercent > 80 && totalPressure < 2000 ? 'RECOMMENDED FOR INDUSTRIAL USE' : 
+                                               totalEfficiencyPercent > 70 ? 'ACCEPTABLE WITH CONSIDERATIONS' : 'REQUIRES OPTIMIZATION'}</p>
+    </div>
+
+    <p>This cyclone separator design demonstrates <strong>${efficiencyGrade.toLowerCase()}</strong> separation performance with a 
+    <strong>${pressureGrade.toLowerCase()}</strong> pressure drop profile. The design is ${totalEfficiencyPercent > 75 ? 'suitable' : 'marginally suitable'} 
+    for industrial dust collection applications.</p>
+
+    <h2>PERFORMANCE METRICS</h2>
+
+    <table class="performance-table">
+        <tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Grade</th></tr>
+        <tr><td>Total Mass Efficiency</td><td>${totalEfficiencyPercent.toFixed(2)}</td><td>%</td><td>${efficiencyGrade}</td></tr>
+        <tr><td>Cut Diameter (d50)</td><td>${runData.d50.toFixed(2)}</td><td>μm</td><td>${runData.d50 < 10 ? 'Excellent' : runData.d50 < 15 ? 'Good' : 'Moderate'}</td></tr>
+        <tr><td>Total Pressure Drop</td><td>${totalPressure.toFixed(0)}</td><td>Pa</td><td>${pressureGrade}</td></tr>
+        <tr><td>Pressure Drop</td><td>${(totalPressure * 0.00401865).toFixed(2)}</td><td>in H₂O</td><td>-</td></tr>
+        <tr><td>Dust per Cyclone</td><td>${runData.dust_per_cyclone.toFixed(2)}</td><td>g</td><td>-</td></tr>
+        <tr><td>Escaped Dust</td><td>${runData.escaped_per_cyclone.toFixed(2)}</td><td>g</td><td>-</td></tr>
+        <tr><td>Collection Rate</td><td>${((runData.dust_per_cyclone - runData.escaped_per_cyclone) / runData.dust_per_cyclone * 100).toFixed(2)}</td><td>%</td><td>-</td></tr>
+    </table>
+
+    <h3>Pressure Drop Breakdown</h3>
+    <table class="performance-table">
+        <tr><th>Component</th><th>Value (Pa)</th><th>Percentage</th></tr>
+        <tr><td>Entry Loss</td><td>${pressureComponents.dPe?.toFixed(0) || 'N/A'}</td><td>${pressureComponents.dPe ? ((pressureComponents.dPe/totalPressure)*100).toFixed(1) + '%' : 'N/A'}</td></tr>
+        <tr><td>Kinetic Loss</td><td>${pressureComponents.dPk?.toFixed(0) || 'N/A'}</td><td>${pressureComponents.dPk ? ((pressureComponents.dPk/totalPressure)*100).toFixed(1) + '%' : 'N/A'}</td></tr>
+        <tr><td>Frictional Loss</td><td>${pressureComponents.dPf?.toFixed(0) || 'N/A'}</td><td>${pressureComponents.dPf ? ((pressureComponents.dPf/totalPressure)*100).toFixed(1) + '%' : 'N/A'}</td></tr>
+        <tr><td>Rotational Loss</td><td>${pressureComponents.dPr?.toFixed(0) || 'N/A'}</td><td>${pressureComponents.dPr ? ((pressureComponents.dPr/totalPressure)*100).toFixed(1) + '%' : 'N/A'}</td></tr>
+        <tr><td>Exit Loss</td><td>${pressureComponents.dPo?.toFixed(0) || 'N/A'}</td><td>${pressureComponents.dPo ? ((pressureComponents.dPo/totalPressure)*100).toFixed(1) + '%' : 'N/A'}</td></tr>
+    </table>
+
+    <h2>PARTICLE SIZE DISTRIBUTION ANALYSIS</h2>
+
+    <table class="performance-table">
+        <tr><th>Particle Size (μm)</th><th>Efficiency (%)</th><th>Mass Fraction (%)</th><th>Assessment</th></tr>
+        ${runData.efficiencies.map((eff, index) => {
+            const particleSize = [0.5, 1.5, 2.5, 3.5, 4.5, 6, 8.5, 15, 30, 60, 100][index];
+            const massFraction = [0.025, 0.075, 0.085, 0.070, 0.055, 0.100, 0.090, 0.200, 0.180, 0.115, 0.005][index];
+            const assessment = eff > 90 ? 'Excellent' : eff > 75 ? 'Good' : eff > 50 ? 'Moderate' : 'Poor';
+            return `<tr><td>${particleSize}</td><td>${eff.toFixed(1)}</td><td>${(massFraction*100).toFixed(1)}</td><td>${assessment}</td></tr>`;
+        }).join('')}
+    </table>
+
+    <h3>Performance by Category</h3>
+    <div class="metric-row">
+        <span class="metric-label">Ultrafine (&lt;1 μm):</span> 
+        <span class="metric-value">${runData.efficiencies[0].toFixed(1)}%</span> - ${runData.efficiencies[0] > 50 ? 'Good capture' : 'Limited capture'}
+    </div>
+    <div class="metric-row">
+        <span class="metric-label">Fine (1-10 μm):</span> 
+        <span class="metric-value">${(runData.efficiencies.slice(1,6).reduce((a,b) => a+b) / 5).toFixed(1)}%</span> - ${(runData.efficiencies.slice(1,6).reduce((a,b) => a+b) / 5) > 70 ? 'Effective separation' : 'Moderate separation'}
+    </div>
+    <div class="metric-row">
+        <span class="metric-label">Coarse (&gt;10 μm):</span> 
+        <span class="metric-value">${(runData.efficiencies.slice(6).reduce((a,b) => a+b) / 5).toFixed(1)}%</span> - ${(runData.efficiencies.slice(6).reduce((a,b) => a+b) / 5) > 90 ? 'Excellent capture' : 'Good capture'}
+    </div>
+
+    <h2>ENGINEERING RECOMMENDATIONS</h2>
+    ${generateWordRecommendations(runData, totalEfficiencyPercent, totalPressure)}
+
+    <h2>CONCLUSION</h2>
+    <div class="${totalEfficiencyPercent > 85 && totalPressure < 1500 ? 'success' : 
+                  totalEfficiencyPercent > 75 ? 'recommendation' : 'warning'}">
+        <p>The <strong>"${runData.name}"</strong> cyclone separator design exhibits <strong>${efficiencyGrade.toLowerCase()}</strong> performance characteristics 
+        with a total mass efficiency of <strong>${totalEfficiencyPercent.toFixed(2)}%</strong> and a pressure drop of <strong>${totalPressure.toFixed(0)} Pa</strong>.</p>
+        
+        <p>${totalEfficiencyPercent > 85 && totalPressure < 1500 ? 
+            'This design is highly recommended for industrial implementation with excellent efficiency and reasonable pressure drop.' :
+        totalEfficiencyPercent > 75 && totalPressure < 2000 ?
+            'This design is suitable for most industrial applications with good overall performance characteristics.' :
+        totalEfficiencyPercent > 65 ?
+            'This design shows acceptable performance but may benefit from optimization to improve efficiency or reduce pressure drop.' :
+            'This design requires significant optimization before industrial implementation is recommended.'}</p>
+    </div>
+
+    <div class="footer">
+        <p>Report generated by AI-Powered Cyclone Design Assistant</p>
+        <p>Date: ${currentDate} ${currentTime}</p>
+        <p>Analysis based on established cyclone separator engineering principles</p>
+    </div>
+</body>
+</html>`;
+        }
+
+        function generateWordRecommendations(runData, efficiency, pressure) {
+            const recommendations = [];
+            
+            if (efficiency < 70) {
+                recommendations.push('<div class="warning"><strong>EFFICIENCY IMPROVEMENT:</strong> Consider reducing cyclone diameter by 10-15% to increase tangential velocity and improve fine particle capture.</div>');
+                recommendations.push('<div class="warning"><strong>INLET OPTIMIZATION:</strong> Adjust inlet velocity to optimal range (15-25 m/s) for better particle separation.</div>');
+            } else if (efficiency < 85) {
+                recommendations.push('<div class="recommendation"><strong>FINE TUNING:</strong> Minor geometry adjustments could yield 5-10% efficiency improvement.</div>');
+                recommendations.push('<div class="recommendation"><strong>VORTEX FINDER:</strong> Consider optimizing vortex finder diameter for enhanced performance.</div>');
+            }
+            
+            if (pressure > 2500) {
+                recommendations.push('<div class="warning"><strong>PRESSURE REDUCTION:</strong> Increase outlet diameter by 5-10% to reduce rotational losses.</div>');
+                recommendations.push('<div class="warning"><strong>HEIGHT OPTIMIZATION:</strong> Consider increasing cyclone height to maintain efficiency while reducing pressure drop.</div>');
+            } else if (pressure > 2000) {
+                recommendations.push('<div class="recommendation"><strong>MODERATE PRESSURE:</strong> Current pressure drop is acceptable but monitor energy costs.</div>');
+            }
+            
+            if (runData.d50 > 15) {
+                recommendations.push(`<div class="warning"><strong>CUT DIAMETER:</strong> Current d50 of ${runData.d50.toFixed(1)} μm indicates limited fine particle capture. Consider design modifications for finer separation.</div>`);
+            }
+            
+            if (recommendations.length === 0) {
+                recommendations.push('<div class="success"><strong>OPTIMAL DESIGN:</strong> Current design parameters are well-balanced for the intended application.</div>');
+                recommendations.push('<div class="success"><strong>MAINTENANCE:</strong> Focus on regular maintenance to maintain performance levels.</div>');
+            }
+            
+            return recommendations.join('');
+        }
+
+        function generateComparisonReport() {
+            if (runHistory.length < 2) {
+                addMessage("You need at least 2 runs to generate a comparison report.", 'ai');
+                return;
+            }
+            
+            const comparisonReport = generateRunComparisonReport();
+            displayComparisonReport(comparisonReport);
+            
+            addMessage(`Comparison report generated for ${runHistory.length} runs. Check the Engineering Report panel for detailed analysis.`, 'ai');
+        }
+
+        function generateRunComparisonReport() {
+            const currentDate = new Date().toLocaleDateString();
+            const currentTime = new Date().toLocaleTimeString();
+            
+            // Calculate comparison metrics
+            const efficiencies = runHistory.map(run => run.total_mass_efficiency || 0);
+            const efficienciesPercent = efficiencies.map(eff => eff * 100);
+            const pressures = runHistory.map(run => run.total_loss_pa);
+            const cutDiameters = runHistory.map(run => run.d50);
+            
+            const bestEfficiency = Math.max(...efficienciesPercent);
+            const bestEfficiencyRun = runHistory[efficienciesPercent.indexOf(bestEfficiency)];
+            const lowestPressure = Math.min(...pressures);
+            const lowestPressureRun = runHistory[pressures.indexOf(lowestPressure)];
+            const finestCut = Math.min(...cutDiameters);
+            const finestCutRun = runHistory[cutDiameters.indexOf(finestCut)];
+            
+            return `
+CYCLONE SEPARATOR COMPARISON REPORT
+Generated: ${currentDate} ${currentTime}
+Number of Designs Compared: ${runHistory.length}
+
+═══════════════════════════════════════════════════════════════════════════════
+
+EXECUTIVE SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+This comparative analysis evaluates ${runHistory.length} cyclone separator designs to identify optimal 
+performance characteristics and design trade-offs. The analysis covers efficiency, pressure drop, 
+cut diameter, and overall performance assessment.
+
+Key Findings:
+• Best Total Mass Efficiency: "${bestEfficiencyRun.name}" with ${bestEfficiency.toFixed(1)}%
+• Lowest Pressure Drop: "${lowestPressureRun.name}" with ${lowestPressure.toFixed(0)} Pa
+• Finest Cut Diameter: "${finestCutRun.name}" with ${finestCut.toFixed(1)} μm
+
+═══════════════════════════════════════════════════════════════════════════════
+
+PERFORMANCE COMPARISON TABLE
+═══════════════════════════════════════════════════════════════════════════════
+
+${runHistory.map(run => {
+    const efficiency = (run.total_mass_efficiency || 0) * 100;
+    const grade = efficiency > 85 ? 'Excellent' : efficiency > 75 ? 'Good' : efficiency > 65 ? 'Moderate' : 'Poor';
+    return `Design: ${run.name}
+  • Total Mass Efficiency: ${efficiency.toFixed(2)}% (${grade})
+  • Pressure Drop: ${run.total_loss_pa.toFixed(0)} Pa
+  • Cut Diameter: ${run.d50.toFixed(1)} μm
+  • Dust per Cyclone: ${run.dust_per_cyclone.toFixed(2)} g
+  • Escaped Dust: ${run.escaped_per_cyclone.toFixed(2)} g`;
+}).join('\n\n')}
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STATISTICAL ANALYSIS
+═══════════════════════════════════════════════════════════════════════════════
+
+Efficiency Statistics:
+  • Range: ${Math.min(...efficienciesPercent).toFixed(1)}% - ${Math.max(...efficienciesPercent).toFixed(1)}%
+  • Average: ${(efficienciesPercent.reduce((a,b) => a+b, 0) / efficienciesPercent.length).toFixed(1)}%
+  • Standard Deviation: ${Math.sqrt(efficienciesPercent.reduce((a,b) => a + Math.pow(b - efficienciesPercent.reduce((c,d) => c+d, 0)/efficienciesPercent.length, 2), 0) / efficienciesPercent.length).toFixed(1)}%
+
+Pressure Drop Statistics:
+  • Range: ${Math.min(...pressures).toFixed(0)} - ${Math.max(...pressures).toFixed(0)} Pa
+  • Average: ${(pressures.reduce((a,b) => a+b, 0) / pressures.length).toFixed(0)} Pa
+  • Variation: ${((Math.max(...pressures) / Math.min(...pressures) - 1) * 100).toFixed(1)}%
+
+Cut Diameter Statistics:
+  • Range: ${Math.min(...cutDiameters).toFixed(1)} - ${Math.max(...cutDiameters).toFixed(1)} μm
+  • Average: ${(cutDiameters.reduce((a,b) => a+b, 0) / cutDiameters.length).toFixed(1)} μm
+
+═══════════════════════════════════════════════════════════════════════════════
+
+DESIGN TRADE-OFF ANALYSIS
+═══════════════════════════════════════════════════════════════════════════════
+
+Efficiency vs Pressure Drop Analysis:
+${runHistory.map(run => {
+    const efficiency = (run.total_mass_efficiency || 0) * 100;
+    const pressure = run.total_loss_pa;
+    const ratio = efficiency / (pressure / 1000); // Efficiency per kPa
+    return `• ${run.name}: ${efficiency.toFixed(1)}% / ${pressure.toFixed(0)} Pa = ${ratio.toFixed(1)} efficiency points per kPa`;
+}).join('\n')}
+
+Performance Ranking:
+${runHistory
+    .map(run => ({
+        ...run,
+        efficiency: (run.total_mass_efficiency || 0) * 100,
+        score: ((run.total_mass_efficiency || 0) * 100) - (run.total_loss_pa / 50) // Composite score
+    }))
+    .sort((a, b) => b.score - a.score)
+    .map((run, index) => `${index + 1}. ${run.name} (Score: ${run.score.toFixed(1)})`)
+    .join('\n')}
+
+═══════════════════════════════════════════════════════════════════════════════
+
+RECOMMENDATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+Design Selection Guidance:
+• For Maximum Efficiency: Choose "${bestEfficiencyRun.name}" (${bestEfficiency.toFixed(1)}% efficiency)
+• For Energy Savings: Choose "${lowestPressureRun.name}" (${lowestPressure.toFixed(0)} Pa pressure drop)
+• For Fine Particles: Choose "${finestCutRun.name}" (${finestCut.toFixed(1)} μm cut diameter)
+
+${bestEfficiencyRun.name === lowestPressureRun.name ? 
+    `Optimal Choice: "${bestEfficiencyRun.name}" provides the best balance of efficiency and pressure drop.` :
+    `Trade-off Decision: Consider "${bestEfficiencyRun.name}" for high efficiency applications or "${lowestPressureRun.name}" for energy-sensitive installations.`}
+
+Design Space Insights:
+${Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent) > 15 ? 
+    'Significant efficiency variation indicates high design sensitivity. Small geometry changes can have major impact.' :
+    'Relatively stable efficiency across designs suggests robust performance in this parameter range.'}
+
+${Math.max(...pressures) / Math.min(...pressures) > 2 ? 
+    'Large pressure drop variations suggest geometry has major impact on energy consumption.' :
+    'Pressure drops are relatively consistent across designs.'}
+
+═══════════════════════════════════════════════════════════════════════════════
+
+CONCLUSION
+═══════════════════════════════════════════════════════════════════════════════
+
+This comparative analysis of ${runHistory.length} cyclone separator designs reveals important design 
+trade-offs and optimization opportunities. The variation in performance metrics indicates 
+${Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent) > 10 ? 'significant design sensitivity' : 'moderate design sensitivity'} 
+within the evaluated parameter space.
+
+Key Takeaways:
+• Efficiency range spans ${(Math.max(...efficienciesPercent) - Math.min(...efficienciesPercent)).toFixed(1)} percentage points
+• Pressure drop varies by factor of ${(Math.max(...pressures) / Math.min(...pressures)).toFixed(1)}
+• Cut diameter variation: ${(Math.max(...cutDiameters) - Math.min(...cutDiameters)).toFixed(1)} μm
+
+Recommended design depends on application priorities:
+- High-efficiency applications: "${bestEfficiencyRun.name}"
+- Energy-sensitive applications: "${lowestPressureRun.name}"
+- Fine particle applications: "${finestCutRun.name}"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Report generated by AI-Powered Cyclone Design Assistant
+Date: ${currentDate} ${currentTime}
+Comparative analysis based on ${runHistory.length} design variations
+`;
+        }
+
+        function displayComparisonReport(report) {
+            const reportDiv = document.getElementById('detailed-report');
+            const downloadWordBtn = document.getElementById('download-word-btn');
+            const downloadBtn = document.getElementById('download-pdf-btn');
+            const copyBtn = document.getElementById('copy-report-btn');
+            
+            reportDiv.innerHTML = `
+                <div class="bg-white border border-gray-200 rounded-lg p-4 max-h-96 overflow-y-auto">
+                    <pre class="text-xs font-mono whitespace-pre-wrap text-gray-800 leading-relaxed">${report}</pre>
+                </div>
+            `;
+            
+            // Store report for download/copy functions
+            window.currentReport = {
+                content: report,
+                runName: `Comparison_${runHistory.length}_Runs`,
+                date: new Date().toISOString().split('T')[0],
+                isComparison: true
+            };
+            
+            // Show action buttons
+            downloadWordBtn.style.display = 'block';
+            downloadBtn.style.display = 'block';
+            copyBtn.style.display = 'block';
         }
 
         // Hook into the save-run button to update run selector
