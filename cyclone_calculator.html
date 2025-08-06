@@ -232,88 +232,31 @@
             background: rgba(34, 197, 94, 1);
         }
         
-        /* Floating Results Preview */
-        .results-preview {
+        /* Simple Mini Chart */
+        .mini-chart {
             position: fixed;
-            top: 50%;
+            top: 100px;
             right: 20px;
-            transform: translateY(-50%);
-            width: 280px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            z-index: 999;
-            transition: all 0.3s ease;
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
+            width: 300px;
+            height: 180px;
+            background: white;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
         }
         
-        .results-preview.show {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-        
-        .results-preview.minimized {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        
-        .results-preview.minimized .preview-content {
-            display: none;
-        }
-        
-        .results-preview.minimized .preview-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            font-size: 24px;
-        }
-        
-        .preview-header {
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
+        .mini-chart-header {
+            background: #3b82f6;
             color: white;
-            padding: 8px 12px;
-            border-radius: 12px 12px 0 0;
+            padding: 6px 12px;
             font-size: 12px;
             font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         
-        .preview-content {
+        .mini-chart-content {
             padding: 8px;
-            height: calc(100% - 36px);
-        }
-        
-        .preview-chart-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        .preview-toggle-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 2px 4px;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        
-        .preview-toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            height: calc(100% - 30px);
         }
     </style>
 </head>
@@ -325,22 +268,13 @@
         <button id="zoom-100-btn" class="zoom-btn active" onclick="setZoom(1.0)">🔍+ 100%</button>
     </div>
 
-    <!-- Floating Results Preview -->
-    <div id="results-preview" class="results-preview">
-        <div class="preview-header">
-            <span id="preview-title">📊 Efficiency Preview</span>
-            <button class="preview-toggle-btn" onclick="togglePreview()">−</button>
+    <!-- Simple Mini Chart -->
+    <div id="mini-chart" class="mini-chart">
+        <div class="mini-chart-header">
+            📊 Efficiency Comparison
         </div>
-        <div class="preview-content">
-            <div class="preview-chart-container">
-                <canvas id="preview-efficiency-chart"></canvas>
-                <div id="preview-placeholder" style="display: none; text-align: center; padding: 60px 20px; color: #6b7280; font-size: 12px;">
-                    Calculate and save runs to see efficiency comparison
-                </div>
-            </div>
-        </div>
-        <div class="preview-toggle" style="display: none;">
-            📊
+        <div class="mini-chart-content">
+            <canvas id="mini-efficiency-chart"></canvas>
         </div>
     </div>
 
@@ -1218,13 +1152,6 @@
                     tabContents.forEach(content => {
                         content.classList.toggle('active', content.id === tab.dataset.tab);
                     });
-                    
-                    // Handle results preview visibility
-                    if (tab.dataset.tab === 'single-calc-tab' && lastCalculatedData && Object.keys(lastCalculatedData).length > 0) {
-                        showResultsPreview(lastCalculatedData);
-                    } else {
-                        hideResultsPreview();
-                    }
                 });
             });
         }
@@ -1259,9 +1186,9 @@
         const dust_per_cyclone=initial_dust/num_cyclones;const escaped_per_cyclone=dust_per_cyclone*(1-totalMassEfficiency);const total_escaped_dust=escaped_per_cyclone*num_cyclones;lastCalculatedData={d50:d50_microns,total_loss_pa:pressureResults.total_loss,airwatt_loss:airwatt_loss,escaped_dust:total_escaped_dust,dust_per_cyclone:dust_per_cyclone,escaped_per_cyclone:escaped_per_cyclone,total_mass_efficiency:totalMassEfficiency,pressure_components:{dPe:pressureResults.delta_Pe,dPk:pressureResults.delta_Pk,dPf:pressureResults.delta_Pf_total,dPr:pressureResults.delta_Pr,dPo:pressureResults.delta_Po},efficiencies:currentEfficiencies};
         document.getElementById("result-Vin").textContent=V_in.toFixed(2);document.getElementById("result-V1").textContent=V1.toFixed(4);document.getElementById("result-L1_mm").textContent=(L1*1e3).toFixed(2);document.getElementById("result-Ne1").textContent=Ne1.toFixed(2);document.getElementById("result-V2").textContent=isFinite(average_V2)?average_V2.toFixed(4):"N/A";document.getElementById("result-L2_mm").textContent=(L2*1e3).toFixed(2);document.getElementById("result-Ne2").textContent=Ne2.toFixed(2);document.getElementById("result-Ne_total").textContent=Ne_total.toFixed(2);
         document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
-        document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters();showResultsPreview(lastCalculatedData)}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
-        document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);updatePreviewChart();runCounter++;document.getElementById("run-name-input").value=""});
-        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()});hideResultsPreview()});
+        document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
+        document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);updateMiniChart();runCounter++;document.getElementById("run-name-input").value=""});
+        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()});updateMiniChart()});
 
         // File Operations
         document.getElementById("save-to-file-btn").addEventListener("click", saveRunsToFile);
@@ -4891,11 +4818,8 @@ Comparative analysis based on ${runHistory.length} design variations
             // Set initial state
             setZoom(1.0);
             
-            // Initialize preview if we're on single calculation tab
-            const singleTab = document.getElementById('single-calc-tab');
-            if (singleTab && singleTab.classList.contains('active')) {
-                showResultsPreview(null);
-            }
+            // Initialize mini chart
+            createMiniChart();
         });
 
         // Clear Chat Function
@@ -4930,14 +4854,13 @@ Comparative analysis based on ${runHistory.length} design variations
             }, 300);
         }
 
-        // Results Preview Functions
-        let previewChart = null;
-        const chartColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#ec4899', '#6366f1'];
+        // Simple Mini Chart
+        let miniChart = null;
         
-        function initializePreviewChart() {
-            const ctx = document.getElementById('preview-efficiency-chart').getContext('2d');
+        function createMiniChart() {
+            const ctx = document.getElementById('mini-efficiency-chart').getContext('2d');
             
-            previewChart = new Chart(ctx, {
+            miniChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: particle_sizes_microns,
@@ -4948,140 +4871,38 @@ Comparative analysis based on ${runHistory.length} design variations
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                font: { size: 8 },
-                                boxWidth: 8,
-                                padding: 4,
-                                usePointStyle: true
-                            }
-                        },
-                        tooltip: {
-                            titleFont: { size: 9 },
-                            bodyFont: { size: 8 },
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`;
-                                }
-                            }
+                            display: false
                         }
                     },
                     scales: {
                         x: {
-                            title: {
-                                display: true,
-                                text: 'Particle Size (μm)',
-                                font: { size: 8 }
-                            },
-                            ticks: {
-                                font: { size: 7 },
-                                maxRotation: 45
-                            },
-                            grid: {
-                                display: false
-                            }
+                            display: false
                         },
                         y: {
-                            title: {
-                                display: true,
-                                text: 'Efficiency (%)',
-                                font: { size: 8 }
-                            },
-                            ticks: {
-                                font: { size: 7 }
-                            },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            },
+                            display: false,
                             min: 0,
                             max: 100
                         }
                     }
                 }
             });
+            
+            updateMiniChart();
         }
         
-        function updatePreviewChart() {
-            if (!previewChart) {
-                initializePreviewChart();
+        function updateMiniChart() {
+            if (!miniChart) {
+                createMiniChart();
+                return;
             }
             
-            // Clear existing datasets
-            previewChart.data.datasets = [];
-            
-            // Add all runs from runHistory to the preview chart
-            runHistory.forEach((run, index) => {
-                const colorIndex = index % chartColors.length;
-                previewChart.data.datasets.push({
-                    label: run.name,
-                    data: run.efficiencies,
-                    borderColor: chartColors[colorIndex],
-                    backgroundColor: chartColors[colorIndex] + '20',
-                    borderWidth: 1.5,
-                    fill: false,
-                    tension: 0.3,
-                    pointRadius: 2,
-                    pointHoverRadius: 4,
-                    pointBackgroundColor: chartColors[colorIndex],
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 1
-                });
-            });
-            
-            previewChart.update('none');
-        }
-        
-        function showResultsPreview(results) {
-            const preview = document.getElementById('results-preview');
-            const currentTab = document.querySelector('.tab-content.active');
-            const placeholder = document.getElementById('preview-placeholder');
-            const canvas = document.getElementById('preview-efficiency-chart');
-            
-            // Show preview in single calculation tab
-            if (currentTab && currentTab.id === 'single-calc-tab') {
-                preview.classList.add('show');
-                
-                if (runHistory.length > 0) {
-                    // Show chart, hide placeholder
-                    canvas.style.display = 'block';
-                    placeholder.style.display = 'none';
-                    updatePreviewChart();
-                } else {
-                    // Show placeholder, hide chart
-                    canvas.style.display = 'none';
-                    placeholder.style.display = 'block';
-                }
-            } else {
-                // Hide preview for other tabs
-                preview.classList.remove('show');
+            // Copy data from the main efficiency chart
+            const mainChart = efficiencyChart;
+            if (mainChart && mainChart.data.datasets.length > 0) {
+                miniChart.data.datasets = [...mainChart.data.datasets];
+                miniChart.update('none');
             }
         }
-        
-        function hideResultsPreview() {
-            const preview = document.getElementById('results-preview');
-            preview.classList.remove('show');
-        }
-        
-        function togglePreview() {
-            const preview = document.getElementById('results-preview');
-            const toggleBtn = preview.querySelector('.preview-toggle-btn');
-            
-            if (preview.classList.contains('minimized')) {
-                preview.classList.remove('minimized');
-                toggleBtn.textContent = '−';
-            } else {
-                preview.classList.add('minimized');
-                toggleBtn.textContent = '+';
-            }
-        }
-        
-        // Auto-hide preview when clicking on minimized version
-        document.getElementById('results-preview').addEventListener('click', function(e) {
-            if (this.classList.contains('minimized') && e.target === this) {
-                togglePreview();
-            }
-        });
 
     </script>
 </body>
