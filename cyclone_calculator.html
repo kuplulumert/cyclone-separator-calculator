@@ -94,9 +94,103 @@
             color: white;
             border-color: #4f46e5;
         }
+       
+        /* SortableJS Styles */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .drag-handle {
+            cursor: grab;
+            color: #9ca3af;
+        }
+        .drag-handle:hover {
+            color: #374151;
+        }
+        .sortable-card {
+             min-height: 100px;
+        }
+        .sortable-ghost {
+            opacity: 0.4;
+            background: #c7d2fe;
+            border: 2px dashed #4f46e5;
+        }
+        .sortable-column {
+            min-height: 200px;
+        }
+
+        /* Tab Styles */
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            color: #6b7280;
+        }
+        .tab-button.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+        
+        /* Instant Result Tab Styles */
+        .result-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            background: #f9fafb;
+        }
+        .result-card.full-width {
+            grid-column: 1 / -1;
+        }
+        .result-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0;
+        }
+        .result-unit {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-left: 0.25rem;
+        }
+        .result-status {
+            font-size: 1rem;
+            color: #059669;
+            margin: 0;
+        }
+        .result-status.error {
+            color: #dc2626;
+        }
+        .chart-container {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background: #f9fafb;
+        }
+        .chart-container-fixed {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
+
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-screen-xl">
         <header class="text-center mb-8">
             <h1 class="text-4xl sm:text-5xl font-bold text-gray-900">Generalized Cyclone Parameter Calculator</h1>
@@ -104,469 +198,123 @@
         </header>
 
         <main>
-            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-                <h2 class="text-3xl font-semibold mb-6">Input Parameters</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Cyclone Dimensions</h3>
-                        <div class="space-y-3">
-                            <div class="input-group">
-                                <label for="Dc_mm" class="input-label">Body Diameter (Dc)</label>
-                                <input type="number" id="Dc_mm" class="input-field" value="20">
-                                <span class="unit-text text-gray-500">mm</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="Lc_mm" class="input-label">Barrel Length (Lc)</label>
-                                <input type="number" id="Lc_mm" class="input-field" value="20">
-                                <span class="unit-text text-gray-500">mm</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="Zc_mm" class="input-label">Cone Length (Zc)</label>
-                                <input type="number" id="Zc_mm" class="input-field" value="50">
-                                <span class="unit-text text-gray-500">mm</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="De_mm" class="input-label">Outlet Diameter (De)</label>
-                                <input type="number" id="De_mm" class="input-field" value="10">
-                                <span class="unit-text text-gray-500">mm</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="Dd_mm" class="input-label">Dust Outlet (Dd)</label>
-                                <input type="number" id="Dd_mm" class="input-field" value="5">
-                                <span class="unit-text text-gray-500">mm</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="Bc_mm" class="input-label">Inlet Width (Bc)</label>
-                                <input type="number" id="Bc_mm" class="input-field" value="5">
-                                <span class="unit-text text-gray-500">mm</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="Hc_mm" class="input-label">Inlet Height (Hc)</label>
-                                <input type="number" id="Hc_mm" class="input-field" value="9">
-                                <span class="unit-text text-gray-500">mm</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Flow & Material Properties</h3>
-                        <div class="space-y-3">
-                            <div class="input-group">
-                                <label for="Q_lps" class="input-label">Inlet Flow Rate</label>
-                                <input type="number" id="Q_lps" class="input-field" value="1">
-                                <span class="unit-text text-gray-500">L/s</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="mu" class="input-label">Gas Viscosity (μ)</label>
-                                <input type="text" id="mu" class="input-field" value="1.81e-5">
-                                <span class="unit-text text-gray-500">Pa.s</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="rho_p" class="input-label">Particle Density (ρp)</label>
-                                <input type="number" id="rho_p" class="input-field" value="2650">
-                                <span class="unit-text text-gray-500">kg/m³</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="rho_g" class="input-label">Gas Density (ρg)</label>
-                                <input type="number" id="rho_g" class="input-field" value="1.225">
-                                <span class="unit-text text-gray-500">kg/m³</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="e_um" class="input-label">Roughness (e)</label>
-                                <input type="number" id="e_um" class="input-field" value="45">
-                                <span class="unit-text text-gray-500">µm</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="initial_dust" class="input-label">Initial Dust Load</label>
-                                <input type="number" id="initial_dust" class="input-field" value="200">
-                                <span class="unit-text text-gray-500">g</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="num_cyclones" class="input-label"># of Cyclones</label>
-                                <input type="number" id="num_cyclones" class="input-field" value="1">
-                                <span class="unit-text text-gray-500">units</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-8 text-center">
-                    <button id="calculate-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105 text-lg">
-                        Calculate
-                    </button>
-                </div>
+            <div class="border-b border-gray-300 mb-8">
+                <nav class="flex -mb-px">
+                    <button class="tab-button active" data-tab="single-calc-tab">Single Calculation</button>
+                    <button class="tab-button" data-tab="param-study-tab">Parametric Study</button>
+                    <button class="tab-button" data-tab="optimization-tab">Optimization</button>
+                    <button class="tab-button" data-tab="instant-result-tab">Instant Result</button>
+                </nav>
             </div>
 
-            <div id="results" class="hidden bg-white p-6 sm:p-8 rounded-2xl shadow-lg mt-8">
-                <h2 class="text-3xl font-semibold mb-6">Calculation Results</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                        <h3 class="font-bold text-xl text-indigo-700">Inlet Velocity</h3>
-                        <p class="text-3xl font-mono"><span id="result-Vin"></span> m/s</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                        <h3 class="font-bold text-xl text-indigo-700">Total Number of Turns (Ne)</h3>
-                        <p class="text-3xl font-mono"><span id="result-Ne_total"></span></p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-lg shadow-sm">
-                        <h3 class="font-bold text-xl text-green-800">Cut Diameter (d50)</h3>
-                        <p class="text-4xl font-mono text-center text-green-700 pt-2"><span id="result-d50"></span> µm</p>
-                    </div>
-                    <div class="bg-blue-50 p-4 rounded-lg shadow-sm">
-                        <h3 class="font-bold text-xl text-blue-800">Total Mass Separation Efficiency</h3>
-                        <p class="text-4xl font-mono text-center text-blue-700 pt-2"><span id="result-total-efficiency"></span> %</p>
-                    </div>
-                    <div class="bg-red-50 p-6 rounded-lg shadow-sm col-span-1 md:col-span-2">
-                        <h3 class="font-bold text-xl text-red-800 mb-3 text-center">Pressure Drop & Power Consumption</h3>
-                        <div class="grid grid-cols-2 gap-x-8 gap-y-2 max-w-lg mx-auto text-lg">
-                            <span>Entry Loss (ΔPe):</span><span class="font-mono text-right"><span id="result-dPe"></span> Pa</span>
-                            <span>Kinetic Loss (ΔPk):</span><span class="font-mono text-right"><span id="result-dPk"></span> Pa</span>
-                            <span>Frictional Loss (ΔPf):</span><span class="font-mono text-right"><span id="result-dPf"></span> Pa</span>
-                            <span>Rotational Loss (ΔPr):</span><span class="font-mono text-right"><span id="result-dPr"></span> Pa</span>
-                            <span>Exit Loss (ΔPo):</span><span class="font-mono text-right"><span id="result-dPo"></span> Pa</span>
-                        </div>
-                        <div class="text-center mt-4 pt-4 border-t border-red-200">
-                            <h4 class="font-semibold text-gray-600">Total Pressure Loss</h4>
-                            <p class="text-4xl font-bold text-red-700 my-1"><span id="result-total-pa"></span> Pa</p>
-                            <p class="text-lg text-red-600">(<span id="result-total-h2o"></span> in H₂O)</p>
-                        </div>
-                        <div class="text-center mt-4 pt-4 border-t border-red-200">
-                            <h4 class="font-semibold text-gray-600">Airwatt Loss</h4>
-                            <p class="text-4xl font-bold text-red-700 my-1"><span id="result-airwatt-loss"></span> W</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="efficiency-section" class="mt-10">
-                    <h3 class="text-2xl font-semibold mb-4">Particle Separation Efficiency Details</h3>
-                    <div class="overflow-x-auto">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Particle Size (dp, µm)</th>
-                                    <th>Mass Fraction (%)</th>
-                                    <th>Separation Efficiency (%)</th>
-                                    <th>Weighted Efficiency (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="efficiency-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 rounded-lg p-4 mt-8"></div>
-        </main>
-    </div>
-
-    <script>
-        // Global variables
-        const particle_sizes_microns = [0.5, 1.5, 2.5, 3.5, 4.5, 6, 8.5, 15, 30, 60, 100];
-        const mass_fractions = [0.025, 0.075, 0.085, 0.070, 0.055, 0.100, 0.090, 0.200, 0.180, 0.115, 0.005];
-        const MIN_VELOCITY = 1e-6;
-
-        // Mathematical functions
-        function simpson(f, a, b, n, args) {
-            if (a >= b) return 0;
-            if (n % 2 !== 0) n++;
-            const h = (b - a) / n;
-            let sum = f(a, ...args) + f(b, ...args);
-            
-            for (let i = 1; i < n; i += 2) {
-                const y = f(a + i * h, ...args);
-                if (isFinite(y)) sum += 4 * y;
-            }
-            
-            for (let i = 2; i < n - 1; i += 2) {
-                const y = f(a + i * h, ...args);
-                if (isFinite(y)) sum += 2 * y;
-            }
-            
-            return sum * h / 3;
-        }
-
-        // Velocity calculation functions
-        const calculate_v_t1 = (V_in) => V_in;
-
-        function calculate_v_z1(V_in, D_c, D_e, B_c, H_c) {
-            const Q_in = V_in * H_c * B_c;
-            const annular_area = (Math.PI / 4) * (D_c ** 2 - D_e ** 2);
-            if (annular_area <= 0) return 0;
-            return Q_in / annular_area;
-        }
-
-        function calculate_cone_radius_at_z(z, D_c, Z_c, D_d) {
-            const R_c = D_c / 2;
-            const R_d = D_d / 2;
-            if (Z_c === 0) return R_c;
-            return R_c - (z / Z_c) * (R_c - R_d);
-        }
-
-        function calculate_v_t2(z, V_in, D_c, Z_c, D_d) {
-            const R_c = D_c / 2;
-            const r_at_z = calculate_cone_radius_at_z(z, D_c, Z_c, D_d);
-            if (r_at_z <= 0) return Infinity;
-            return (R_c / r_at_z) * V_in;
-        }
-
-        function calculate_v_z2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c) {
-            if ((D_c - D_d) <= 0 || Z_c <= 0) return 0;
-            
-            let Z_o2 = Z_c * (1 - (D_e - D_d) / (D_c - D_d));
-            if (Z_o2 <= 0) Z_o2 = Z_c;
-            
-            const Q_in = V_in * H_c * B_c;
-            let Q_z = 0;
-            if (z <= Z_o2) {
-                Q_z = Q_in * (1 - z / Z_o2);
-            }
-            
-            const r_cone_at_z = calculate_cone_radius_at_z(z, D_c, Z_c, D_d);
-            const r_outlet = D_e / 2;
-            const annular_area_z = Math.PI * (r_cone_at_z ** 2 - r_outlet ** 2);
-            
-            if (annular_area_z <= 0) return Infinity;
-            return Q_z / annular_area_z;
-        }
-
-        function calculate_v_r2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c) {
-            const V_z2_at_z = calculate_v_z2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
-            if (Z_c === 0) return 0;
-            const tan_theta = ((D_c / 2) - (D_d / 2)) / Z_c;
-            return V_z2_at_z * tan_theta;
-        }
-
-        // Integrand functions
-        function integrand_l1(z, V_in, D_c, D_e, B_c, H_c) {
-            const V_t1 = calculate_v_t1(V_in);
-            const V_z1 = calculate_v_z1(V_in, D_c, D_e, B_c, H_c);
-            if (V_z1 < MIN_VELOCITY) return 0;
-            return Math.sqrt(V_t1 ** 2 + V_z1 ** 2) / V_z1;
-        }
-
-        function integrand_l2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c) {
-            const V_t2 = calculate_v_t2(z, V_in, D_c, Z_c, D_d);
-            const V_z2 = calculate_v_z2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
-            const V_r2 = calculate_v_r2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
-            
-            if (V_z2 < MIN_VELOCITY || !isFinite(V_z2)) return 0;
-            
-            const total_velocity_V2 = Math.sqrt(V_t2 ** 2 + V_z2 ** 2 + V_r2 ** 2);
-            return total_velocity_V2 / V_z2;
-        }
-
-        // Parameter calculation functions
-        function calculate_barrel_parameters(V_in, D_c, D_e, L_c, B_c, H_c) {
-            const V_t1 = calculate_v_t1(V_in);
-            const V_z1 = calculate_v_z1(V_in, D_c, D_e, B_c, H_c);
-            const V1 = Math.sqrt(V_t1 ** 2 + V_z1 ** 2);
-            const L1 = simpson(z => integrand_l1(z, V_in, D_c, D_e, B_c, H_c), 0, L_c, 1000, []);
-            const Ne1 = L1 / (Math.PI * D_c);
-            return { V1, L1, Ne1 };
-        }
-
-        function calculate_cone_parameters(V_in, D_c, D_e, Z_c, D_d, B_c, H_c) {
-            const L2 = simpson(z => integrand_l2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c), 0, Z_c, 1000, []);
-            const avg_diameter_for_turns = (D_c + D_e) / 2;
-            const Ne2 = avg_diameter_for_turns > 0 ? L2 / (Math.PI * avg_diameter_for_turns) : Infinity;
-            
-            const z_mid = Z_c / 2;
-            const V_t2_avg = calculate_v_t2(z_mid, V_in, D_c, Z_c, D_d);
-            const V_z2_avg = calculate_v_z2(z_mid, V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
-            const V_r2_avg = calculate_v_r2(z_mid, V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
-            const average_V2 = Math.sqrt(V_t2_avg ** 2 + V_z2_avg ** 2 + V_r2_avg ** 2);
-            
-            return { average_V2, L2, Ne2 };
-        }
-
-        function calculate_lapple_cut_diameter(mu, B_c, rho_p, rho_g, V_in, Ne_total) {
-            const numerator = 9 * mu * B_c;
-            const denominator = 2 * Math.PI * (rho_p - rho_g) * V_in * Ne_total;
-            if (denominator <= 0) return Infinity;
-            return Math.sqrt(numerator / denominator);
-        }
-
-        function calculate_separation_efficiency(d50_microns, dp_microns) {
-            if (dp_microns <= 0) return 0;
-            return 1 / (1 + (d50_microns / dp_microns) ** 2);
-        }
-
-        function swamee_jain_friction_factor(Re, e, D) {
-            if (Re < 2300) return 64 / Re;
-            const log_term = e / (3.7 * D) + 5.74 / (Re ** 0.9);
-            if (log_term <= 0) return 0.02;
-            return 0.25 / (Math.log10(log_term)) ** 2;
-        }
-
-        function calculate_pressure_loss(V_in, D_c, D_e, L_c, Z_c, D_d, B_c, H_c, rho_g, mu, e) {
-            const Q_in = V_in * B_c * H_c;
-            const VP_in = 0.5 * rho_g * V_in ** 2;
-            
-            // Entry loss
-            const C5 = 1;
-            const delta_Pe = C5 * VP_in;
-            
-            // Kinetic loss
-            const A_out = Math.PI * (D_e / 2) ** 2;
-            const V_out = Q_in / A_out;
-            const VP_out = 0.5 * rho_g * V_out ** 2;
-            const delta_Pk = VP_in - VP_out;
-            
-            // Rotational loss
-            const R = D_c / 2;
-            const r0 = D_e / 2;
-            const delta_Pr = r0 > 0 ? rho_g * V_in ** 2 * (R / r0 - 1) : Infinity;
-            
-            // Exit loss
-            const C6 = 1.8;
-            const delta_Po = C6 * VP_out;
-            
-            // Frictional losses
-            const V_z1_val = calculate_v_z1(V_in, D_c, D_e, B_c, H_c);
-            const V_s1 = Math.sqrt(V_in ** 2 + V_z1_val ** 2);
-            const D_s1 = V_s1 > 0 ? Math.sqrt(4 * Q_in / (Math.PI * V_s1)) : 0;
-            const Re1 = D_s1 > 0 ? rho_g * V_s1 * D_s1 / mu : 0;
-            const f1 = swamee_jain_friction_factor(Re1, e, D_s1);
-            const VP_s1 = 0.5 * rho_g * V_s1 ** 2;
-            const L1 = simpson(z => integrand_l1(z, V_in, D_c, D_e, B_c, H_c), 0, L_c, 1000, []);
-            const delta_Pf1 = D_s1 > 0 ? f1 / 2 * (VP_s1 / D_s1) * L1 : 0;
-            
-            // Cone section friction
-            let Z_o2 = 0;
-            if (D_c - D_d > 0 && Z_c > 0) {
-                Z_o2 = Z_c * (D_c - D_e) / (D_c - D_d);
-            }
-            if (Z_o2 <= 0) {
-                Z_o2 = Z_c;
-            }
-            
-            const z_mid = Z_o2 / 2;
-            const V_t2_avg = calculate_v_t2(z_mid, V_in, D_c, Z_c, D_d);
-            const V_z2_avg = calculate_v_z2(z_mid, V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
-            const V_r2_avg = calculate_v_r2(z_mid, V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
-            const V_s2_avg = Math.sqrt(V_t2_avg ** 2 + V_z2_avg ** 2 + V_r2_avg ** 2);
-            
-            const Q_z_avg = Q_in * (1 - z_mid / Z_o2);
-            const D_s2_avg = V_s2_avg > 0 ? Math.sqrt(4 * Q_z_avg / (Math.PI * V_s2_avg)) : 0;
-            const Re2_avg = D_s2_avg > 0 ? rho_g * V_s2_avg * D_s2_avg / mu : 0;
-            const f2_avg = swamee_jain_friction_factor(Re2_avg, e, D_s2_avg);
-            const VP_s2_avg = 0.5 * rho_g * V_s2_avg ** 2;
-            const L2 = simpson(z => integrand_l2(z, V_in, D_c, D_e, Z_c, D_d, B_c, H_c), 0, Z_c, 1000, []);
-            const delta_Pf2 = D_s2_avg > 0 ? f2_avg / 2 * (VP_s2_avg / D_s2_avg) * L2 : 0;
-            
-            const delta_Pf_total = delta_Pf1 + delta_Pf2;
-            const total_loss = delta_Pe + delta_Pk + delta_Pr + delta_Po + delta_Pf_total;
-            
-            return {
-                total_loss,
-                delta_Pe,
-                delta_Pk,
-                delta_Pf_total,
-                delta_Pr,
-                delta_Po
-            };
-        }
-
-        // Main calculation event listener
-        document.getElementById("calculate-btn").addEventListener("click", () => {
-            const resultsDiv = document.getElementById("results");
-            const errorDiv = document.getElementById("error-message");
-            
-            resultsDiv.classList.add("hidden");
-            errorDiv.classList.add("hidden");
-            
-            try {
-                // Get input values
-                const Q_lps = parseFloat(document.getElementById("Q_lps").value);
-                const D_c_mm = parseFloat(document.getElementById("Dc_mm").value);
-                const L_c_mm = parseFloat(document.getElementById("Lc_mm").value);
-                const Z_c_mm = parseFloat(document.getElementById("Zc_mm").value);
-                const D_e_mm = parseFloat(document.getElementById("De_mm").value);
-                const D_d_mm = parseFloat(document.getElementById("Dd_mm").value);
-                const B_c_mm = parseFloat(document.getElementById("Bc_mm").value);
-                const H_c_mm = parseFloat(document.getElementById("Hc_mm").value);
-                const mu = parseFloat(document.getElementById("mu").value);
-                const rho_p = parseFloat(document.getElementById("rho_p").value);
-                const rho_g = parseFloat(document.getElementById("rho_g").value);
-                const e_um = parseFloat(document.getElementById("e_um").value);
-                const initial_dust = parseFloat(document.getElementById("initial_dust").value);
-                const num_cyclones = parseInt(document.getElementById("num_cyclones").value) || 1;
-                
-                // Convert units
-                const D_c = D_c_mm / 1000;
-                const L_c = L_c_mm / 1000;
-                const Z_c = Z_c_mm / 1000;
-                const D_e = D_e_mm / 1000;
-                const D_d = D_d_mm / 1000;
-                const B_c = B_c_mm / 1000;
-                const H_c = H_c_mm / 1000;
-                const e = e_um / 1000000;
-                const Q_m3s = Q_lps / 1000;
-                
-                // Validate inputs
-                const A_in = B_c * H_c;
-                if (A_in <= 0) throw new Error("Inlet area (Bc * Hc) must be positive.");
-                
-                const V_in = Q_m3s / A_in;
-                
-                if (!(D_c > D_e && D_e > D_d && D_d > 0 && L_c > 0 && Z_c >= 0 && V_in > 0 && B_c > 0 && H_c > 0)) {
-                    throw new Error("Dimensions must be positive. The following must hold: Dc > De > Dd > 0.");
-                }
-                
-                // Calculate parameters
-                const { V1, L1, Ne1 } = calculate_barrel_parameters(V_in, D_c, D_e, L_c, B_c, H_c);
-                const { average_V2, L2, Ne2 } = calculate_cone_parameters(V_in, D_c, D_e, Z_c, D_d, B_c, H_c);
-                const Ne_total = Ne1 + Ne2;
-                
-                const d50 = calculate_lapple_cut_diameter(mu, B_c, rho_p, rho_g, V_in, Ne_total);
-                const d50_microns = d50 * 1000000;
-                
-                const pressureResults = calculate_pressure_loss(V_in, D_c, D_e, L_c, Z_c, D_d, B_c, H_c, rho_g, mu, e);
-                const airwatt_loss = pressureResults.total_loss * Q_m3s;
-                
-                // Calculate efficiency table
-                const efficiencyTableBody = document.getElementById("efficiency-body");
-                efficiencyTableBody.innerHTML = "";
-                let totalMassEfficiency = 0;
-                
-                particle_sizes_microns.forEach((dp, index) => {
-                    const massFraction = mass_fractions[index];
-                    const efficiency = calculate_separation_efficiency(d50_microns, dp);
-                    const weightedEfficiency = efficiency * massFraction;
-                    totalMassEfficiency += weightedEfficiency;
-                    
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${dp}</td>
-                        <td>${(massFraction * 100).toFixed(1)}</td>
-                        <td>${(efficiency * 100).toFixed(2)}</td>
-                        <td>${(weightedEfficiency * 100).toFixed(2)}</td>
-                    `;
-                    efficiencyTableBody.appendChild(row);
-                });
-                
-                // Update results display
-                document.getElementById("result-Vin").textContent = V_in.toFixed(2);
-                document.getElementById("result-Ne_total").textContent = Ne_total.toFixed(2);
-                document.getElementById("result-d50").textContent = d50_microns.toFixed(2);
-                document.getElementById("result-total-efficiency").textContent = (totalMassEfficiency * 100).toFixed(2);
-                
-                document.getElementById("result-dPe").textContent = pressureResults.delta_Pe.toFixed(2);
-                document.getElementById("result-dPk").textContent = pressureResults.delta_Pk.toFixed(2);
-                document.getElementById("result-dPf").textContent = pressureResults.delta_Pf_total.toFixed(2);
-                document.getElementById("result-dPr").textContent = pressureResults.delta_Pr.toFixed(2);
-                document.getElementById("result-dPo").textContent = pressureResults.delta_Po.toFixed(2);
-                document.getElementById("result-total-pa").textContent = pressureResults.total_loss.toFixed(2);
-                document.getElementById("result-total-h2o").textContent = (pressureResults.total_loss * 0.00401865).toFixed(2);
-                document.getElementById("result-airwatt-loss").textContent = airwatt_loss.toFixed(3);
-                
-                resultsDiv.classList.remove("hidden");
-                
-            } catch (e) {
-                const errorContainer = document.getElementById("error-message");
-                errorContainer.textContent = `Error: ${e.message}. Please check your inputs.`;
-                errorContainer.classList.remove("hidden");
-            }
-        });
-    </script>
-</body>
-</html>
+            <div id="single-calc-tab" class="tab-content active">
+                <div id="main-grid-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                     <div id="sortable-column-1" class="sortable-column flex flex-col gap-8">
+                         <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                             <div id="calculator-form">
+                                 <div class="card-header mb-6 border-b pb-3">
+                                     <div class="flex items-center gap-4">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                                         <h2 class="text-3xl font-semibold">Input Parameters</h2>
+                                     </div>
+                                     <div class="control-container">
+                                         <div class="control-group">
+                                             <button id="layout-1-col" class="layout-btn">1 Column</button>
+                                             <button id="layout-2-col" class="layout-btn active">2 Columns</button>
+                                         </div>
+                                         <div class="control-group">
+                                             <button class="font-down-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg></button>
+                                             <span class="text-sm font-medium">Text Size</span>
+                                             <button class="font-up-btn control-btn"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg></button>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                     <div>
+                                         <h3 class="text-lg font-semibold text-gray-700 mb-4">Cyclone Dimensions</h3>
+                                         <div class="space-y-3">
+                                             <div class="input-group"><label for="Dc_mm" class="input-label">Body Diameter (Dc)</label><input type="number" id="Dc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="20"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Lc_mm" class="input-label">Barrel Length (Lc)</label><input type="number" id="Lc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="20"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Zc_mm" class="input-label">Cone Length (Zc)</label><input type="number" id="Zc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="50"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="De_mm" class="input-label">Outlet Diameter (De)</label><input type="number" id="De_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="10"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Dd_mm" class="input-label">Dust Outlet (Dd)</label><input type="number" id="Dd_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="5"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Bc_mm" class="input-label">Inlet Width (Bc)</label><input type="number" id="Bc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="5"><span class="unit-text text-gray-500">mm</span></div>
+                                             <div class="input-group"><label for="Hc_mm" class="input-label">Inlet Height (Hc)</label><input type="number" id="Hc_mm" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="9"><span class="unit-text text-gray-500">mm</span></div>
+                                         </div>
+                                     </div>
+                                     <div>
+                                         <h3 class="text-lg font-semibold text-gray-700 mb-4">Flow & Material Properties</h3>
+                                         <div class="space-y-3">
+                                             <div class="input-group"><label for="Q_lps" class="input-label">Inlet Flow Rate</label><input type="number" id="Q_lps" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1"><span class="unit-text text-gray-500">L/s</span></div>
+                                             <div class="input-group"><label for="mu" class="input-label">Gas Viscosity (μ)</label><input type="text" id="mu" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1.81e-5"><span class="unit-text text-gray-500">Pa.s</span></div>
+                                             <div class="input-group"><label for="rho_p" class="input-label">Particle Density (ρp)</label><input type="number" id="rho_p" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="2650"><span class="unit-text text-gray-500">kg/m³</span></div>
+                                             <div class="input-group"><label for="rho_g" class="input-label">Gas Density (ρg)</label><input type="number" id="rho_g" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1.225"><span class="unit-text text-gray-500">kg/m³</span></div>
+                                             <div class="input-group"><label for="e_um" class="input-label">Roughness (e)</label><input type="number" id="e_um" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="45"><span class="unit-text text-gray-500">µm</span></div>
+                                             <div class="input-group"><label for="initial_dust" class="input-label">Initial Dust Load</label><input type="number" id="initial_dust" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="200"><span class="unit-text text-gray-500">g</span></div>
+                                             <div class="input-group"><label for="num_cyclones" class="input-label"># of Cyclones</label><input type="number" id="num_cyclones" class="input-field p-2 border border-gray-300 rounded-md shadow-sm" value="1"><span class="unit-text text-gray-500">units</span></div>
+                                         </div>
+                                     </div>
+                                 </div>
+                                                                 <!-- Main Action Area -->
+                                <div class="mt-8 bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-2xl border border-indigo-200">
+                                    <div class="flex flex-col items-center gap-4">
+                                        <!-- Primary Actions Row -->
+                                        <div class="flex items-center gap-4 flex-wrap justify-center">
+                                            <input type="text" id="run-name-input" placeholder="Enter Run Name" class="p-3 border border-gray-300 rounded-lg shadow-sm w-64 text-center font-medium">
+                                            <button id="calculate-btn" class="bg-indigo-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105 text-lg">
+                                                🚀 Calculate
+                                            </button>
+                                            <button id="save-run-btn" class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-700 transition-all transform hover:scale-105">
+                                                💾 Save Run
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Quick Access Menu -->
+                                        <div class="flex items-center gap-3">
+                                            <div class="relative">
+                                                <button id="quick-menu-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg border border-gray-300 transition-colors flex items-center gap-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                                    </svg>
+                                                    Quick Actions
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                </button>
+                                                <div id="quick-menu-dropdown" class="hidden absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                                                    <div class="p-2">
+                                                        <div class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">File Operations</div>
+                                                        <button id="save-to-file-btn" class="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 rounded-md flex items-center gap-2 text-gray-700">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12" />
+                                                            </svg>
+                                                            Save Project to File
+                                                        </button>
+                                                        <label for="load-from-file-input" class="w-full text-left px-3 py-2 text-sm hover:bg-orange-50 rounded-md flex items-center gap-2 text-gray-700 cursor-pointer">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                                                            </svg>
+                                                            Load Project from File
+                                                        </label>
+                                                        <input type="file" id="load-from-file-input" accept=".json" style="display: none;">
+                                                        <button id="export-all-runs-btn" class="w-full text-left px-3 py-2 text-sm hover:bg-purple-50 rounded-md flex items-center gap-2 text-gray-700">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                            </svg>
+                                                            Export Analysis Report
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Parameters History Toggle -->
+                                            <button id="history-toggle-btn" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-medium py-2 px-4 rounded-lg border border-amber-300 transition-colors flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                Parameter History
+                                                <span id="history-count" class="bg-amber-200 text-amber-900 px-2 py-1 rounded-full text-xs font-bold">0</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
