@@ -484,7 +484,7 @@
                             <div class="card-header mb-4">
                                 <div class="flex items-center gap-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 drag-handle" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                                    <h3 class="text-2xl font-semibold">Parametric Dust Load</h3>
+                                    <h3 class="text-2xl font-semibold">Dust Collection Performance</h3>
                                 </div>
                                 <button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="param-per-cyclone-dust-chart" title="Export Chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button>
                             </div>
@@ -1919,8 +1919,19 @@
 
             paramEscapedDustChart.data.datasets[0].data = studyResults.map(r => r.total_escaped_dust);
             paramAirwattChart.data.datasets[0].data = studyResults.map(r => r.airwatt_loss);
-            paramPerCycloneDustChart.data.datasets[0].data = studyResults.map(r => r.dust_per_cyclone);
-            paramPerCycloneDustChart.data.datasets[1].data = studyResults.map(r => r.escaped_per_cyclone);
+            // Update stacked bar data and efficiency line
+            const collectedDustData = studyResults.map(r => r.dust_per_cyclone - r.escaped_per_cyclone);
+            const escapedDustData = studyResults.map(r => r.escaped_per_cyclone);
+            const efficiencyData = studyResults.map(r => {
+                const totalDust = r.dust_per_cyclone;
+                const escaped = r.escaped_per_cyclone;
+                const collected = totalDust - escaped;
+                return totalDust > 0 ? (collected / totalDust) * 100 : 0;
+            });
+            
+            paramPerCycloneDustChart.data.datasets[0].data = collectedDustData; // Collected Dust
+            paramPerCycloneDustChart.data.datasets[1].data = escapedDustData;   // Escaped Dust  
+            paramPerCycloneDustChart.data.datasets[2].data = efficiencyData;    // Collection Efficiency
 
             [paramEfficiencyChart, paramPressureChart, paramEscapedDustChart, paramPerCycloneDustChart, paramAirwattChart].forEach(c => {c.update();c.draw()});
             document.getElementById('param-grid-container').classList.remove('hidden');
@@ -1947,11 +1958,168 @@
             const paramEscapedDustCtx=document.getElementById("param-escaped-dust-chart").getContext("2d");let paramEscapedDustOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));paramEscapedDustOptions.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Total Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};paramEscapedDustChart=new Chart(paramEscapedDustCtx,{type:"bar",data:{labels:[],datasets:[{label:"Total Escaped Dust",data:[],backgroundColor:"#facc15"}]},options:paramEscapedDustOptions,plugins:[{id:'paramEscapedDustValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
             const paramAirwattCtx=document.getElementById("param-airwatt-chart").getContext("2d");let paramAirwattOptions=JSON.parse(JSON.stringify(chartOptionsTemplate));paramAirwattOptions.scales={x:{title:{display:!0, font:{}},ticks:{font:{}}},y:{title:{display:!0,text:"Airwatt Loss (W)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}};paramAirwattChart=new Chart(paramAirwattCtx,{type:"bar",data:{labels:[],datasets:[{label:"Airwatt Loss",data:[],backgroundColor:"#8b5cf6"}]},options:paramAirwattOptions,plugins:[{id:'paramAirwattValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{let total=0;chart.data.datasets.forEach(dataset=>{const value=dataset.data[index];if(value>0)total+=value});if(total>0){const meta=chart.getDatasetMeta(0);if(meta&&meta.data[index]){const bar=meta.data[index];const text=total.toFixed(1);ctx.strokeText(text,bar.x,bar.y-8);ctx.fillText(text,bar.x,bar.y-8)}}});ctx.restore()}}]});
            
-            // Parametric Per Cyclone Chart (Grouped Bar)
+            // Parametric Per Cyclone Chart (Professional Stacked + Efficiency)
             const pPerCtx = document.getElementById("param-per-cyclone-dust-chart").getContext("2d");
             let pPerOptions = JSON.parse(JSON.stringify(chartOptionsTemplate));
-            pPerOptions.scales = {x:{title:{display:!0,font:{}},ticks:{font:{}}}, y:{title:{display:!0,text:"Dust Load (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}}}, y1:{type:"linear",display:!0,position:"right",title:{display:!0,text:"Escaped Dust (g)",font:{}},beginAtZero:!0,grace:"10%",ticks:{font:{}},grid:{drawOnChartArea:!1}}};
-            paramPerCycloneDustChart = new Chart(pPerCtx,{type:"line",data:{labels:[],datasets:[{label:"Dust Load per Cyclone",data:[],backgroundColor:"#3b82f6",borderColor:"#3b82f6",type:"line",yAxisID:"y",pointRadius:6,fill:false,tension:0.1},{label:"Escaped Dust per Cyclone",data:[],backgroundColor:"#dc2626",borderColor:"#dc2626",type:"line",yAxisID:"y1",pointRadius:6,fill:false,tension:0.1}]},options:pPerOptions,plugins:[{id:'paramPerCycloneValues',afterDatasetsDraw:function(chart){const ctx=chart.ctx;ctx.save();ctx.font=`bold 14px Arial`;ctx.textAlign="center";ctx.textBaseline="bottom";ctx.strokeStyle="#ffffff";ctx.lineWidth=3;ctx.fillStyle="#000000";chart.data.labels.forEach((label,index)=>{chart.data.datasets.forEach((dataset,datasetIndex)=>{const value=dataset.data[index];if(value&&value>0){const meta=chart.getDatasetMeta(datasetIndex);if(meta&&meta.data&&meta.data[index]){const element=meta.data[index];const text=value.toFixed(1);ctx.strokeText(text,element.x,element.y-8);ctx.fillText(text,element.x,element.y-8)}}})});ctx.restore()}}]});
+            pPerOptions.scales = {
+                x: {
+                    title: {display: true, text: 'Parameter Values', font: {}},
+                    ticks: {font: {}}
+                },
+                y: {
+                    title: {display: true, text: 'Dust per Cyclone (g)', font: {}},
+                    beginAtZero: true,
+                    grace: "10%",
+                    ticks: {font: {}},
+                    stacked: true
+                },
+                y1: {
+                    type: "linear",
+                    display: true,
+                    position: "right",
+                    title: {display: true, text: 'Collection Efficiency (%)', font: {}},
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        font: {},
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    },
+                    grid: {drawOnChartArea: false}
+                }
+            };
+            pPerOptions.plugins = {
+                ...pPerOptions.plugins,
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            if (label.includes('Efficiency')) {
+                                return label + ': ' + context.parsed.y.toFixed(1) + '%';
+                            } else {
+                                return label + ': ' + context.parsed.y.toFixed(1) + 'g';
+                            }
+                        },
+                        footer: function(tooltipItems) {
+                            // Show total dust and collection percentage
+                            const dataIndex = tooltipItems[0].dataIndex;
+                            const datasets = tooltipItems[0].chart.data.datasets;
+                            const collectedData = datasets.find(d => d.label === 'Collected Dust').data;
+                            const escapedData = datasets.find(d => d.label === 'Escaped Dust').data;
+                            
+                            if (collectedData && escapedData) {
+                                const collected = collectedData[dataIndex];
+                                const escaped = escapedData[dataIndex];
+                                const total = collected + escaped;
+                                const efficiency = ((collected / total) * 100).toFixed(1);
+                                return `Total: ${total.toFixed(1)}g | Efficiency: ${efficiency}%`;
+                            }
+                            return '';
+                        }
+                    }
+                }
+            };
+            
+            paramPerCycloneDustChart = new Chart(pPerCtx, {
+                type: "bar",
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: "Collected Dust",
+                            data: [],
+                            backgroundColor: "#22c55e", // Green for collected
+                            borderColor: "#16a34a",
+                            borderWidth: 1,
+                            stack: 'dust',
+                            order: 2
+                        },
+                        {
+                            label: "Escaped Dust", 
+                            data: [],
+                            backgroundColor: "#ef4444", // Red for escaped
+                            borderColor: "#dc2626",
+                            borderWidth: 1,
+                            stack: 'dust',
+                            order: 3
+                        },
+                        {
+                            label: "Collection Efficiency",
+                            data: [],
+                            type: "line",
+                            backgroundColor: "#3b82f6",
+                            borderColor: "#2563eb",
+                            borderWidth: 3,
+                            pointBackgroundColor: "#2563eb",
+                            pointBorderColor: "#ffffff",
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            fill: false,
+                            tension: 0.4,
+                            yAxisID: "y1",
+                            order: 1
+                        }
+                    ]
+                },
+                options: pPerOptions,
+                plugins: [{
+                    id: 'paramPerCycloneValues',
+                    afterDatasetsDraw: function(chart) {
+                        const ctx = chart.ctx;
+                        ctx.save();
+                        
+                        // Draw values on stacked bars
+                        chart.data.datasets.forEach((dataset, datasetIndex) => {
+                            if (dataset.type !== 'line') {
+                                const meta = chart.getDatasetMeta(datasetIndex);
+                                meta.data.forEach((bar, index) => {
+                                    const value = dataset.data[index];
+                                    if (value && value > 0) {
+                                        ctx.fillStyle = '#ffffff';
+                                        ctx.strokeStyle = '#000000';
+                                        ctx.lineWidth = 2;
+                                        ctx.font = 'bold 11px Arial';
+                                        ctx.textAlign = 'center';
+                                        ctx.textBaseline = 'middle';
+                                        
+                                        const text = value.toFixed(1) + 'g';
+                                        const x = bar.x;
+                                        const y = bar.y + (bar.height / 2);
+                                        
+                                        // Only show if bar is tall enough
+                                        if (bar.height > 20) {
+                                            ctx.strokeText(text, x, y);
+                                            ctx.fillText(text, x, y);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        
+                        // Draw efficiency values on line points
+                        const efficiencyDataset = chart.data.datasets.find(d => d.label === 'Collection Efficiency');
+                        if (efficiencyDataset) {
+                            const efficiencyMeta = chart.getDatasetMeta(chart.data.datasets.indexOf(efficiencyDataset));
+                            efficiencyMeta.data.forEach((point, index) => {
+                                const value = efficiencyDataset.data[index];
+                                if (value !== null && value !== undefined) {
+                                    ctx.fillStyle = '#2563eb';
+                                    ctx.font = 'bold 12px Arial';
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'bottom';
+                                    
+                                    const text = value.toFixed(1) + '%';
+                                    ctx.fillText(text, point.x, point.y - 10);
+                                }
+                            });
+                        }
+                        
+                        ctx.restore();
+                    }
+                }]
+            });
         }
 
         // ===========================
