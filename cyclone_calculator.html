@@ -255,11 +255,39 @@
                                          </div>
                                      </div>
                                  </div>
-                                 <div class="mt-8 flex justify-center items-center gap-4">
-                                     <input type="text" id="run-name-input" placeholder="Enter Run Name" class="p-2 border border-gray-300 rounded-md shadow-sm w-64">
-                                     <button id="calculate-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105">Calculate</button>
-                                     <button id="save-run-btn" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105">Save Run</button>
-                                 </div>
+                                                                 <div class="mt-8 flex justify-center items-center gap-4 flex-wrap">
+                                    <input type="text" id="run-name-input" placeholder="Enter Run Name" class="p-2 border border-gray-300 rounded-md shadow-sm w-64">
+                                    <button id="calculate-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105">Calculate</button>
+                                    <button id="save-run-btn" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105">Save Run</button>
+                                </div>
+                                
+                                <!-- File Save/Load Section -->
+                                <div class="mt-6 flex justify-center items-center gap-4 flex-wrap">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-medium text-gray-600">💾 File Operations:</span>
+                                    </div>
+                                    <button id="save-to-file-btn" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        Save to File
+                                    </button>
+                                    
+                                    <label for="load-from-file-input" class="bg-orange-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-orange-700 transition-transform transform hover:scale-105 cursor-pointer flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                                        </svg>
+                                        Load from File
+                                    </label>
+                                    <input type="file" id="load-from-file-input" accept=".json" style="display: none;">
+                                    
+                                    <button id="export-all-runs-btn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-purple-700 transition-transform transform hover:scale-105 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                        Export All Runs
+                                    </button>
+                                </div>
                              </div>
                          </div>
                      </div>
@@ -749,6 +777,165 @@
         document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
         document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);runCounter++;document.getElementById("run-name-input").value=""});
         document.getElementById("clear-history-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()})});
+
+        // File Operations
+        document.getElementById("save-to-file-btn").addEventListener("click", saveRunsToFile);
+        document.getElementById("load-from-file-input").addEventListener("change", loadRunsFromFile);
+        document.getElementById("export-all-runs-btn").addEventListener("click", exportAllRuns);
+
+        function saveRunsToFile() {
+            if (runHistory.length === 0) {
+                alert("No runs to save. Please calculate and save some runs first.");
+                return;
+            }
+            
+            const dataToSave = {
+                runs: runHistory,
+                exportDate: new Date().toISOString(),
+                version: "1.0",
+                application: "Cyclone Calculator"
+            };
+            
+            const dataStr = JSON.stringify(dataToSave, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `cyclone_runs_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert(`Successfully saved ${runHistory.length} runs to file!`);
+        }
+
+        function loadRunsFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Validate the data structure
+                    if (!data.runs || !Array.isArray(data.runs)) {
+                        throw new Error("Invalid file format: missing runs array");
+                    }
+                    
+                    // Ask user if they want to replace or merge
+                    let shouldMerge = false;
+                    if (runHistory.length > 0) {
+                        shouldMerge = confirm(`You have ${runHistory.length} existing runs. Click OK to merge with loaded runs, or Cancel to replace all runs.`);
+                    }
+                    
+                    if (!shouldMerge) {
+                        runHistory = [];
+                        runCounter = 1;
+                    }
+                    
+                    // Load the runs
+                    const loadedRuns = data.runs;
+                    const startCounter = runCounter;
+                    
+                    loadedRuns.forEach((run, index) => {
+                        // Assign new IDs to avoid conflicts
+                        const newRun = {
+                            ...run,
+                            id: runCounter,
+                            name: run.name || `Loaded Run ${runCounter}`
+                        };
+                        runHistory.push(newRun);
+                        runCounter++;
+                    });
+                    
+                    // Update the display
+                    updateComparisonTable();
+                    
+                    // Clear charts and rebuild
+                    [efficiencyChart, pressureChart, escapedDustChart, perCycloneDustChart, airwattChart].forEach(chart => {
+                        chart.data.labels = [];
+                        chart.data.datasets.forEach(d => d.data = []);
+                        if (chart === efficiencyChart) {
+                            chart.data.datasets = [{
+                                label: 'Efficiency (%)',
+                                data: [],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                tension: 0.1
+                            }];
+                        }
+                        chart.update();
+                    });
+                    
+                    // Rebuild all charts with loaded data
+                    runHistory.forEach(runData => {
+                        updateChartsForNewRun(runData);
+                    });
+                    
+                    alert(`Successfully loaded ${loadedRuns.length} runs from file!${shouldMerge ? ` Total runs: ${runHistory.length}` : ''}`);
+                    
+                } catch (error) {
+                    alert(`Error loading file: ${error.message}`);
+                } finally {
+                    // Clear the file input
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function exportAllRuns() {
+            if (runHistory.length === 0) {
+                alert("No runs to export. Please calculate and save some runs first.");
+                return;
+            }
+            
+            // Create a formatted export with additional metadata
+            const exportData = {
+                metadata: {
+                    exportDate: new Date().toISOString(),
+                    totalRuns: runHistory.length,
+                    application: "Cyclone Calculator",
+                    version: "1.0"
+                },
+                summary: {
+                    bestEfficiency: Math.max(...runHistory.map(r => r.total_loss_pa ? (100 - r.escaped_dust/200*100) : 0)),
+                    lowestPressureDrop: Math.min(...runHistory.map(r => r.total_loss_pa || Infinity)),
+                    averageD50: runHistory.reduce((sum, r) => sum + (r.d50 || 0), 0) / runHistory.length
+                },
+                runs: runHistory.map(run => ({
+                    id: run.id,
+                    name: run.name,
+                    d50_microns: run.d50,
+                    efficiency_percent: ((1 - run.escaped_dust/200) * 100).toFixed(2),
+                    pressure_drop_pa: run.total_loss_pa,
+                    airwatt_loss: run.airwatt_loss,
+                    escaped_dust_g: run.escaped_dust,
+                    dust_per_cyclone_g: run.dust_per_cyclone,
+                    escaped_per_cyclone_g: run.escaped_per_cyclone,
+                    pressure_components: run.pressure_components,
+                    efficiencies_by_particle_size: run.efficiencies
+                }))
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `cyclone_analysis_export_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert(`Successfully exported detailed analysis of ${runHistory.length} runs to file!`);
+        }
         function updateComparisonTable(){const tableBody=document.getElementById("comparison-body");const comparisonSection=document.getElementById("comparison-section");tableBody.innerHTML="";if(runHistory.length===0){comparisonSection.classList.add("hidden");return}comparisonSection.classList.remove("hidden");runHistory.forEach(run=>{const row=document.createElement("tr");row.innerHTML=`<td>${run.id}</td><td>${run.name}</td><td>${(run.d50).toFixed(2)}</td><td>${run.total_loss_pa.toFixed(2)}</td><td>${run.airwatt_loss.toFixed(3)}</td><td>${run.escaped_dust.toFixed(2)}</td>`;tableBody.appendChild(row)});updateAllTextSizes()}
         function updateChartsForNewRun(runData){const newEffColor=chartColors[(runHistory.length-1)%chartColors.length];efficiencyChart.data.datasets.push({label:runData.name,data:runData.efficiencies,borderColor:newEffColor,backgroundColor:"transparent",borderWidth:2,tension:.1,pointBackgroundColor:newEffColor});pressureChart.data.labels.push(runData.name);pressureChart.data.datasets[0].data.push(runData.pressure_components.dPe);pressureChart.data.datasets[1].data.push(runData.pressure_components.dPk);pressureChart.data.datasets[2].data.push(runData.pressure_components.dPf);pressureChart.data.datasets[3].data.push(runData.pressure_components.dPr);pressureChart.data.datasets[4].data.push(runData.pressure_components.dPo);escapedDustChart.data.labels.push(runData.name);escapedDustChart.data.datasets[0].data.push(runData.escaped_dust);airwattChart.data.labels.push(runData.name);airwattChart.data.datasets[0].data.push(runData.airwatt_loss);perCycloneDustChart.data.labels.push(runData.name);perCycloneDustChart.data.datasets[0].data.push(runData.dust_per_cyclone);perCycloneDustChart.data.datasets[1].data.push(runData.escaped_per_cyclone);        [efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(c=>{c.update();c.draw()})}
        
