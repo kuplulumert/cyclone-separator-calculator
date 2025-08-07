@@ -1153,8 +1153,8 @@
                                             <span class="text-sm font-medium">Inlet Width</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="0.1">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="0.3">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="0.003">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="0.006">
                                         </div>
                                     </div>
                                     
@@ -1164,8 +1164,8 @@
                                             <span class="text-sm font-medium">Inlet Height</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="0.15">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="0.45">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="0.005">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="0.008">
                                         </div>
                                     </div>
                                     
@@ -1175,8 +1175,8 @@
                                             <span class="text-sm font-medium">Cylinder Diameter</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="0.5">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="1.5">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="0.015">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="0.025">
                                         </div>
                                     </div>
                                     
@@ -1186,8 +1186,8 @@
                                             <span class="text-sm font-medium">Cylinder Height</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="1.0">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="3.0">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="0.030">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="0.050">
                                         </div>
                                     </div>
                                     
@@ -1197,8 +1197,8 @@
                                             <span class="text-sm font-medium">Vortex Finder Diameter</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="0.2">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="0.6">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="0.006">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="0.010">
                                         </div>
                                     </div>
                                 </div>
@@ -5739,15 +5739,15 @@ Comparative analysis based on ${runHistory.length} design variations
         }
 
         function mapDOEParamsToCycloneParams(doeParams) {
-            // Get current form values as defaults (use actual input IDs from the HTML)
-            const Q_lps = parseFloat(document.getElementById("Q_lps").value) || 500;
-            const D_c_mm = parseFloat(document.getElementById("Dc_mm").value) || 1000;
-            const L_c_mm = parseFloat(document.getElementById("Lc_mm").value) || 2000;
-            const Z_c_mm = parseFloat(document.getElementById("Zc_mm").value) || 1000;
-            const D_e_mm = parseFloat(document.getElementById("De_mm").value) || 400;
-            const D_d_mm = parseFloat(document.getElementById("Dd_mm").value) || 200;
-            const B_c_mm = parseFloat(document.getElementById("Bc_mm").value) || 200;
-            const H_c_mm = parseFloat(document.getElementById("Hc_mm").value) || 300;
+            // Get current form values as defaults (using ACTUAL default values from form)
+            const Q_lps = parseFloat(document.getElementById("Q_lps").value) || 1;
+            const D_c_mm = parseFloat(document.getElementById("Dc_mm").value) || 20;
+            const L_c_mm = parseFloat(document.getElementById("Lc_mm").value) || 40;
+            const Z_c_mm = parseFloat(document.getElementById("Zc_mm").value) || 20;
+            const D_e_mm = parseFloat(document.getElementById("De_mm").value) || 8;
+            const D_d_mm = parseFloat(document.getElementById("Dd_mm").value) || 4;
+            const B_c_mm = parseFloat(document.getElementById("Bc_mm").value) || 4;
+            const H_c_mm = parseFloat(document.getElementById("Hc_mm").value) || 6;
             const mu = parseFloat(document.getElementById("mu").value) || 1.8e-5;
             const rho_p = parseFloat(document.getElementById("rho_p").value) || 2650;
             const rho_g = parseFloat(document.getElementById("rho_g").value) || 1.2;
@@ -5776,10 +5776,10 @@ Comparative analysis based on ${runHistory.length} design variations
             return params;
         }
 
-        // Real cyclone calculation for DOE
+        // Real cyclone calculation for DOE - using EXACT same logic as main calculate button
         function calculateCyclonePerformance(params) {
             try {
-                // Extract parameters
+                // Extract parameters (ensuring exact same values as main calculation)
                 const Q_lps = params.Q_lps;
                 const D_c_mm = params.D_c_mm;
                 const L_c_mm = params.L_c_mm;
