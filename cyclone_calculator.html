@@ -1432,49 +1432,43 @@
                         </div>
                     </div>
                     
-                    <!-- Main Visualization Panel -->
+                    <!-- Parameter Effects Panel (Top) -->
                     <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 DOE Analysis Visualization</h3>
-                        
-                        <div class="grid grid-cols-12 gap-6">
-                            <!-- Main Chart -->
-                            <div class="col-span-10">
-                                <div class="mb-4 flex gap-2">
-                                    <select id="doe-chart-type" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="scatter">Scatter Plot</option>
-                                        <option value="contour">Contour Plot</option>
-                                        <option value="surface">3D Surface</option>
-                                        <option value="parallel">Parallel Coordinates</option>
-                                    </select>
-                                    <select id="doe-x-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="">Select X-axis</option>
-                                    </select>
-                                    <select id="doe-y-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="">Select Y-axis</option>
-                                    </select>
-                                    <select id="doe-response-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="">Select Response</option>
-                                    </select>
-                                </div>
-                                <canvas id="doe-main-chart" width="1000" height="600"></canvas>
-                            </div>
-                            
-                            <!-- Residuals Chart Only -->
-                            <div class="col-span-2">
-                                <div>
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Residuals</h4>
-                                    <canvas id="doe-residuals-chart" width="250" height="300"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Parameter Effects Panel (Separate) -->
-                    <div class="mt-6 bg-white rounded-lg shadow-md p-6">
                         <h4 id="parameter-effects-title" class="text-lg font-semibold text-gray-800 mb-4">Parameter Effects</h4>
                         <div class="w-full">
                             <canvas id="doe-effects-chart" width="1200" height="400"></canvas>
                         </div>
+                    </div>
+                    
+                    <!-- Main Visualization Panel -->
+                    <div class="mt-6 bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 DOE Analysis Visualization</h3>
+                        
+                        <div class="w-full">
+                            <div class="mb-4 flex gap-2">
+                                <select id="doe-chart-type" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="scatter">Scatter Plot</option>
+                                    <option value="contour">Contour Plot</option>
+                                    <option value="surface">3D Surface</option>
+                                    <option value="parallel">Parallel Coordinates</option>
+                                </select>
+                                <select id="doe-x-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select X-axis</option>
+                                </select>
+                                <select id="doe-y-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select Y-axis</option>
+                                </select>
+                                <select id="doe-response-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select Response</option>
+                                </select>
+                            </div>
+                            <canvas id="doe-main-chart" width="1200" height="600"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden Residuals Chart (kept for functionality) -->
+                    <div style="display: none;">
+                        <canvas id="doe-residuals-chart" width="250" height="300"></canvas>
                     </div>
                     
                 </div>
