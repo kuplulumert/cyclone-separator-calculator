@@ -1257,6 +1257,17 @@
                                             <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="10">
                                         </div>
                                     </div>
+                                    
+                                    <div class="parameter-row">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="flow_rate" onchange="updateExperimentInfo()">
+                                            <span class="text-sm font-medium">Inlet Flow Rate</span>
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="flow_rate" value="0.5" step="0.1">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="flow_rate" value="2.0" step="0.1">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -5378,7 +5389,8 @@ Comparative analysis based on ${runHistory.length} design variations
                 'inlet_height': 'Inlet Height (mm)',
                 'cylinder_diameter': 'Cylinder Diameter (mm)',
                 'cylinder_height': 'Cylinder Height (mm)',
-                'vortex_finder': 'Vortex Finder Diameter (mm)'
+                'vortex_finder': 'Vortex Finder Diameter (mm)',
+                'flow_rate': 'Inlet Flow Rate (L/s)'
             };
             return displayNames[paramName] || paramName;
         }
@@ -6004,9 +6016,9 @@ Comparative analysis based on ${runHistory.length} design variations
             const initial_dust = parseFloat(document.getElementById("initial_dust").value) || 10;
             const num_cyclones = parseInt(document.getElementById("num_cyclones").value) || 1;
             
-            // Map DOE parameters to form values (DOE params are already in mm)
+            // Map DOE parameters to form values (DOE params are already in mm, flow rate in L/s)
             const params = {
-                Q_lps: Q_lps,
+                Q_lps: doeParams.flow_rate || Q_lps,
                 D_c_mm: doeParams.cylinder_diameter || D_c_mm,
                 L_c_mm: doeParams.cylinder_height || L_c_mm,
                 Z_c_mm: Z_c_mm,
