@@ -1462,12 +1462,12 @@
                             <!-- Side Charts -->
                             <div class="col-span-4 space-y-4">
                                 <div>
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Parameter Effects</h4>
-                                    <canvas id="doe-effects-chart" width="300" height="180"></canvas>
+                                    <h4 id="parameter-effects-title" class="text-sm font-semibold text-gray-700 mb-2">Parameter Effects</h4>
+                                    <canvas id="doe-effects-chart" width="450" height="280"></canvas>
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-semibold text-gray-700 mb-2">Residuals</h4>
-                                    <canvas id="doe-residuals-chart" width="300" height="180"></canvas>
+                                    <canvas id="doe-residuals-chart" width="450" height="240"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -6543,6 +6543,12 @@ Comparative analysis based on ${runHistory.length} design variations
             const selectedParams = getSelectedDOEParameters();
             const responseAxis = document.getElementById('doe-response-axis').value || 'efficiency';
             
+            // Update the section title
+            const titleElement = document.getElementById('parameter-effects-title');
+            if (titleElement) {
+                titleElement.textContent = `Parameter Effects on ${getResponseDisplayName(responseAxis)}`;
+            }
+            
             if (selectedParams.length === 0) return;
             
             // Calculate parameter effects (simplified main effects)
@@ -6580,7 +6586,7 @@ Comparative analysis based on ${runHistory.length} design variations
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Parameter Effects',
+                            text: `Parameter Effects on ${getResponseDisplayName(responseAxis)}`,
                             font: { size: 14 }
                         },
                         legend: {
