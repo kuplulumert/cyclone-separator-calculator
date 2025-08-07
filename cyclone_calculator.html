@@ -1172,6 +1172,7 @@
                                         <option value="factorial">Full Factorial Design</option>
                                         <option value="fractional">Fractional Factorial Design</option>
                                         <option value="central-composite" selected>Central Composite Design</option>
+                                        <option value="face-centered">Face-Centered Central Composite</option>
                                         <option value="latin-hypercube">Latin Hypercube Sampling</option>
                                         <option value="custom">Custom Design Matrix</option>
                                     </select>
@@ -5321,12 +5322,24 @@ Comparative analysis based on ${runHistory.length} design variations
                 case 'central-composite':
                     doeMatrix = generateCentralCompositeDesign(selectedParams);
                     break;
+                case 'face-centered':
+                    doeMatrix = generateFaceCenteredCCDesign(selectedParams);
+                    break;
                 case 'latin-hypercube':
                     doeMatrix = generateLatinHypercubeDesign(selectedParams, numExperiments);
                     break;
                 case 'custom':
                     doeMatrix = generateCustomDesign(selectedParams, numExperiments);
                     break;
+            }
+            
+            // Validate and constrain all parameter values to bounds
+            const constrainedCount = validateAndConstrainDOEMatrix(doeMatrix, selectedParams);
+            
+            // Show warning if values were constrained
+            if (constrainedCount > 0) {
+                const methodName = document.querySelector('#doe-method option:checked').textContent;
+                alert(`⚠️ DOE Boundary Warning\n\n${methodName} generated ${constrainedCount} parameter values outside the specified ranges.\n\nThese values have been automatically constrained to your min/max bounds.\n\nFor better results, consider:\n• Using Face-Centered Central Composite Design\n• Adjusting parameter ranges\n• Using Full Factorial for smaller designs`);
             }
             
             // Reset results and counters
@@ -5436,7 +5449,9 @@ Comparative analysis based on ${runHistory.length} design variations
                     if (idx === param) {
                         const center = (p.min + p.max) / 2;
                         const range = (p.max - p.min) / 2;
-                        posExperiment[p.name] = center + alpha * range;
+                        const axialValue = center + alpha * range;
+                        // Constrain to parameter bounds
+                        posExperiment[p.name] = Math.min(p.max, Math.max(p.min, axialValue));
                     } else {
                         posExperiment[p.name] = (p.min + p.max) / 2;
                     }
@@ -5449,9 +5464,69 @@ Comparative analysis based on ${runHistory.length} design variations
                     if (idx === param) {
                         const center = (p.min + p.max) / 2;
                         const range = (p.max - p.min) / 2;
-                        negExperiment[p.name] = center - alpha * range;
+                        const axialValue = center - alpha * range;
+                        // Constrain to parameter bounds
+                        negExperiment[p.name] = Math.min(p.max, Math.max(p.min, axialValue));
                     } else {
                         negExperiment[p.name] = (p.min + p.max) / 2;
+                    }
+                });
+                matrix.push(negExperiment);
+            }
+            
+            // Center points
+            const numCenterPoints = Math.max(3, numParams);
+            for (let i = 0; i < numCenterPoints; i++) {
+                const centerExperiment = { id: runId++, status: 'pending' };
+                parameters.forEach(param => {
+                    centerExperiment[param.name] = (param.min + param.max) / 2;
+                });
+                matrix.push(centerExperiment);
+            }
+            
+            return matrix;
+        }
+
+        // Face-Centered Central Composite Design (keeps axial points at boundaries)
+        function generateFaceCenteredCCDesign(parameters) {
+            const numParams = parameters.length;
+            const matrix = [];
+            let runId = 1;
+            
+            // Factorial points (2^k)
+            const numFactorialRuns = Math.pow(2, numParams);
+            for (let run = 0; run < numFactorialRuns; run++) {
+                const experiment = { id: runId++, status: 'pending' };
+                
+                for (let param = 0; param < numParams; param++) {
+                    const level = (Math.floor(run / Math.pow(2, param)) % 2) * 2 - 1; // -1 or +1
+                    const value = parameters[param].min + (level + 1) / 2 * (parameters[param].max - parameters[param].min);
+                    experiment[parameters[param].name] = value;
+                }
+                
+                matrix.push(experiment);
+            }
+            
+            // Face-centered axial points (2k) - axial points at boundaries
+            for (let param = 0; param < numParams; param++) {
+                // Positive axial point (at max boundary)
+                const posExperiment = { id: runId++, status: 'pending' };
+                parameters.forEach((p, idx) => {
+                    if (idx === param) {
+                        posExperiment[p.name] = p.max; // At boundary
+                    } else {
+                        posExperiment[p.name] = (p.min + p.max) / 2; // At center
+                    }
+                });
+                matrix.push(posExperiment);
+                
+                // Negative axial point (at min boundary)
+                const negExperiment = { id: runId++, status: 'pending' };
+                parameters.forEach((p, idx) => {
+                    if (idx === param) {
+                        negExperiment[p.name] = p.min; // At boundary
+                    } else {
+                        negExperiment[p.name] = (p.min + p.max) / 2; // At center
                     }
                 });
                 matrix.push(negExperiment);
@@ -5578,6 +5653,23 @@ Comparative analysis based on ${runHistory.length} design variations
             return matrix;
         }
 
+        // Validate and constrain DOE matrix to parameter bounds
+        function validateAndConstrainDOEMatrix(matrix, parameters) {
+            let constrainedCount = 0;
+            
+            matrix.forEach(experiment => {
+                parameters.forEach(param => {
+                    const originalValue = experiment[param.name];
+                    if (originalValue < param.min || originalValue > param.max) {
+                        experiment[param.name] = Math.min(param.max, Math.max(param.min, originalValue));
+                        constrainedCount++;
+                    }
+                });
+            });
+            
+            return constrainedCount;
+        }
+
         // DOE Information Update Functions
         function updateExperimentInfo() {
             const method = document.getElementById('doe-method').value;
@@ -5621,6 +5713,15 @@ Comparative analysis based on ${runHistory.length} design variations
                     numExperiments = factorial + axial + center;
                     explanation = `Central Composite: ${factorial} factorial + ${axial} axial + ${center} center = ${numExperiments} experiments`;
                     infoDiv.className = 'mt-2 p-2 bg-purple-50 border border-purple-200 rounded text-xs text-purple-700';
+                    break;
+                    
+                case 'face-centered':
+                    const fcFactorial = Math.pow(2, numParams);
+                    const fcAxial = 2 * numParams;
+                    const fcCenter = Math.max(3, numParams);
+                    numExperiments = fcFactorial + fcAxial + fcCenter;
+                    explanation = `Face-Centered CCD: ${fcFactorial} factorial + ${fcAxial} face points + ${fcCenter} center = ${numExperiments} experiments (stays within bounds)`;
+                    infoDiv.className = 'mt-2 p-2 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700';
                     break;
                     
                 case 'latin-hypercube':
