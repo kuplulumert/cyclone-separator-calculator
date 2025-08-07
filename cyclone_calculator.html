@@ -1106,6 +1106,57 @@
                 <div class="max-w-7xl mx-auto">
                     <h2 class="text-3xl font-bold text-gray-800 mb-8">🧪 Design of Experiments (DOE) Integration</h2>
                     
+                    <!-- DOE Introduction Section -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6 mb-8">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-3">What is Design of Experiments (DOE)?</h3>
+                                <p class="text-gray-700 mb-4">DOE is a systematic approach to planning experiments that helps you understand how design parameters affect cyclone performance with minimal testing. Instead of testing randomly, DOE strategically selects parameter combinations to maximize information gain.</p>
+                                
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 mb-2">🎯 DOE Methods Explained:</h4>
+                                        <ul class="text-sm space-y-2 text-gray-700">
+                                            <li><strong>Full Factorial:</strong> Tests all possible combinations (2^n experiments). Best for 2-3 parameters.</li>
+                                            <li><strong>Fractional Factorial:</strong> Tests selected combinations (2^(n-1)). Efficient for screening many parameters.</li>
+                                            <li><strong>Central Composite:</strong> Adds center and axial points to factorial. Ideal for response surface modeling.</li>
+                                            <li><strong>Latin Hypercube:</strong> Space-filling design. Good for exploring large parameter spaces efficiently.</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 mb-2">📊 Key Terms:</h4>
+                                        <ul class="text-sm space-y-2 text-gray-700">
+                                            <li><strong>Parameters (Factors):</strong> Design variables you want to study (e.g., diameter, height)</li>
+                                            <li><strong>Responses:</strong> Performance measures you want to optimize (e.g., efficiency, pressure drop)</li>
+                                            <li><strong>Levels:</strong> Different values each parameter takes (e.g., low/high)</li>
+                                            <li><strong>Runs:</strong> Individual experiments with specific parameter combinations</li>
+                                            <li><strong>Center Points:</strong> Experiments at middle values for error estimation</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 p-4 bg-white rounded-lg border border-blue-200">
+                                    <h4 class="font-semibold text-gray-800 mb-2">🚀 How to Use This DOE Tool:</h4>
+                                    <ol class="text-sm space-y-1 text-gray-700 list-decimal list-inside">
+                                        <li><strong>Select Parameters:</strong> Choose 2-4 cyclone dimensions to study</li>
+                                        <li><strong>Set Ranges:</strong> Define min/max values for each parameter</li>
+                                        <li><strong>Choose DOE Method:</strong> Start with "Central Composite" for most cases</li>
+                                        <li><strong>Generate Matrix:</strong> Creates optimal experiment plan</li>
+                                        <li><strong>Run Experiments:</strong> Automatically calculates all combinations</li>
+                                        <li><strong>Analyze Results:</strong> Use built-in charts and statistics to find optimal design</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="grid grid-cols-12 gap-6">
                         
                         <!-- Left Panel: Experiment Setup -->
@@ -1117,18 +1168,22 @@
                                 
                                 <div class="mb-4">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">DOE Method</label>
-                                    <select id="doe-method" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <select id="doe-method" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="updateExperimentInfo()">
                                         <option value="factorial">Full Factorial Design</option>
                                         <option value="fractional">Fractional Factorial Design</option>
-                                        <option value="central-composite">Central Composite Design</option>
+                                        <option value="central-composite" selected>Central Composite Design</option>
                                         <option value="latin-hypercube">Latin Hypercube Sampling</option>
                                         <option value="custom">Custom Design Matrix</option>
                                     </select>
+                                    <div id="doe-method-info" class="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+                                        Select parameters to see experiment count
+                                    </div>
                                 </div>
                                 
-                                <div class="mb-4">
+                                <div class="mb-4" id="num-experiments-container">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Number of Experiments</label>
                                     <input type="number" id="num-experiments" min="8" max="100" value="16" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <div class="mt-1 text-xs text-gray-500">Only used for Latin Hypercube and Custom designs</div>
                                 </div>
                                 
                                 <div class="mb-4">
@@ -1149,7 +1204,7 @@
                                 <div class="space-y-4" id="doe-parameters">
                                     <div class="parameter-row">
                                         <label class="flex items-center">
-                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="inlet_width" checked>
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="inlet_width" checked onchange="updateExperimentInfo()">
                                             <span class="text-sm font-medium">Inlet Width</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
@@ -1160,7 +1215,7 @@
                                     
                                     <div class="parameter-row">
                                         <label class="flex items-center">
-                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="inlet_height" checked>
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="inlet_height" checked onchange="updateExperimentInfo()">
                                             <span class="text-sm font-medium">Inlet Height</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
@@ -1171,7 +1226,7 @@
                                     
                                     <div class="parameter-row">
                                         <label class="flex items-center">
-                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="cylinder_diameter" checked>
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="cylinder_diameter" checked onchange="updateExperimentInfo()">
                                             <span class="text-sm font-medium">Cylinder Diameter</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
@@ -1182,7 +1237,7 @@
                                     
                                     <div class="parameter-row">
                                         <label class="flex items-center">
-                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="cylinder_height">
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="cylinder_height" onchange="updateExperimentInfo()">
                                             <span class="text-sm font-medium">Cylinder Height</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
@@ -1193,7 +1248,7 @@
                                     
                                     <div class="parameter-row">
                                         <label class="flex items-center">
-                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="vortex_finder">
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="vortex_finder" onchange="updateExperimentInfo()">
                                             <span class="text-sm font-medium">Vortex Finder Diameter</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
@@ -5102,6 +5157,12 @@ Comparative analysis based on ${runHistory.length} design variations
             
             // Initialize DOE visualization controls
             setupDOEVisualizationControls();
+            
+            // Initialize DOE experiment info
+            updateExperimentInfo();
+            
+            // Add event listener to number of experiments input
+            document.getElementById('num-experiments').addEventListener('input', updateExperimentInfo);
         });
 
         // Clear Chat Function
@@ -5508,6 +5569,83 @@ Comparative analysis based on ${runHistory.length} design variations
             }
             
             return matrix;
+        }
+
+        // DOE Information Update Functions
+        function updateExperimentInfo() {
+            const method = document.getElementById('doe-method').value;
+            const selectedParams = getSelectedDOEParameters();
+            const numParams = selectedParams.length;
+            const infoDiv = document.getElementById('doe-method-info');
+            const numExpContainer = document.getElementById('num-experiments-container');
+            
+            if (numParams === 0) {
+                infoDiv.innerHTML = 'Select parameters to see experiment count';
+                infoDiv.className = 'mt-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600';
+                return;
+            }
+            
+            let numExperiments = 0;
+            let explanation = '';
+            let showNumberInput = false;
+            
+            switch (method) {
+                case 'factorial':
+                    numExperiments = Math.pow(2, numParams);
+                    explanation = `Full Factorial: 2^${numParams} = ${numExperiments} experiments (all combinations of high/low levels)`;
+                    infoDiv.className = 'mt-2 p-2 bg-green-50 border border-green-200 rounded text-xs text-green-700';
+                    break;
+                    
+                case 'fractional':
+                    if (numParams <= 3) {
+                        numExperiments = Math.pow(2, numParams);
+                        explanation = `With ${numParams} parameters, using Full Factorial: ${numExperiments} experiments`;
+                    } else {
+                        numExperiments = Math.pow(2, numParams - 1);
+                        explanation = `Fractional Factorial: 2^${numParams-1} = ${numExperiments} experiments (half of full factorial)`;
+                    }
+                    infoDiv.className = 'mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700';
+                    break;
+                    
+                case 'central-composite':
+                    const factorial = Math.pow(2, numParams);
+                    const axial = 2 * numParams;
+                    const center = Math.max(3, numParams);
+                    numExperiments = factorial + axial + center;
+                    explanation = `Central Composite: ${factorial} factorial + ${axial} axial + ${center} center = ${numExperiments} experiments`;
+                    infoDiv.className = 'mt-2 p-2 bg-purple-50 border border-purple-200 rounded text-xs text-purple-700';
+                    break;
+                    
+                case 'latin-hypercube':
+                    const numExpInput = parseInt(document.getElementById('num-experiments').value) || 16;
+                    numExperiments = numExpInput;
+                    explanation = `Latin Hypercube: ${numExperiments} space-filling experiments (efficient exploration)`;
+                    showNumberInput = true;
+                    infoDiv.className = 'mt-2 p-2 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700';
+                    break;
+                    
+                case 'custom':
+                    const customNum = parseInt(document.getElementById('num-experiments').value) || 16;
+                    numExperiments = customNum;
+                    explanation = `Custom Design: ${numExperiments} random experiments within parameter bounds`;
+                    showNumberInput = true;
+                    infoDiv.className = 'mt-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700';
+                    break;
+            }
+            
+            if (numExperiments > 50) {
+                explanation += ` ⚠️ Large number of experiments - consider fewer parameters or fractional design`;
+                infoDiv.className = 'mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-700';
+            }
+            
+            infoDiv.innerHTML = explanation;
+            
+            // Show/hide number of experiments input
+            if (showNumberInput) {
+                numExpContainer.style.display = 'block';
+            } else {
+                numExpContainer.style.display = 'none';
+            }
         }
 
         // AI Comparison Table Functions
