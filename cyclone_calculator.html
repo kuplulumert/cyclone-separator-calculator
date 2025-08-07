@@ -1153,8 +1153,8 @@
                                             <span class="text-sm font-medium">Inlet Width</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="0.003">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="0.006">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="3">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="6">
                                         </div>
                                     </div>
                                     
@@ -1164,8 +1164,8 @@
                                             <span class="text-sm font-medium">Inlet Height</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="0.005">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="0.008">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="5">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="8">
                                         </div>
                                     </div>
                                     
@@ -1175,8 +1175,8 @@
                                             <span class="text-sm font-medium">Cylinder Diameter</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="0.015">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="0.025">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="15">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="25">
                                         </div>
                                     </div>
                                     
@@ -1186,8 +1186,8 @@
                                             <span class="text-sm font-medium">Cylinder Height</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="0.030">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="0.050">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="30">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="50">
                                         </div>
                                     </div>
                                     
@@ -1197,8 +1197,8 @@
                                             <span class="text-sm font-medium">Vortex Finder Diameter</span>
                                         </label>
                                         <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="0.006">
-                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="0.010">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="6">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="10">
                                         </div>
                                     </div>
                                 </div>
@@ -5293,11 +5293,11 @@ Comparative analysis based on ${runHistory.length} design variations
 
         function getParameterDisplayName(paramName) {
             const displayNames = {
-                'inlet_width': 'Inlet Width (m)',
-                'inlet_height': 'Inlet Height (m)',
-                'cylinder_diameter': 'Cylinder Diameter (m)',
-                'cylinder_height': 'Cylinder Height (m)',
-                'vortex_finder': 'Vortex Finder Diameter (m)'
+                'inlet_width': 'Inlet Width (mm)',
+                'inlet_height': 'Inlet Height (mm)',
+                'cylinder_diameter': 'Cylinder Diameter (mm)',
+                'cylinder_height': 'Cylinder Height (mm)',
+                'vortex_finder': 'Vortex Finder Diameter (mm)'
             };
             return displayNames[paramName] || paramName;
         }
@@ -5758,16 +5758,16 @@ Comparative analysis based on ${runHistory.length} design variations
             const initial_dust = parseFloat(document.getElementById("initial_dust").value) || 10;
             const num_cyclones = parseInt(document.getElementById("num_cyclones").value) || 1;
             
-            // Map DOE parameters to form values
+            // Map DOE parameters to form values (DOE params are already in mm)
             const params = {
                 Q_lps: Q_lps,
-                D_c_mm: doeParams.cylinder_diameter ? doeParams.cylinder_diameter * 1000 : D_c_mm,
-                L_c_mm: doeParams.cylinder_height ? doeParams.cylinder_height * 1000 : L_c_mm,
+                D_c_mm: doeParams.cylinder_diameter || D_c_mm,
+                L_c_mm: doeParams.cylinder_height || L_c_mm,
                 Z_c_mm: Z_c_mm,
-                D_e_mm: doeParams.vortex_finder ? doeParams.vortex_finder * 1000 : D_e_mm,
+                D_e_mm: doeParams.vortex_finder || D_e_mm,
                 D_d_mm: D_d_mm,
-                B_c_mm: doeParams.inlet_width ? doeParams.inlet_width * 1000 : B_c_mm,
-                H_c_mm: doeParams.inlet_height ? doeParams.inlet_height * 1000 : H_c_mm,
+                B_c_mm: doeParams.inlet_width || B_c_mm,
+                H_c_mm: doeParams.inlet_height || H_c_mm,
                 mu: mu,
                 rho_p: rho_p,
                 rho_g: rho_g,
