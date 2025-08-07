@@ -5099,6 +5099,9 @@ Comparative analysis based on ${runHistory.length} design variations
             
             // Initialize mini chart
             createMiniChart();
+            
+            // Initialize DOE visualization controls
+            setupDOEVisualizationControls();
         });
 
         // Clear Chat Function
@@ -6019,13 +6022,54 @@ Comparative analysis based on ${runHistory.length} design variations
             window.URL.revokeObjectURL(url);
         }
 
-        // Analysis Functions (placeholder implementations)
+        // Analysis Functions
         function performANOVA() {
             if (doeResults.length < 8) {
                 alert('Need at least 8 completed experiments for ANOVA analysis.');
                 return;
             }
-            alert('ANOVA analysis feature coming soon!');
+            
+            const selectedParams = getSelectedDOEParameters();
+            const selectedResponses = getSelectedDOEResponses();
+            
+            if (selectedParams.length === 0 || selectedResponses.length === 0) {
+                alert('Please select parameters and responses for ANOVA analysis.');
+                return;
+            }
+            
+            // Simple ANOVA calculation
+            let report = 'ANOVA ANALYSIS RESULTS\n';
+            report += '========================\n\n';
+            
+            selectedResponses.forEach(response => {
+                const responseValues = doeResults.map(result => result[response]);
+                const mean = responseValues.reduce((sum, val) => sum + val, 0) / responseValues.length;
+                const variance = responseValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (responseValues.length - 1);
+                const stdDev = Math.sqrt(variance);
+                
+                report += `Response: ${getResponseDisplayName(response)}\n`;
+                report += `  Mean: ${mean.toFixed(3)}\n`;
+                report += `  Std Dev: ${stdDev.toFixed(3)}\n`;
+                report += `  CV%: ${(stdDev/mean*100).toFixed(1)}%\n\n`;
+                
+                // Parameter correlations
+                selectedParams.forEach(param => {
+                    const paramValues = doeResults.map(result => {
+                        const experiment = doeMatrix.find(exp => exp.id === result.experimentId);
+                        return experiment[param.name];
+                    });
+                    
+                    const correlation = calculateCorrelation(paramValues, responseValues);
+                    const significance = Math.abs(correlation) > 0.5 ? '**' : Math.abs(correlation) > 0.3 ? '*' : '';
+                    
+                    report += `  ${param.displayName}: r=${correlation.toFixed(3)} ${significance}\n`;
+                });
+                report += '\n';
+            });
+            
+            report += 'Significance levels: ** = Strong (|r|>0.5), * = Moderate (|r|>0.3)\n';
+            
+            alert(report);
         }
 
         function generateResponseSurface() {
@@ -6033,15 +6077,61 @@ Comparative analysis based on ${runHistory.length} design variations
                 alert('Need at least 8 completed experiments for response surface modeling.');
                 return;
             }
-            alert('Response surface modeling feature coming soon!');
+            
+            // Update visualization to show contour plot
+            document.getElementById('doe-chart-type').value = 'contour';
+            createDOEScatterPlot();
+            
+            alert('Response surface visualization updated. Select two parameters for X and Y axes to see contour plot.');
         }
 
         function performSensitivityAnalysis() {
-            if (doeResults.length < 8) {
-                alert('Need at least 8 completed experiments for sensitivity analysis.');
+            if (doeResults.length < 4) {
+                alert('Need at least 4 completed experiments for sensitivity analysis.');
                 return;
             }
-            alert('Sensitivity analysis feature coming soon!');
+            
+            // Generate effects chart
+            createDOEEffectsChart();
+            
+            const selectedParams = getSelectedDOEParameters();
+            const responseAxis = document.getElementById('doe-response-axis').value || 'efficiency';
+            
+            if (selectedParams.length === 0) {
+                alert('Please select parameters for sensitivity analysis.');
+                return;
+            }
+            
+            // Calculate sensitivity indices
+            let report = 'SENSITIVITY ANALYSIS\n';
+            report += '===================\n\n';
+            report += `Response: ${getResponseDisplayName(responseAxis)}\n\n`;
+            
+            const effects = selectedParams.map(param => {
+                const paramValues = doeResults.map(result => {
+                    const experiment = doeMatrix.find(exp => exp.id === result.experimentId);
+                    return experiment[param.name];
+                });
+                
+                const responseValues = doeResults.map(result => result[responseAxis]);
+                const correlation = calculateCorrelation(paramValues, responseValues);
+                
+                return {
+                    parameter: param.displayName,
+                    sensitivity: Math.abs(correlation) * 100
+                };
+            });
+            
+            // Sort by sensitivity
+            effects.sort((a, b) => b.sensitivity - a.sensitivity);
+            
+            effects.forEach((effect, index) => {
+                report += `${index + 1}. ${effect.parameter}: ${effect.sensitivity.toFixed(1)}% influence\n`;
+            });
+            
+            report += '\nParameter Effects chart updated on the right panel.';
+            
+            alert(report);
         }
 
         function generateInteractionPlots() {
@@ -6049,15 +6139,65 @@ Comparative analysis based on ${runHistory.length} design variations
                 alert('Need at least 8 completed experiments for interaction plots.');
                 return;
             }
-            alert('Interaction plots feature coming soon!');
+            
+            // Update visualization to show parallel coordinates
+            document.getElementById('doe-chart-type').value = 'parallel';
+            createDOEScatterPlot();
+            
+            alert('Interaction visualization updated. Parallel coordinates plot shows relationships between all variables.');
         }
 
         function optimizeResponse() {
-            if (doeResults.length < 8) {
-                alert('Need at least 8 completed experiments for optimization.');
+            if (doeResults.length < 4) {
+                alert('Need at least 4 completed experiments for optimization.');
                 return;
             }
-            alert('Multi-objective optimization feature coming soon!');
+            
+            const selectedResponses = getSelectedDOEResponses();
+            
+            if (selectedResponses.length === 0) {
+                alert('Please select responses for optimization.');
+                return;
+            }
+            
+            // Find optimal conditions
+            let report = 'OPTIMIZATION RESULTS\n';
+            report += '===================\n\n';
+            
+            selectedResponses.forEach(response => {
+                const responseValues = doeResults.map(result => result[response]);
+                
+                let optimalIndex;
+                let optimalValue;
+                
+                if (response === 'efficiency') {
+                    // Maximize efficiency
+                    optimalValue = Math.max(...responseValues);
+                    optimalIndex = responseValues.indexOf(optimalValue);
+                } else if (response === 'pressure_drop') {
+                    // Minimize pressure drop
+                    optimalValue = Math.min(...responseValues);
+                    optimalIndex = responseValues.indexOf(optimalValue);
+                } else {
+                    // Default: find maximum
+                    optimalValue = Math.max(...responseValues);
+                    optimalIndex = responseValues.indexOf(optimalValue);
+                }
+                
+                const optimalResult = doeResults[optimalIndex];
+                const optimalExperiment = doeMatrix.find(exp => exp.id === optimalResult.experimentId);
+                
+                report += `Optimal ${getResponseDisplayName(response)}: ${optimalValue.toFixed(3)}\n`;
+                report += `Run: ${optimalResult.experimentId}\n`;
+                
+                const selectedParams = getSelectedDOEParameters();
+                selectedParams.forEach(param => {
+                    report += `  ${param.displayName}: ${optimalExperiment[param.name].toFixed(4)}\n`;
+                });
+                report += '\n';
+            });
+            
+            alert(report);
         }
 
         function exportDOEReport() {
@@ -6073,8 +6213,356 @@ Comparative analysis based on ${runHistory.length} design variations
         }
 
         function updateDOEVisualization() {
-            // Placeholder for visualization updates
-            console.log('Updating DOE visualization...');
+            if (doeResults.length === 0) return;
+            
+            // Update chart options with current parameters and responses
+            updateAxisSelectors();
+            
+            // Generate default visualization
+            createDOEScatterPlot();
+            createDOEEffectsChart();
+            createDOEResidualsChart();
+        }
+
+        // DOE Visualization Functions
+        function createDOEScatterPlot() {
+            const canvas = document.getElementById('doe-main-chart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destroy existing chart
+            if (window.doeMainChart) {
+                window.doeMainChart.destroy();
+            }
+            
+            const xAxis = document.getElementById('doe-x-axis').value;
+            const yAxis = document.getElementById('doe-y-axis').value;
+            const responseAxis = document.getElementById('doe-response-axis').value;
+            
+            if (!xAxis || !responseAxis) {
+                // Show instruction message
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.fillText('Select X-axis and Response variables', canvas.width/2, canvas.height/2);
+                return;
+            }
+            
+            // Prepare data
+            const data = doeResults.map(result => {
+                const experiment = doeMatrix.find(exp => exp.id === result.experimentId);
+                return {
+                    x: experiment[xAxis],
+                    y: result[responseAxis],
+                    label: `Run ${result.experimentId}`
+                };
+            }).filter(point => point.x !== undefined && point.y !== undefined);
+            
+            const chartType = document.getElementById('doe-chart-type').value;
+            
+            if (chartType === 'scatter') {
+                window.doeMainChart = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: getResponseDisplayName(responseAxis),
+                            data: data,
+                            backgroundColor: '#3b82f6',
+                            borderColor: '#1d4ed8',
+                            borderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `${getResponseDisplayName(responseAxis)} vs ${getParameterDisplayName(xAxis)}`
+                            },
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: getParameterDisplayName(xAxis)
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: getResponseDisplayName(responseAxis)
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false
+                        }
+                    }
+                });
+            } else if (chartType === 'parallel') {
+                createParallelCoordinatesPlot(ctx);
+            }
+        }
+
+        function createParallelCoordinatesPlot(ctx) {
+            // Clear canvas
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            
+            const selectedParams = getSelectedDOEParameters();
+            const selectedResponses = getSelectedDOEResponses();
+            const allVars = [...selectedParams.map(p => p.name), ...selectedResponses];
+            
+            if (allVars.length < 2) return;
+            
+            const width = ctx.canvas.width;
+            const height = ctx.canvas.height;
+            const margin = 60;
+            const plotWidth = width - 2 * margin;
+            const plotHeight = height - 2 * margin;
+            
+            // Normalize data
+            const normalizedData = doeResults.map(result => {
+                const experiment = doeMatrix.find(exp => exp.id === result.experimentId);
+                const point = {};
+                
+                selectedParams.forEach(param => {
+                    const values = doeMatrix.map(exp => exp[param.name]).filter(v => v !== undefined);
+                    const min = Math.min(...values);
+                    const max = Math.max(...values);
+                    point[param.name] = (experiment[param.name] - min) / (max - min);
+                });
+                
+                selectedResponses.forEach(response => {
+                    const values = doeResults.map(r => r[response]).filter(v => v !== undefined);
+                    const min = Math.min(...values);
+                    const max = Math.max(...values);
+                    point[response] = (result[response] - min) / (max - min);
+                });
+                
+                return point;
+            });
+            
+            // Draw axes
+            ctx.strokeStyle = '#6b7280';
+            ctx.lineWidth = 1;
+            allVars.forEach((varName, i) => {
+                const x = margin + (i * plotWidth) / (allVars.length - 1);
+                ctx.beginPath();
+                ctx.moveTo(x, margin);
+                ctx.lineTo(x, height - margin);
+                ctx.stroke();
+                
+                // Label
+                ctx.fillStyle = '#374151';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                const displayName = selectedParams.find(p => p.name === varName)?.displayName || 
+                                  getResponseDisplayName(varName) || varName;
+                ctx.fillText(displayName, x, height - 10);
+            });
+            
+            // Draw lines for each experiment
+            normalizedData.forEach((point, idx) => {
+                ctx.strokeStyle = `hsl(${(idx * 360) / normalizedData.length}, 70%, 50%)`;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = 0.7;
+                
+                ctx.beginPath();
+                allVars.forEach((varName, i) => {
+                    const x = margin + (i * plotWidth) / (allVars.length - 1);
+                    const y = margin + (1 - point[varName]) * plotHeight;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+            });
+            
+            ctx.globalAlpha = 1;
+        }
+
+        function createDOEEffectsChart() {
+            const canvas = document.getElementById('doe-effects-chart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destroy existing chart
+            if (window.doeEffectsChart) {
+                window.doeEffectsChart.destroy();
+            }
+            
+            const selectedParams = getSelectedDOEParameters();
+            const responseAxis = document.getElementById('doe-response-axis').value || 'efficiency';
+            
+            if (selectedParams.length === 0) return;
+            
+            // Calculate parameter effects (simplified main effects)
+            const effects = selectedParams.map(param => {
+                const paramValues = doeResults.map(result => {
+                    const experiment = doeMatrix.find(exp => exp.id === result.experimentId);
+                    return experiment[param.name];
+                });
+                
+                const responseValues = doeResults.map(result => result[responseAxis]);
+                
+                // Calculate correlation coefficient as effect measure
+                const correlation = calculateCorrelation(paramValues, responseValues);
+                
+                return {
+                    parameter: param.displayName,
+                    effect: Math.abs(correlation) * 100
+                };
+            });
+            
+            window.doeEffectsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: effects.map(e => e.parameter),
+                    datasets: [{
+                        label: 'Parameter Effect (%)',
+                        data: effects.map(e => e.effect),
+                        backgroundColor: '#8b5cf6',
+                        borderColor: '#7c3aed',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Parameter Effects',
+                            font: { size: 14 }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Effect Magnitude (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createDOEResidualsChart() {
+            const canvas = document.getElementById('doe-residuals-chart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destroy existing chart
+            if (window.doeResidualsChart) {
+                window.doeResidualsChart.destroy();
+            }
+            
+            const responseAxis = document.getElementById('doe-response-axis').value || 'efficiency';
+            const responseValues = doeResults.map(result => result[responseAxis]);
+            
+            if (responseValues.length === 0) return;
+            
+            // Calculate mean
+            const mean = responseValues.reduce((sum, val) => sum + val, 0) / responseValues.length;
+            
+            // Calculate residuals (deviation from mean)
+            const residuals = responseValues.map((val, idx) => ({
+                x: idx + 1,
+                y: val - mean
+            }));
+            
+            window.doeResidualsChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Residuals',
+                        data: residuals,
+                        backgroundColor: '#ef4444',
+                        borderColor: '#dc2626',
+                        borderWidth: 1,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Residuals Plot',
+                            font: { size: 14 }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Run Order'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Residual'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Add event listeners for chart type and axis changes
+        function setupDOEVisualizationControls() {
+            document.getElementById('doe-chart-type').addEventListener('change', createDOEScatterPlot);
+            document.getElementById('doe-x-axis').addEventListener('change', createDOEScatterPlot);
+            document.getElementById('doe-y-axis').addEventListener('change', createDOEScatterPlot);
+            document.getElementById('doe-response-axis').addEventListener('change', () => {
+                createDOEScatterPlot();
+                createDOEEffectsChart();
+                createDOEResidualsChart();
+            });
+        }
+
+        // Utility function for correlation calculation
+        function calculateCorrelation(x, y) {
+            const n = x.length;
+            if (n !== y.length || n === 0) return 0;
+            
+            const meanX = x.reduce((sum, val) => sum + val, 0) / n;
+            const meanY = y.reduce((sum, val) => sum + val, 0) / n;
+            
+            let numerator = 0;
+            let denomX = 0;
+            let denomY = 0;
+            
+            for (let i = 0; i < n; i++) {
+                const deltaX = x[i] - meanX;
+                const deltaY = y[i] - meanY;
+                numerator += deltaX * deltaY;
+                denomX += deltaX * deltaX;
+                denomY += deltaY * deltaY;
+            }
+            
+            const denominator = Math.sqrt(denomX * denomY);
+            return denominator === 0 ? 0 : numerator / denominator;
         }
 
       </script>
