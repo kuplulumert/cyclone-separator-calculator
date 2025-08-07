@@ -6680,10 +6680,10 @@ Comparative analysis based on ${runHistory.length} design variations
             // Update the section title
             const titleElement = document.getElementById('parameter-effects-title');
             if (titleElement) {
-                titleElement.textContent = `Parameter Effects on ${getResponseDisplayName(responseAxis)}`;
+                titleElement.textContent = `Pareto Chart - Parameter Effects on ${getResponseDisplayName(responseAxis)}`;
             }
             
-            if (selectedParams.length === 0) return;
+            if (selectedParams.length === 0 || doeResults.length === 0) return;
             
             // Calculate parameter effects (simplified main effects)
             const effects = selectedParams.map(param => {
@@ -6703,36 +6703,121 @@ Comparative analysis based on ${runHistory.length} design variations
                 };
             });
             
+            // Sort effects in descending order (Pareto principle)
+            effects.sort((a, b) => b.effect - a.effect);
+            
+            // Calculate cumulative percentages
+            const totalEffect = effects.reduce((sum, e) => sum + e.effect, 0);
+            let cumulative = 0;
+            const cumulativePercentages = effects.map(e => {
+                cumulative += e.effect;
+                return (cumulative / totalEffect) * 100;
+            });
+            
+            // Create Pareto chart with dual y-axes
             window.doeEffectsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: effects.map(e => e.parameter),
-                    datasets: [{
-                        label: 'Parameter Effect (%)',
-                        data: effects.map(e => e.effect),
-                        backgroundColor: '#8b5cf6',
-                        borderColor: '#7c3aed',
-                        borderWidth: 1
-                    }]
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'Effect Magnitude (%)',
+                            data: effects.map(e => e.effect),
+                            backgroundColor: effects.map((e, i) => {
+                                // Color coding: Most significant = dark purple, least = light purple
+                                const intensity = 1 - (i / (effects.length - 1)) * 0.6;
+                                return `rgba(139, 92, 246, ${intensity})`;
+                            }),
+                            borderColor: '#7c3aed',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            type: 'line',
+                            label: 'Cumulative %',
+                            data: cumulativePercentages,
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#dc2626',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            fill: false,
+                            yAxisID: 'y1'
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
                         title: {
                             display: true,
-                            text: `Parameter Effects on ${getResponseDisplayName(responseAxis)}`,
-                            font: { size: 14 }
+                            text: `Pareto Chart - Effects on ${getResponseDisplayName(responseAxis)}`,
+                            font: { size: 16, weight: 'bold' }
                         },
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        const index = context.dataIndex;
+                                        return `Cumulative: ${cumulativePercentages[index].toFixed(1)}%`;
+                                    }
+                                    return '';
+                                }
+                            }
                         }
                     },
                     scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Parameters (Ranked by Importance)',
+                                font: { size: 12 }
+                            }
+                        },
                         y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Effect Magnitude (%)'
+                                text: 'Effect Magnitude (%)',
+                                color: '#8b5cf6'
+                            },
+                            ticks: {
+                                color: '#8b5cf6'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Cumulative %',
+                                color: '#dc2626'
+                            },
+                            ticks: {
+                                color: '#dc2626',
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
                             }
                         }
                     }
