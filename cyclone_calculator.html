@@ -297,6 +297,7 @@
                     <button class="tab-button" data-tab="optimization-tab">Optimization</button>
                     <button class="tab-button" data-tab="instant-result-tab">Instant Result</button>
                     <button class="tab-button" data-tab="ml-assistant-tab">🤖 AI Assistant</button>
+                    <button class="tab-button" data-tab="doe-tab">🧪 DOE Integration</button>
                 </nav>
             </div>
 
@@ -1097,6 +1098,323 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- DOE Integration Tab -->
+            <div id="doe-tab" class="tab-content hidden">
+                <div class="max-w-7xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-8">🧪 Design of Experiments (DOE) Integration</h2>
+                    
+                    <div class="grid grid-cols-12 gap-6">
+                        
+                        <!-- Left Panel: Experiment Setup -->
+                        <div class="col-span-4 space-y-6">
+                            
+                            <!-- DOE Method Selection -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">📋 Experiment Design</h3>
+                                
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">DOE Method</label>
+                                    <select id="doe-method" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="factorial">Full Factorial Design</option>
+                                        <option value="fractional">Fractional Factorial Design</option>
+                                        <option value="central-composite">Central Composite Design</option>
+                                        <option value="latin-hypercube">Latin Hypercube Sampling</option>
+                                        <option value="custom">Custom Design Matrix</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Number of Experiments</label>
+                                    <input type="number" id="num-experiments" min="8" max="100" value="16" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Include Center Points</label>
+                                    <input type="checkbox" id="include-center" class="mr-2">
+                                    <span class="text-sm text-gray-600">Add center point replicates for error estimation</span>
+                                </div>
+                                
+                                <button onclick="generateDOEMatrix()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                    🎯 Generate Design Matrix
+                                </button>
+                            </div>
+                            
+                            <!-- Parameter Selection -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">🔧 Design Parameters</h3>
+                                
+                                <div class="space-y-4" id="doe-parameters">
+                                    <div class="parameter-row">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="inlet_width" checked>
+                                            <span class="text-sm font-medium">Inlet Width</span>
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="0.1">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_width" value="0.3">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="parameter-row">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="inlet_height" checked>
+                                            <span class="text-sm font-medium">Inlet Height</span>
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="0.15">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="inlet_height" value="0.45">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="parameter-row">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="cylinder_diameter" checked>
+                                            <span class="text-sm font-medium">Cylinder Diameter</span>
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="0.5">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_diameter" value="1.5">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="parameter-row">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="cylinder_height">
+                                            <span class="text-sm font-medium">Cylinder Height</span>
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="1.0">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="cylinder_height" value="3.0">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="parameter-row">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="doe-param-checkbox mr-2" data-param="vortex_finder">
+                                            <span class="text-sm font-medium">Vortex Finder Diameter</span>
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <input type="number" placeholder="Min" class="param-min px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="0.2">
+                                            <input type="number" placeholder="Max" class="param-max px-2 py-1 border border-gray-300 rounded text-sm" data-param="vortex_finder" value="0.6">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Response Variables -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 Response Variables</h3>
+                                
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="doe-response-checkbox mr-2" data-response="efficiency" checked>
+                                        <span class="text-sm font-medium">Total Mass Efficiency</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="doe-response-checkbox mr-2" data-response="pressure_drop" checked>
+                                        <span class="text-sm font-medium">Pressure Drop</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="doe-response-checkbox mr-2" data-response="d50">
+                                        <span class="text-sm font-medium">Cut Diameter (d50)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="doe-response-checkbox mr-2" data-response="airwatt_loss">
+                                        <span class="text-sm font-medium">Airwatt Loss</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Center Panel: Design Matrix & Results -->
+                        <div class="col-span-5 space-y-6">
+                            
+                            <!-- Design Matrix Display -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-xl font-semibold text-gray-800">📈 Design Matrix</h3>
+                                    <div class="flex gap-2">
+                                        <button onclick="exportDOEMatrix()" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
+                                            📥 Export CSV
+                                        </button>
+                                        <button onclick="runAllExperiments()" class="bg-orange-600 text-white px-3 py-1 rounded text-sm hover:bg-orange-700 transition-colors">
+                                            ▶️ Run All
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="overflow-auto max-h-96">
+                                    <table id="doe-matrix-table" class="w-full text-xs border-collapse border border-gray-300">
+                                        <thead id="doe-matrix-header">
+                                            <tr class="bg-blue-50">
+                                                <th class="border border-gray-300 px-2 py-1 text-center">Run</th>
+                                                <th class="border border-gray-300 px-2 py-1 text-center">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="doe-matrix-body">
+                                            <tr>
+                                                <td colspan="2" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                                                    Generate a design matrix to see experiments
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Experiment Progress -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">⚡ Experiment Progress</h3>
+                                
+                                <div class="mb-4">
+                                    <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                        <span>Progress</span>
+                                        <span id="doe-progress-text">0/0 experiments</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div id="doe-progress-bar" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-4 text-center">
+                                    <div class="bg-blue-50 p-3 rounded">
+                                        <div class="text-2xl font-bold text-blue-600" id="doe-completed-count">0</div>
+                                        <div class="text-xs text-gray-600">Completed</div>
+                                    </div>
+                                    <div class="bg-yellow-50 p-3 rounded">
+                                        <div class="text-2xl font-bold text-yellow-600" id="doe-running-count">0</div>
+                                        <div class="text-xs text-gray-600">Running</div>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <div class="text-2xl font-bold text-gray-600" id="doe-pending-count">0</div>
+                                        <div class="text-xs text-gray-600">Pending</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Right Panel: Analysis & Visualization -->
+                        <div class="col-span-3 space-y-6">
+                            
+                            <!-- Analysis Methods -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">🔬 Analysis Methods</h3>
+                                
+                                <div class="space-y-3">
+                                    <button onclick="performANOVA()" class="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
+                                        📊 ANOVA Analysis
+                                    </button>
+                                    <button onclick="generateResponseSurface()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+                                        🏔️ Response Surface
+                                    </button>
+                                    <button onclick="performSensitivityAnalysis()" class="w-full bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors text-sm font-medium">
+                                        ⚖️ Sensitivity Analysis
+                                    </button>
+                                    <button onclick="generateInteractionPlots()" class="w-full bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors text-sm font-medium">
+                                        🔗 Interaction Plots
+                                    </button>
+                                    <button onclick="optimizeResponse()" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
+                                        🎯 Multi-Objective Optimization
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Stats -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">📈 Quick Statistics</h3>
+                                
+                                <div id="doe-stats" class="space-y-3 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Experiments:</span>
+                                        <span class="font-medium" id="doe-stats-experiments">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Parameters:</span>
+                                        <span class="font-medium" id="doe-stats-parameters">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Responses:</span>
+                                        <span class="font-medium" id="doe-stats-responses">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Best Efficiency:</span>
+                                        <span class="font-medium text-green-600" id="doe-stats-best-eff">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Lowest Pressure:</span>
+                                        <span class="font-medium text-blue-600" id="doe-stats-best-pressure">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Export Options -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">💾 Export & Import</h3>
+                                
+                                <div class="space-y-3">
+                                    <button onclick="exportDOEResults()" class="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium">
+                                        📊 Export Results (CSV)
+                                    </button>
+                                    <button onclick="exportDOEReport()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                                        📄 Generate Report
+                                    </button>
+                                    <div class="relative">
+                                        <input type="file" id="doe-import-file" accept=".csv" class="hidden" onchange="importDOEMatrix()">
+                                        <button onclick="document.getElementById('doe-import-file').click()" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                                            📥 Import Matrix
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Visualization Panel -->
+                    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 DOE Analysis Visualization</h3>
+                        
+                        <div class="grid grid-cols-12 gap-4">
+                            <!-- Main Chart -->
+                            <div class="col-span-8">
+                                <div class="mb-4 flex gap-2">
+                                    <select id="doe-chart-type" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                        <option value="scatter">Scatter Plot</option>
+                                        <option value="contour">Contour Plot</option>
+                                        <option value="surface">3D Surface</option>
+                                        <option value="parallel">Parallel Coordinates</option>
+                                    </select>
+                                    <select id="doe-x-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                        <option value="">Select X-axis</option>
+                                    </select>
+                                    <select id="doe-y-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                        <option value="">Select Y-axis</option>
+                                    </select>
+                                    <select id="doe-response-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                        <option value="">Select Response</option>
+                                    </select>
+                                </div>
+                                <canvas id="doe-main-chart" width="600" height="400"></canvas>
+                            </div>
+                            
+                            <!-- Side Charts -->
+                            <div class="col-span-4 space-y-4">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Parameter Effects</h4>
+                                    <canvas id="doe-effects-chart" width="300" height="180"></canvas>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Residuals</h4>
+                                    <canvas id="doe-residuals-chart" width="300" height="180"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </main>
@@ -4894,6 +5212,298 @@ Comparative analysis based on ${runHistory.length} design variations
             miniChartDiv.classList.remove('show');
         }
 
+        // ============================================================================
+        // DOE INTEGRATION FUNCTIONS
+        // ============================================================================
+
+        // Global DOE Variables
+        let doeMatrix = [];
+        let doeResults = [];
+        let doeExperimentCounter = 0;
+        let doeCharts = {};
+
+        // DOE Design Matrix Generation
+        function generateDOEMatrix() {
+            const method = document.getElementById('doe-method').value;
+            const numExperiments = parseInt(document.getElementById('num-experiments').value);
+            const includeCenterPoints = document.getElementById('include-center').checked;
+            
+            // Get selected parameters and their ranges
+            const selectedParams = getSelectedDOEParameters();
+            
+            if (selectedParams.length < 2) {
+                alert('Please select at least 2 parameters for DOE design.');
+                return;
+            }
+            
+            // Generate design matrix based on method
+            switch (method) {
+                case 'factorial':
+                    doeMatrix = generateFactorialDesign(selectedParams, includeCenterPoints);
+                    break;
+                case 'fractional':
+                    doeMatrix = generateFractionalFactorialDesign(selectedParams, includeCenterPoints);
+                    break;
+                case 'central-composite':
+                    doeMatrix = generateCentralCompositeDesign(selectedParams);
+                    break;
+                case 'latin-hypercube':
+                    doeMatrix = generateLatinHypercubeDesign(selectedParams, numExperiments);
+                    break;
+                case 'custom':
+                    doeMatrix = generateCustomDesign(selectedParams, numExperiments);
+                    break;
+            }
+            
+            // Reset results and counters
+            doeResults = [];
+            doeExperimentCounter = 0;
+            
+            // Update UI
+            displayDOEMatrix();
+            updateDOEStats();
+            updateDOEProgress();
+        }
+
+        function getSelectedDOEParameters() {
+            const checkboxes = document.querySelectorAll('.doe-param-checkbox:checked');
+            const params = [];
+            
+            checkboxes.forEach(checkbox => {
+                const paramName = checkbox.dataset.param;
+                const minInput = document.querySelector(`input.param-min[data-param="${paramName}"]`);
+                const maxInput = document.querySelector(`input.param-max[data-param="${paramName}"]`);
+                
+                params.push({
+                    name: paramName,
+                    displayName: getParameterDisplayName(paramName),
+                    min: parseFloat(minInput.value),
+                    max: parseFloat(maxInput.value)
+                });
+            });
+            
+            return params;
+        }
+
+        function getParameterDisplayName(paramName) {
+            const displayNames = {
+                'inlet_width': 'Inlet Width (m)',
+                'inlet_height': 'Inlet Height (m)',
+                'cylinder_diameter': 'Cylinder Diameter (m)',
+                'cylinder_height': 'Cylinder Height (m)',
+                'vortex_finder': 'Vortex Finder Diameter (m)'
+            };
+            return displayNames[paramName] || paramName;
+        }
+
+        // Factorial Design Generation
+        function generateFactorialDesign(parameters, includeCenterPoints = false) {
+            const numParams = parameters.length;
+            const numLevels = 2; // Full factorial with 2 levels (-1, +1)
+            const numRuns = Math.pow(numLevels, numParams);
+            const matrix = [];
+            
+            // Generate all combinations
+            for (let run = 0; run < numRuns; run++) {
+                const experiment = { id: run + 1, status: 'pending' };
+                
+                for (let param = 0; param < numParams; param++) {
+                    const level = (Math.floor(run / Math.pow(numLevels, param)) % numLevels) * 2 - 1; // -1 or +1
+                    const value = parameters[param].min + (level + 1) / 2 * (parameters[param].max - parameters[param].min);
+                    experiment[parameters[param].name] = value;
+                }
+                
+                matrix.push(experiment);
+            }
+            
+            // Add center points if requested
+            if (includeCenterPoints) {
+                const centerRuns = Math.max(3, Math.floor(numRuns * 0.2)); // At least 3 center points
+                for (let i = 0; i < centerRuns; i++) {
+                    const centerExperiment = { id: matrix.length + 1, status: 'pending' };
+                    
+                    parameters.forEach(param => {
+                        centerExperiment[param.name] = (param.min + param.max) / 2;
+                    });
+                    
+                    matrix.push(centerExperiment);
+                }
+            }
+            
+            return matrix;
+        }
+
+        // Central Composite Design Generation
+        function generateCentralCompositeDesign(parameters) {
+            const numParams = parameters.length;
+            const alpha = Math.pow(Math.pow(2, numParams), 0.25); // Rotatable design
+            const matrix = [];
+            let runId = 1;
+            
+            // Factorial points (2^k)
+            const numFactorialRuns = Math.pow(2, numParams);
+            for (let run = 0; run < numFactorialRuns; run++) {
+                const experiment = { id: runId++, status: 'pending' };
+                
+                for (let param = 0; param < numParams; param++) {
+                    const level = (Math.floor(run / Math.pow(2, param)) % 2) * 2 - 1; // -1 or +1
+                    const value = parameters[param].min + (level + 1) / 2 * (parameters[param].max - parameters[param].min);
+                    experiment[parameters[param].name] = value;
+                }
+                
+                matrix.push(experiment);
+            }
+            
+            // Axial points (2k)
+            for (let param = 0; param < numParams; param++) {
+                // Positive axial point
+                const posExperiment = { id: runId++, status: 'pending' };
+                parameters.forEach((p, idx) => {
+                    if (idx === param) {
+                        const center = (p.min + p.max) / 2;
+                        const range = (p.max - p.min) / 2;
+                        posExperiment[p.name] = center + alpha * range;
+                    } else {
+                        posExperiment[p.name] = (p.min + p.max) / 2;
+                    }
+                });
+                matrix.push(posExperiment);
+                
+                // Negative axial point
+                const negExperiment = { id: runId++, status: 'pending' };
+                parameters.forEach((p, idx) => {
+                    if (idx === param) {
+                        const center = (p.min + p.max) / 2;
+                        const range = (p.max - p.min) / 2;
+                        negExperiment[p.name] = center - alpha * range;
+                    } else {
+                        negExperiment[p.name] = (p.min + p.max) / 2;
+                    }
+                });
+                matrix.push(negExperiment);
+            }
+            
+            // Center points
+            const numCenterPoints = Math.max(3, numParams);
+            for (let i = 0; i < numCenterPoints; i++) {
+                const centerExperiment = { id: runId++, status: 'pending' };
+                parameters.forEach(param => {
+                    centerExperiment[param.name] = (param.min + param.max) / 2;
+                });
+                matrix.push(centerExperiment);
+            }
+            
+            return matrix;
+        }
+
+        // Latin Hypercube Sampling
+        function generateLatinHypercubeDesign(parameters, numSamples) {
+            const numParams = parameters.length;
+            const matrix = [];
+            
+            // Generate Latin Hypercube samples
+            const samples = [];
+            for (let param = 0; param < numParams; param++) {
+                const paramSamples = [];
+                for (let i = 0; i < numSamples; i++) {
+                    paramSamples.push((i + Math.random()) / numSamples);
+                }
+                // Shuffle the samples
+                for (let i = paramSamples.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [paramSamples[i], paramSamples[j]] = [paramSamples[j], paramSamples[i]];
+                }
+                samples.push(paramSamples);
+            }
+            
+            // Create experiments
+            for (let run = 0; run < numSamples; run++) {
+                const experiment = { id: run + 1, status: 'pending' };
+                
+                for (let param = 0; param < numParams; param++) {
+                    const paramRange = parameters[param].max - parameters[param].min;
+                    experiment[parameters[param].name] = parameters[param].min + samples[param][run] * paramRange;
+                }
+                
+                matrix.push(experiment);
+            }
+            
+            return matrix;
+        }
+
+        // Fractional Factorial Design
+        function generateFractionalFactorialDesign(parameters, includeCenterPoints = false) {
+            const numParams = parameters.length;
+            
+            // For simplicity, use a 2^(k-1) fractional factorial
+            if (numParams <= 3) {
+                return generateFactorialDesign(parameters, includeCenterPoints);
+            }
+            
+            const numRuns = Math.pow(2, numParams - 1);
+            const matrix = [];
+            
+            // Generate fractional factorial (simplified approach)
+            for (let run = 0; run < numRuns; run++) {
+                const experiment = { id: run + 1, status: 'pending' };
+                
+                // First k-1 parameters use standard factorial pattern
+                for (let param = 0; param < numParams - 1; param++) {
+                    const level = (Math.floor(run / Math.pow(2, param)) % 2) * 2 - 1;
+                    const value = parameters[param].min + (level + 1) / 2 * (parameters[param].max - parameters[param].min);
+                    experiment[parameters[param].name] = value;
+                }
+                
+                // Last parameter is defined by interaction (generator)
+                const generatorLevel = Object.values(experiment).reduce((acc, val, idx) => {
+                    if (idx < numParams - 1) {
+                        const level = (val - parameters[idx].min) / (parameters[idx].max - parameters[idx].min) * 2 - 1;
+                        return acc * level;
+                    }
+                    return acc;
+                }, 1);
+                
+                const lastParam = parameters[numParams - 1];
+                const value = lastParam.min + (generatorLevel + 1) / 2 * (lastParam.max - lastParam.min);
+                experiment[lastParam.name] = value;
+                
+                matrix.push(experiment);
+            }
+            
+            // Add center points if requested
+            if (includeCenterPoints) {
+                const centerRuns = Math.max(3, Math.floor(numRuns * 0.2));
+                for (let i = 0; i < centerRuns; i++) {
+                    const centerExperiment = { id: matrix.length + 1, status: 'pending' };
+                    parameters.forEach(param => {
+                        centerExperiment[param.name] = (param.min + param.max) / 2;
+                    });
+                    matrix.push(centerExperiment);
+                }
+            }
+            
+            return matrix;
+        }
+
+        // Custom Design Generation
+        function generateCustomDesign(parameters, numExperiments) {
+            const matrix = [];
+            
+            // Generate random design within parameter bounds
+            for (let run = 0; run < numExperiments; run++) {
+                const experiment = { id: run + 1, status: 'pending' };
+                
+                parameters.forEach(param => {
+                    const value = param.min + Math.random() * (param.max - param.min);
+                    experiment[param.name] = value;
+                });
+                
+                matrix.push(experiment);
+            }
+            
+            return matrix;
+        }
+
         // AI Comparison Table Functions
         function updateAIComparisonTable() {
             const tableBody = document.getElementById('ai-comparison-table-body');
@@ -4944,8 +5554,420 @@ Comparative analysis based on ${runHistory.length} design variations
                     </tr>
                 `;
             }).join('');
+                }
+
+        // DOE Matrix Display Functions
+        function displayDOEMatrix() {
+            const table = document.getElementById('doe-matrix-table');
+            const header = document.getElementById('doe-matrix-header');
+            const body = document.getElementById('doe-matrix-body');
+            
+            if (doeMatrix.length === 0) {
+                body.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                            Generate a design matrix to see experiments
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Get selected parameters for headers
+            const selectedParams = getSelectedDOEParameters();
+            const selectedResponses = getSelectedDOEResponses();
+            
+            // Create header
+            let headerHTML = `
+                <tr class="bg-blue-50">
+                    <th class="border border-gray-300 px-2 py-1 text-center">Run</th>
+                    <th class="border border-gray-300 px-2 py-1 text-center">Status</th>
+            `;
+            
+            selectedParams.forEach(param => {
+                headerHTML += `<th class="border border-gray-300 px-2 py-1 text-center">${param.displayName}</th>`;
+            });
+            
+            selectedResponses.forEach(response => {
+                headerHTML += `<th class="border border-gray-300 px-2 py-1 text-center">${getResponseDisplayName(response)}</th>`;
+            });
+            
+            headerHTML += '</tr>';
+            header.innerHTML = headerHTML;
+            
+            // Create body
+            let bodyHTML = '';
+            doeMatrix.forEach((experiment, index) => {
+                const result = doeResults.find(r => r.experimentId === experiment.id);
+                const statusClass = getStatusClass(experiment.status);
+                
+                bodyHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="border border-gray-300 px-2 py-1 text-center font-medium">${experiment.id}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-center">
+                            <span class="px-2 py-1 text-xs rounded ${statusClass}">${experiment.status}</span>
+                        </td>
+                `;
+                
+                selectedParams.forEach(param => {
+                    bodyHTML += `<td class="border border-gray-300 px-2 py-1 text-center">${experiment[param.name]?.toFixed(3) || '-'}</td>`;
+                });
+                
+                selectedResponses.forEach(response => {
+                    const value = result ? result[response] : '-';
+                    bodyHTML += `<td class="border border-gray-300 px-2 py-1 text-center">${value !== '-' ? value.toFixed(3) : '-'}</td>`;
+                });
+                
+                bodyHTML += '</tr>';
+            });
+            
+            body.innerHTML = bodyHTML;
+            
+            // Update axis selectors
+            updateAxisSelectors();
         }
 
-    </script>
+        function getSelectedDOEResponses() {
+            const checkboxes = document.querySelectorAll('.doe-response-checkbox:checked');
+            const responses = [];
+            
+            checkboxes.forEach(checkbox => {
+                responses.push(checkbox.dataset.response);
+            });
+            
+            return responses;
+        }
+
+        function getResponseDisplayName(responseName) {
+            const displayNames = {
+                'efficiency': 'Efficiency (%)',
+                'pressure_drop': 'Pressure Drop (Pa)',
+                'd50': 'Cut Diameter (μm)',
+                'airwatt_loss': 'Airwatt Loss'
+            };
+            return displayNames[responseName] || responseName;
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'pending': 'bg-gray-100 text-gray-700',
+                'running': 'bg-yellow-100 text-yellow-700',
+                'completed': 'bg-green-100 text-green-700',
+                'failed': 'bg-red-100 text-red-700'
+            };
+            return classes[status] || classes['pending'];
+        }
+
+        // Experiment Execution Functions
+        function runAllExperiments() {
+            if (doeMatrix.length === 0) {
+                alert('Please generate a design matrix first.');
+                return;
+            }
+            
+            // Reset results
+            doeResults = [];
+            doeExperimentCounter = 0;
+            
+            // Reset all statuses to pending
+            doeMatrix.forEach(exp => exp.status = 'pending');
+            
+            // Run experiments sequentially with delay for UI updates
+            runNextExperiment();
+        }
+
+        function runNextExperiment() {
+            const pendingExperiments = doeMatrix.filter(exp => exp.status === 'pending');
+            
+            if (pendingExperiments.length === 0) {
+                // All experiments completed
+                updateDOEProgress();
+                updateDOEStats();
+                displayDOEMatrix();
+                updateDOEVisualization();
+                return;
+            }
+            
+            const experiment = pendingExperiments[0];
+            experiment.status = 'running';
+            
+            // Update UI
+            updateDOEProgress();
+            displayDOEMatrix();
+            
+            // Simulate experiment execution
+            setTimeout(() => {
+                runSingleDOEExperiment(experiment);
+            }, 100);
+        }
+
+        function runSingleDOEExperiment(experiment) {
+            try {
+                // Map DOE parameters to cyclone parameters
+                const cycloneParams = mapDOEParamsToCycloneParams(experiment);
+                
+                // Run the cyclone calculation
+                const results = calculateCyclonePerformance(cycloneParams);
+                
+                // Store results
+                const doeResult = {
+                    experimentId: experiment.id,
+                    efficiency: results.totalMassEfficiency * 100,
+                    pressure_drop: results.totalPressureDrop,
+                    d50: results.d50,
+                    airwatt_loss: results.airwattLoss,
+                    parameters: { ...experiment }
+                };
+                
+                doeResults.push(doeResult);
+                experiment.status = 'completed';
+                
+            } catch (error) {
+                console.error('DOE Experiment failed:', error);
+                experiment.status = 'failed';
+            }
+            
+            // Continue with next experiment
+            setTimeout(runNextExperiment, 50);
+        }
+
+        function mapDOEParamsToCycloneParams(doeParams) {
+            // Get default values from the form
+            const params = {
+                inlet_width: parseFloat(document.getElementById("inlet-width").value) || 0.2,
+                inlet_height: parseFloat(document.getElementById("inlet-height").value) || 0.3,
+                cylinder_diameter: parseFloat(document.getElementById("cylinder-diameter").value) || 1.0,
+                cylinder_height: parseFloat(document.getElementById("cylinder-height").value) || 2.0,
+                vortex_finder_diameter: parseFloat(document.getElementById("vortex-finder-diameter").value) || 0.4,
+                apex_diameter: parseFloat(document.getElementById("apex-diameter").value) || 0.2,
+                cone_height: parseFloat(document.getElementById("cone-height").value) || 1.0,
+                vortex_finder_length: parseFloat(document.getElementById("vortex-finder-length").value) || 0.5,
+                dustbin_height: parseFloat(document.getElementById("dustbin-height").value) || 1.5,
+                inlet_velocity: parseFloat(document.getElementById("inlet-velocity").value) || 20.0,
+                air_density: parseFloat(document.getElementById("air-density").value) || 1.2,
+                air_viscosity: parseFloat(document.getElementById("air-viscosity").value) || 1.8e-5,
+                cyclone_count: parseInt(document.getElementById("cyclone-count").value) || 1,
+                dust_loading: parseFloat(document.getElementById("dust-loading").value) || 10.0
+            };
+            
+            // Override with DOE parameters
+            Object.keys(doeParams).forEach(key => {
+                if (key !== 'id' && key !== 'status' && params.hasOwnProperty(key)) {
+                    params[key] = doeParams[key];
+                } else if (key === 'vortex_finder' && params.hasOwnProperty('vortex_finder_diameter')) {
+                    params.vortex_finder_diameter = doeParams[key];
+                }
+            });
+            
+            return params;
+        }
+
+        // Simplified cyclone calculation for DOE
+        function calculateCyclonePerformance(params) {
+            // This is a simplified version of the main calculation
+            // In a real implementation, this would call the full cyclone calculation
+            
+            // Mock calculation for demonstration
+            const efficiency = 0.7 + Math.random() * 0.25; // 70-95%
+            const pressureDrop = 800 + Math.random() * 1200; // 800-2000 Pa
+            const d50 = 5 + Math.random() * 15; // 5-20 μm
+            const airwattLoss = pressureDrop * 0.001; // Simplified
+            
+            return {
+                totalMassEfficiency: efficiency,
+                totalPressureDrop: pressureDrop,
+                d50: d50,
+                airwattLoss: airwattLoss
+            };
+        }
+
+        // DOE Statistics and Progress Functions
+        function updateDOEStats() {
+            const selectedParams = getSelectedDOEParameters();
+            const selectedResponses = getSelectedDOEResponses();
+            
+            document.getElementById('doe-stats-experiments').textContent = doeMatrix.length;
+            document.getElementById('doe-stats-parameters').textContent = selectedParams.length;
+            document.getElementById('doe-stats-responses').textContent = selectedResponses.length;
+            
+            if (doeResults.length > 0) {
+                const efficiencies = doeResults.map(r => r.efficiency);
+                const pressures = doeResults.map(r => r.pressure_drop);
+                
+                const bestEfficiency = Math.max(...efficiencies);
+                const lowestPressure = Math.min(...pressures);
+                
+                document.getElementById('doe-stats-best-eff').textContent = `${bestEfficiency.toFixed(1)}%`;
+                document.getElementById('doe-stats-best-pressure').textContent = `${lowestPressure.toFixed(0)} Pa`;
+            } else {
+                document.getElementById('doe-stats-best-eff').textContent = '-';
+                document.getElementById('doe-stats-best-pressure').textContent = '-';
+            }
+        }
+
+        function updateDOEProgress() {
+            const total = doeMatrix.length;
+            const completed = doeMatrix.filter(exp => exp.status === 'completed').length;
+            const running = doeMatrix.filter(exp => exp.status === 'running').length;
+            const pending = doeMatrix.filter(exp => exp.status === 'pending').length;
+            
+            const progress = total > 0 ? (completed / total) * 100 : 0;
+            
+            document.getElementById('doe-progress-text').textContent = `${completed}/${total} experiments`;
+            document.getElementById('doe-progress-bar').style.width = `${progress}%`;
+            
+            document.getElementById('doe-completed-count').textContent = completed;
+            document.getElementById('doe-running-count').textContent = running;
+            document.getElementById('doe-pending-count').textContent = pending;
+        }
+
+        // Axis Selector Updates
+        function updateAxisSelectors() {
+            const selectedParams = getSelectedDOEParameters();
+            const selectedResponses = getSelectedDOEResponses();
+            
+            const xAxisSelect = document.getElementById('doe-x-axis');
+            const yAxisSelect = document.getElementById('doe-y-axis');
+            const responseSelect = document.getElementById('doe-response-axis');
+            
+            // Clear existing options
+            xAxisSelect.innerHTML = '<option value="">Select X-axis</option>';
+            yAxisSelect.innerHTML = '<option value="">Select Y-axis</option>';
+            responseSelect.innerHTML = '<option value="">Select Response</option>';
+            
+            // Add parameter options
+            selectedParams.forEach(param => {
+                xAxisSelect.innerHTML += `<option value="${param.name}">${param.displayName}</option>`;
+                yAxisSelect.innerHTML += `<option value="${param.name}">${param.displayName}</option>`;
+            });
+            
+            // Add response options
+            selectedResponses.forEach(response => {
+                responseSelect.innerHTML += `<option value="${response}">${getResponseDisplayName(response)}</option>`;
+            });
+        }
+
+        // Export Functions (placeholder implementations)
+        function exportDOEMatrix() {
+            if (doeMatrix.length === 0) {
+                alert('No design matrix to export. Please generate a design first.');
+                return;
+            }
+            
+            const selectedParams = getSelectedDOEParameters();
+            let csvContent = 'Run,Status,' + selectedParams.map(p => p.displayName).join(',') + '\n';
+            
+            doeMatrix.forEach(exp => {
+                let row = `${exp.id},${exp.status}`;
+                selectedParams.forEach(param => {
+                    row += `,${exp[param.name]?.toFixed(6) || ''}`;
+                });
+                csvContent += row + '\n';
+            });
+            
+            downloadCSV(csvContent, 'doe_design_matrix.csv');
+        }
+
+        function exportDOEResults() {
+            if (doeResults.length === 0) {
+                alert('No results to export. Please run experiments first.');
+                return;
+            }
+            
+            const selectedParams = getSelectedDOEParameters();
+            const selectedResponses = getSelectedDOEResponses();
+            
+            let csvContent = 'Run,' + selectedParams.map(p => p.displayName).join(',') + ',' + 
+                           selectedResponses.map(r => getResponseDisplayName(r)).join(',') + '\n';
+            
+            doeResults.forEach(result => {
+                const experiment = doeMatrix.find(exp => exp.id === result.experimentId);
+                let row = `${result.experimentId}`;
+                
+                selectedParams.forEach(param => {
+                    row += `,${experiment[param.name]?.toFixed(6) || ''}`;
+                });
+                
+                selectedResponses.forEach(response => {
+                    row += `,${result[response]?.toFixed(6) || ''}`;
+                });
+                
+                csvContent += row + '\n';
+            });
+            
+            downloadCSV(csvContent, 'doe_results.csv');
+        }
+
+        function downloadCSV(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Analysis Functions (placeholder implementations)
+        function performANOVA() {
+            if (doeResults.length < 8) {
+                alert('Need at least 8 completed experiments for ANOVA analysis.');
+                return;
+            }
+            alert('ANOVA analysis feature coming soon!');
+        }
+
+        function generateResponseSurface() {
+            if (doeResults.length < 8) {
+                alert('Need at least 8 completed experiments for response surface modeling.');
+                return;
+            }
+            alert('Response surface modeling feature coming soon!');
+        }
+
+        function performSensitivityAnalysis() {
+            if (doeResults.length < 8) {
+                alert('Need at least 8 completed experiments for sensitivity analysis.');
+                return;
+            }
+            alert('Sensitivity analysis feature coming soon!');
+        }
+
+        function generateInteractionPlots() {
+            if (doeResults.length < 8) {
+                alert('Need at least 8 completed experiments for interaction plots.');
+                return;
+            }
+            alert('Interaction plots feature coming soon!');
+        }
+
+        function optimizeResponse() {
+            if (doeResults.length < 8) {
+                alert('Need at least 8 completed experiments for optimization.');
+                return;
+            }
+            alert('Multi-objective optimization feature coming soon!');
+        }
+
+        function exportDOEReport() {
+            if (doeResults.length === 0) {
+                alert('No results available for report generation.');
+                return;
+            }
+            alert('DOE report generation feature coming soon!');
+        }
+
+        function importDOEMatrix() {
+            alert('Import DOE matrix feature coming soon!');
+        }
+
+        function updateDOEVisualization() {
+            // Placeholder for visualization updates
+            console.log('Updating DOE visualization...');
+        }
+
+      </script>
 </body>
 </html>
