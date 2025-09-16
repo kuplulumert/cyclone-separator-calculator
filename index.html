@@ -245,10 +245,16 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             z-index: 1000;
             display: none;
+            transition: all 0.3s ease;
         }
         
         .mini-chart.show {
             display: block;
+        }
+        
+        .mini-chart.minimized {
+            height: 30px;
+            overflow: hidden;
         }
         
         .mini-chart-header {
@@ -257,11 +263,68 @@
             padding: 6px 12px;
             font-size: 12px;
             font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+        }
+        
+        .mini-chart-controls {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .mini-chart-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .mini-chart-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         
         .mini-chart-content {
             padding: 8px;
             height: calc(100% - 30px);
+        }
+        
+        .mini-chart-restore-btn {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            transition: all 0.2s ease;
+        }
+        
+        .mini-chart-restore-btn:hover {
+            background: #2563eb;
+            transform: scale(1.1);
+        }
+        
+        .mini-chart-restore-btn.show {
+            display: flex;
         }
         
         /* DOE Visualization Tabs */
@@ -288,12 +351,19 @@
     <!-- Simple Mini Chart -->
     <div id="mini-chart" class="mini-chart">
         <div class="mini-chart-header">
-            📊 Efficiency Comparison
+            <span>📊 Efficiency Comparison</span>
+            <div class="mini-chart-controls">
+                <button id="mini-chart-minimize-btn" class="mini-chart-btn" title="Minimize">−</button>
+                <button id="mini-chart-close-btn" class="mini-chart-btn" title="Close">×</button>
+            </div>
         </div>
         <div class="mini-chart-content">
             <canvas id="mini-efficiency-chart"></canvas>
         </div>
     </div>
+
+    <!-- Mini Chart Restore Button -->
+    <button id="mini-chart-restore-btn" class="mini-chart-restore-btn" title="Show Efficiency Comparison">📊</button>
 
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-screen-xl">
         <header class="text-center mb-8">
@@ -5232,6 +5302,7 @@ Comparative analysis based on ${runHistory.length} design variations
             
             // Initialize mini chart
             createMiniChart();
+            setupMiniChartControls();
             
             // Initialize DOE visualization controls
             setupDOEVisualizationControls();
@@ -5344,17 +5415,143 @@ Comparative analysis based on ${runHistory.length} design variations
         function showMiniChart() {
             const currentTab = document.querySelector('.tab-content.active');
             const miniChartDiv = document.getElementById('mini-chart');
+            const restoreBtn = document.getElementById('mini-chart-restore-btn');
             
             if (currentTab && currentTab.id === 'single-calc-tab') {
                 miniChartDiv.classList.add('show');
+                restoreBtn.classList.remove('show'); // Hide restore button when mini chart is visible
             } else {
                 miniChartDiv.classList.remove('show');
+                restoreBtn.classList.remove('show'); // Hide restore button on other tabs
             }
         }
         
         function hideMiniChart() {
             const miniChartDiv = document.getElementById('mini-chart');
+            const restoreBtn = document.getElementById('mini-chart-restore-btn');
+            
             miniChartDiv.classList.remove('show');
+            
+            // Show restore button only if we're on the single calc tab and have data
+            const currentTab = document.querySelector('.tab-content.active');
+            if (currentTab && currentTab.id === 'single-calc-tab' && runHistory.length > 0) {
+                restoreBtn.classList.add('show');
+            }
+        }
+        
+        function restoreMiniChart() {
+            const miniChartDiv = document.getElementById('mini-chart');
+            const restoreBtn = document.getElementById('mini-chart-restore-btn');
+            
+            miniChartDiv.classList.add('show');
+            miniChartDiv.classList.remove('minimized'); // Always restore to full size
+            restoreBtn.classList.remove('show');
+            
+            // Reset minimize button
+            const minimizeBtn = document.getElementById('mini-chart-minimize-btn');
+            if (minimizeBtn) {
+                minimizeBtn.textContent = '−';
+                minimizeBtn.title = 'Minimize';
+            }
+        }
+        
+        function minimizeMiniChart() {
+            const miniChartDiv = document.getElementById('mini-chart');
+            const minimizeBtn = document.getElementById('mini-chart-minimize-btn');
+            
+            if (miniChartDiv.classList.contains('minimized')) {
+                // Maximize
+                miniChartDiv.classList.remove('minimized');
+                minimizeBtn.textContent = '−';
+                minimizeBtn.title = 'Minimize';
+            } else {
+                // Minimize
+                miniChartDiv.classList.add('minimized');
+                minimizeBtn.textContent = '□';
+                minimizeBtn.title = 'Maximize';
+            }
+        }
+        
+        function closeMiniChart() {
+            hideMiniChart();
+        }
+        
+        function setupMiniChartControls() {
+            const minimizeBtn = document.getElementById('mini-chart-minimize-btn');
+            const closeBtn = document.getElementById('mini-chart-close-btn');
+            const restoreBtn = document.getElementById('mini-chart-restore-btn');
+            
+            if (minimizeBtn) {
+                minimizeBtn.addEventListener('click', minimizeMiniChart);
+            }
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeMiniChart);
+            }
+            
+            if (restoreBtn) {
+                restoreBtn.addEventListener('click', restoreMiniChart);
+            }
+            
+            // Make mini chart draggable
+            makeMiniChartDraggable();
+        }
+        
+        function makeMiniChartDraggable() {
+            const miniChart = document.getElementById('mini-chart');
+            const header = miniChart.querySelector('.mini-chart-header');
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+            
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('mouseup', dragEnd);
+            
+            function dragStart(e) {
+                // Don't drag if clicking on buttons
+                if (e.target.classList.contains('mini-chart-btn')) return;
+                
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+                
+                if (e.target === header || e.target.parentNode === header) {
+                    isDragging = true;
+                    miniChart.style.cursor = 'grabbing';
+                }
+            }
+            
+            function dragMove(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    
+                    xOffset = currentX;
+                    yOffset = currentY;
+                    
+                    // Keep within viewport bounds
+                    const rect = miniChart.getBoundingClientRect();
+                    const maxX = window.innerWidth - rect.width;
+                    const maxY = window.innerHeight - rect.height;
+                    
+                    xOffset = Math.max(0, Math.min(maxX, xOffset));
+                    yOffset = Math.max(0, Math.min(maxY, yOffset));
+                    
+                    miniChart.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+                }
+            }
+            
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+                miniChart.style.cursor = 'default';
+            }
         }
 
         // ============================================================================
