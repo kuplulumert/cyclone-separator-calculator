@@ -1,0 +1,55 @@
+/* Chart Components */
+.chart-container {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: #f9fafb;
+}
+
+.chart-container-fixed {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+.mini-chart {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    width: 300px;
+    height: 180px;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: none;
+}
+
+.mini-chart.show {
+    display: block;
+}
+
+.mini-chart-header {
+    background: #3b82f6;
+    color: white;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mini-chart-content {
+    padding: 8px;
+    height: calc(100% - 30px);
+}
+
+.chart-copy-btn,
+.chart-export-btn {
+    transition: all 0.2s ease;
+}
+
+.chart-copy-btn:hover,
+.chart-export-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
