@@ -263,6 +263,18 @@
             padding: 8px;
             height: calc(100% - 30px);
         }
+        
+        /* DOE Visualization Tabs */
+        .doe-viz-tab-content {
+            display: block;
+        }
+        .doe-viz-tab-content.hidden {
+            display: none;
+        }
+        .doe-viz-tab-button.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -1432,43 +1444,80 @@
                         </div>
                     </div>
                     
-                    <!-- Visualization Panel -->
+                    <!-- Visualization Panel with Tabs -->
                     <div class="mt-8 bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 DOE Analysis Visualization</h3>
                         
-                        <div class="grid grid-cols-12 gap-4">
-                            <!-- Main Chart -->
-                            <div class="col-span-8">
+                        <!-- Visualization Tab Navigation -->
+                        <div class="border-b border-gray-200 mb-6">
+                            <nav class="-mb-px flex space-x-8">
+                                <button class="doe-viz-tab-button active py-2 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600" data-doe-tab="main-chart-tab">
+                                    📈 Main Chart
+                                </button>
+                                <button class="doe-viz-tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-doe-tab="parameter-effects-tab">
+                                    🎯 Parameter Effects
+                                </button>
+                                <button class="doe-viz-tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-doe-tab="residual-plots-tab">
+                                    📊 Residual Plots
+                                </button>
+                            </nav>
+                        </div>
+                        
+                        <!-- Main Chart Tab -->
+                        <div id="main-chart-tab" class="doe-viz-tab-content">
+                            <div class="mb-4 flex gap-2 flex-wrap">
+                                <select id="doe-chart-type" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="scatter">Scatter Plot</option>
+                                    <option value="contour">Contour Plot</option>
+                                    <option value="surface">3D Surface</option>
+                                    <option value="parallel">Parallel Coordinates</option>
+                                </select>
+                                <select id="doe-x-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select X-axis</option>
+                                </select>
+                                <select id="doe-y-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select Y-axis</option>
+                                </select>
+                                <select id="doe-response-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select Response</option>
+                                </select>
+                            </div>
+                            <div class="chart-container-fixed">
+                                <canvas id="doe-main-chart" width="800" height="500"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Parameter Effects Tab -->
+                        <div id="parameter-effects-tab" class="doe-viz-tab-content hidden">
+                            <div class="mb-4">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">Parameter Effects Analysis</h4>
+                                <p class="text-sm text-gray-600 mb-4">This chart shows how each design parameter affects the selected response variable. Larger bars indicate parameters with stronger influence on the response.</p>
                                 <div class="mb-4 flex gap-2">
-                                    <select id="doe-chart-type" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="scatter">Scatter Plot</option>
-                                        <option value="contour">Contour Plot</option>
-                                        <option value="surface">3D Surface</option>
-                                        <option value="parallel">Parallel Coordinates</option>
-                                    </select>
-                                    <select id="doe-x-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="">Select X-axis</option>
-                                    </select>
-                                    <select id="doe-y-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="">Select Y-axis</option>
-                                    </select>
-                                    <select id="doe-response-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <label class="text-sm font-medium text-gray-700">Response Variable:</label>
+                                    <select id="doe-effects-response" class="px-3 py-1 border border-gray-300 rounded text-sm">
                                         <option value="">Select Response</option>
                                     </select>
                                 </div>
-                                <canvas id="doe-main-chart" width="600" height="400"></canvas>
                             </div>
-                            
-                            <!-- Side Charts -->
-                            <div class="col-span-4 space-y-4">
-                                <div>
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Parameter Effects</h4>
-                                    <canvas id="doe-effects-chart" width="300" height="180"></canvas>
+                            <div class="chart-container-fixed">
+                                <canvas id="doe-effects-chart" width="800" height="500"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Residual Plots Tab -->
+                        <div id="residual-plots-tab" class="doe-viz-tab-content hidden">
+                            <div class="mb-4">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">Residual Analysis</h4>
+                                <p class="text-sm text-gray-600 mb-4">Residual plots help validate the model assumptions. Points should be randomly scattered around zero with no clear patterns.</p>
+                                <div class="mb-4 flex gap-2">
+                                    <label class="text-sm font-medium text-gray-700">Response Variable:</label>
+                                    <select id="doe-residuals-response" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                        <option value="">Select Response</option>
+                                    </select>
                                 </div>
-                                <div>
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Residuals</h4>
-                                    <canvas id="doe-residuals-chart" width="300" height="180"></canvas>
-                                </div>
+                            </div>
+                            <div class="chart-container-fixed">
+                                <canvas id="doe-residuals-chart" width="800" height="500"></canvas>
                             </div>
                         </div>
                     </div>
@@ -1562,6 +1611,34 @@
                     
                     // Show/hide mini chart based on active tab
                     showMiniChart();
+                });
+            });
+            
+            // DOE Visualization Tab Controls
+            const doeVizTabs = document.querySelectorAll('.doe-viz-tab-button');
+            const doeVizTabContents = document.querySelectorAll('.doe-viz-tab-content');
+            doeVizTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all DOE viz tabs
+                    doeVizTabs.forEach(t => {
+                        t.classList.remove('active', 'text-blue-600', 'border-blue-500');
+                        t.classList.add('text-gray-500', 'border-transparent');
+                    });
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active', 'text-blue-600', 'border-blue-500');
+                    tab.classList.remove('text-gray-500', 'border-transparent');
+                    
+                    // Hide all DOE viz tab contents
+                    doeVizTabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // Show the selected tab content
+                    const targetTab = document.getElementById(tab.dataset.doeTab);
+                    if (targetTab) {
+                        targetTab.classList.remove('hidden');
+                    }
                 });
             });
         }
@@ -2685,6 +2762,7 @@
             initCharts();
             initParametricStudyCharts();
             setupControls();
+            setupDOEVisualizationControls();
             populateParamSelect();
             loadInputHistoryFromStorage();
             updateAllTextSizes();
@@ -6079,11 +6157,15 @@ Comparative analysis based on ${runHistory.length} design variations
             const xAxisSelect = document.getElementById('doe-x-axis');
             const yAxisSelect = document.getElementById('doe-y-axis');
             const responseSelect = document.getElementById('doe-response-axis');
+            const effectsResponseSelect = document.getElementById('doe-effects-response');
+            const residualsResponseSelect = document.getElementById('doe-residuals-response');
             
             // Clear existing options
             xAxisSelect.innerHTML = '<option value="">Select X-axis</option>';
             yAxisSelect.innerHTML = '<option value="">Select Y-axis</option>';
             responseSelect.innerHTML = '<option value="">Select Response</option>';
+            if (effectsResponseSelect) effectsResponseSelect.innerHTML = '<option value="">Select Response</option>';
+            if (residualsResponseSelect) residualsResponseSelect.innerHTML = '<option value="">Select Response</option>';
             
             // Add parameter options
             selectedParams.forEach(param => {
@@ -6093,7 +6175,10 @@ Comparative analysis based on ${runHistory.length} design variations
             
             // Add response options
             selectedResponses.forEach(response => {
-                responseSelect.innerHTML += `<option value="${response}">${getResponseDisplayName(response)}</option>`;
+                const displayName = getResponseDisplayName(response);
+                responseSelect.innerHTML += `<option value="${response}">${displayName}</option>`;
+                if (effectsResponseSelect) effectsResponseSelect.innerHTML += `<option value="${response}">${displayName}</option>`;
+                if (residualsResponseSelect) residualsResponseSelect.innerHTML += `<option value="${response}">${displayName}</option>`;
             });
         }
 
@@ -6541,9 +6626,18 @@ Comparative analysis based on ${runHistory.length} design variations
             }
             
             const selectedParams = getSelectedDOEParameters();
-            const responseAxis = document.getElementById('doe-response-axis').value || 'efficiency';
+            const effectsResponseSelect = document.getElementById('doe-effects-response');
+            const responseAxis = effectsResponseSelect ? effectsResponseSelect.value : (document.getElementById('doe-response-axis').value || 'efficiency');
             
-            if (selectedParams.length === 0) return;
+            if (selectedParams.length === 0 || !responseAxis) {
+                // Show instruction message
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.fillText('Select a response variable', canvas.width/2, canvas.height/2);
+                return;
+            }
             
             // Calculate parameter effects (simplified main effects)
             const effects = selectedParams.map(param => {
@@ -6611,7 +6705,19 @@ Comparative analysis based on ${runHistory.length} design variations
                 window.doeResidualsChart.destroy();
             }
             
-            const responseAxis = document.getElementById('doe-response-axis').value || 'efficiency';
+            const residualsResponseSelect = document.getElementById('doe-residuals-response');
+            const responseAxis = residualsResponseSelect ? residualsResponseSelect.value : (document.getElementById('doe-response-axis').value || 'efficiency');
+            
+            if (!responseAxis) {
+                // Show instruction message
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.fillText('Select a response variable', canvas.width/2, canvas.height/2);
+                return;
+            }
+            
             const responseValues = doeResults.map(result => result[responseAxis]);
             
             if (responseValues.length === 0) return;
@@ -6674,9 +6780,28 @@ Comparative analysis based on ${runHistory.length} design variations
             document.getElementById('doe-y-axis').addEventListener('change', createDOEScatterPlot);
             document.getElementById('doe-response-axis').addEventListener('change', () => {
                 createDOEScatterPlot();
-                createDOEEffectsChart();
-                createDOEResidualsChart();
+                // Update the other dropdowns if they don't have values
+                const effectsSelect = document.getElementById('doe-effects-response');
+                const residualsSelect = document.getElementById('doe-residuals-response');
+                if (effectsSelect && !effectsSelect.value) {
+                    createDOEEffectsChart();
+                }
+                if (residualsSelect && !residualsSelect.value) {
+                    createDOEResidualsChart();
+                }
             });
+            
+            // Add event listeners for the new separate dropdowns
+            const effectsResponseSelect = document.getElementById('doe-effects-response');
+            const residualsResponseSelect = document.getElementById('doe-residuals-response');
+            
+            if (effectsResponseSelect) {
+                effectsResponseSelect.addEventListener('change', createDOEEffectsChart);
+            }
+            
+            if (residualsResponseSelect) {
+                residualsResponseSelect.addEventListener('change', createDOEResidualsChart);
+            }
         }
 
         // Utility function for correlation calculation
