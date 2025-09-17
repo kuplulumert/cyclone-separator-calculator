@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generalized Cyclone Parameter Calculator with Comparison</title>
+    <title>AI Enhanced Cyclone Parameter Calculator with Comparison</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -121,17 +121,751 @@
             min-height: 200px;
         }
 
-        /* Tab Styles */
-        .tab-button {
-            padding: 0.75rem 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-bottom: 3px solid transparent;
-            color: #6b7280;
+        /* Minimalist Premium Tab Navigation */
+        .tab-navigation {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+            padding: 0 4rem;
+            position: relative;
         }
+        
+        .tab-navigation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #1e3a8a, transparent);
+            opacity: 0.1;
+        }
+        
+        /* Minimalist Premium Tab Styles */
+        .tab-button {
+            padding: 1rem 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            color: #64748b;
+            background: transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 0 0.25rem;
+            cursor: pointer;
+            letter-spacing: 0.025em;
+        }
+        
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #1e3a8a;
+            transition: width 0.3s ease;
+        }
+        
+        .tab-button:hover {
+            color: #1e40af;
+        }
+        
+        .tab-button:hover::before {
+            width: 100%;
+        }
+        
         .tab-button.active {
-            color: #4f46e5;
-            border-bottom-color: #4f46e5;
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+        
+        .tab-button.active::before {
+            width: 100%;
+            background: #1e3a8a;
+        }
+        
+        /* Minimalist Responsive Design */
+        @media (max-width: 1024px) {
+            .tab-navigation {
+                padding: 0 2rem;
+            }
+            
+            .tab-button {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.85rem;
+                margin: 0 0.125rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tab-navigation {
+                padding: 0 1rem;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            
+            .tab-navigation::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .tab-navigation nav {
+                min-width: 800px;
+            }
+            
+            .tab-button {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.8rem;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+        }
+        
+        /* Clean Focus States */
+        .tab-button:focus {
+            outline: none;
+            color: #1e40af;
+        }
+        
+        .tab-button:focus::before {
+            width: 100%;
+        }
+        
+        /* ========================================
+           PREMIUM HOME TAB THEME
+           ======================================== */
+        
+        /* Premium Home Background */
+        #home-tab {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Clean Background - No Animated Elements */
+        
+        /* Premium Header Section */
+        #home-tab .text-center {
+            position: relative;
+            z-index: 2;
+        }
+        
+        #home-tab h1 {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+            text-shadow: 0 4px 8px rgba(30, 58, 138, 0.1);
+        }
+        
+        @keyframes titleGlow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.1); }
+        }
+        
+        #home-tab .w-24 {
+            animation: expandLine 1s ease-out 0.5s both;
+        }
+        
+        @keyframes expandLine {
+            from { width: 0; }
+            to { width: 6rem; }
+        }
+        
+        /* Premium Feature Cards */
+        #home-tab .grid > div {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(30, 58, 138, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out both;
+        }
+        
+        #home-tab .grid > div:nth-child(1) { animation-delay: 0.1s; }
+        #home-tab .grid > div:nth-child(2) { animation-delay: 0.2s; }
+        #home-tab .grid > div:nth-child(3) { animation-delay: 0.3s; }
+        #home-tab .grid > div:nth-child(4) { animation-delay: 0.4s; }
+        #home-tab .grid > div:nth-child(5) { animation-delay: 0.5s; }
+        #home-tab .grid > div:nth-child(6) { animation-delay: 0.6s; }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Premium Card Hover Effects */
+        #home-tab .grid > div::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(30, 58, 138, 0.05), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        #home-tab .grid > div:hover::before {
+            left: 100%;
+        }
+        
+        #home-tab .grid > div:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(30, 58, 138, 0.15),
+                        0 8px 16px rgba(30, 58, 138, 0.1);
+            border-color: rgba(30, 58, 138, 0.2);
+        }
+        
+        /* Premium Icon Containers */
+        #home-tab .w-12 {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #home-tab .w-12::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(30, 58, 138, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+        
+        #home-tab .grid > div:hover .w-12::before {
+            width: 100px;
+            height: 100px;
+        }
+        
+        #home-tab .grid > div:hover .w-12 {
+            transform: scale(1.1) rotate(5deg);
+            background: linear-gradient(135deg, #bfdbfe, #93c5fd);
+        }
+        
+        /* Premium Typography */
+        #home-tab h3 {
+            color: #1e3a8a;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+        
+        #home-tab .grid > div:hover h3 {
+            color: #1e40af;
+        }
+        
+        #home-tab p {
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+        
+        #home-tab .grid > div:hover p {
+            color: #374151;
+        }
+        
+        /* Premium Action Buttons */
+        #home-tab button {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+        
+        #home-tab button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, #1e3a8a, #1e40af);
+            transition: width 0.3s ease;
+        }
+        
+        #home-tab button:hover::after {
+            width: 100%;
+        }
+        
+        #home-tab button:hover {
+            transform: translateX(4px);
+        }
+        
+        /* Premium About Section */
+        #home-tab .bg-gradient-to-r {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.02), rgba(59, 130, 246, 0.02));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 12px 24px rgba(30, 58, 138, 0.08);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out 0.7s both;
+        }
+        
+        #home-tab .bg-gradient-to-r::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #1e3a8a, #1e40af, #3b82f6);
+        }
+        
+        /* Premium About Content */
+        #home-tab .bg-gradient-to-r h2 {
+            color: #1e3a8a;
+            font-weight: 800;
+            position: relative;
+        }
+        
+        #home-tab .bg-gradient-to-r h3 {
+            color: #1e40af;
+            font-weight: 700;
+            position: relative;
+        }
+        
+        #home-tab .bg-gradient-to-r h3::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            border-radius: 2px;
+        }
+        
+        /* Premium List Items */
+        #home-tab .bg-gradient-to-r li {
+            transition: all 0.3s ease;
+            padding: 0.25rem 0;
+        }
+        
+        #home-tab .bg-gradient-to-r li:hover {
+            transform: translateX(8px);
+            color: #1e40af;
+        }
+        
+        #home-tab .bg-gradient-to-r li span {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+        }
+        
+        /* Premium Entrance Animations */
+        #home-tab .text-center > * {
+            animation: fadeInDown 0.8s ease-out both;
+        }
+        
+        #home-tab .text-center h1 { animation-delay: 0.1s; }
+        #home-tab .text-center p { animation-delay: 0.2s; }
+        #home-tab .text-center .w-24 { animation-delay: 0.3s; }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Clean Home - No Floating Elements */
+        
+        /* Premium Scrollbar for Home Tab */
+        #home-tab::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #home-tab::-webkit-scrollbar-track {
+            background: rgba(30, 58, 138, 0.05);
+            border-radius: 3px;
+        }
+        
+        #home-tab::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            border-radius: 3px;
+        }
+        
+        #home-tab::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        }
+        
+        /* Premium Feature Card Components */
+        .premium-feature-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            animation: slideInUp 0.8s ease-out both;
+        }
+        
+        .premium-feature-card .card-glow {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(30, 58, 138, 0.03), transparent);
+            animation: rotate 10s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .premium-feature-card:hover .card-glow {
+            opacity: 1;
+        }
+        
+        .premium-feature-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(30, 58, 138, 0.15),
+                        0 12px 24px rgba(30, 58, 138, 0.1);
+            border-color: rgba(30, 58, 138, 0.2);
+        }
+        
+        .premium-icon-container {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #1e3a8a, #1e40af, #3b82f6);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 16px rgba(30, 58, 138, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-icon-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .premium-feature-card:hover .premium-icon-container::before {
+            left: 100%;
+        }
+        
+        .premium-feature-card:hover .premium-icon-container {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 24px rgba(30, 58, 138, 0.3);
+        }
+        
+        .premium-card-title {
+            color: #1e3a8a;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .premium-feature-card:hover .premium-card-title {
+            color: #1e40af;
+            transform: translateY(-2px);
+        }
+        
+        .premium-card-description {
+            color: #64748b;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .premium-feature-card:hover .premium-card-description {
+            color: #475569;
+        }
+        
+        .premium-action-btn {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .premium-action-btn:hover::before {
+            left: 100%;
+        }
+        
+        .premium-action-btn:hover {
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(30, 58, 138, 0.3);
+        }
+        
+        /* Premium About Section Components */
+        .premium-about-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            border-radius: 32px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 1s ease-out 0.8s both;
+        }
+        
+        .premium-about-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1e3a8a, #1e40af, #3b82f6, #60a5fa);
+        }
+        
+        .premium-about-section h2 {
+            color: #1e3a8a;
+            font-weight: 800;
+            position: relative;
+        }
+        
+        .premium-info-section {
+            position: relative;
+            padding: 1.5rem;
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(30, 58, 138, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .premium-info-section:hover {
+            background: rgba(248, 250, 252, 0.8);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(30, 58, 138, 0.08);
+        }
+        
+        .premium-section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .premium-section-icon {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .premium-info-section:hover .premium-section-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 12px rgba(30, 58, 138, 0.3);
+        }
+        
+        .premium-section-header h3 {
+            color: #1e40af;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            border: none;
+            padding: 0;
+        }
+        
+        .premium-section-text {
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .premium-feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .premium-feature-list li {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding-left: 0.5rem;
+        }
+        
+        .premium-feature-list li:hover {
+            background: rgba(30, 58, 138, 0.05);
+            color: #1e40af;
+            transform: translateX(8px);
+        }
+        
+        .premium-feature-list li span {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 1rem;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .premium-feature-list li:hover span {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.3);
+        }
+        
+        .premium-footer-badge {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            display: inline-block;
+            box-shadow: 0 8px 16px rgba(30, 58, 138, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .premium-footer-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(30, 58, 138, 0.12);
+        }
+        
+        /* Clean Beko Logo Styling */
+        .beko-logo {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        
+        .beko-logo img {
+            display: block;
+            margin: 0 auto;
+            /* Clean image - no filters, borders, or effects */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        
+        .beko-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .beko-logo:hover img {
+            /* Clean hover - no filters or effects */
+        }
+        
+        /* Clean Centered Logo with Gentle Hovering */
+        #home-tab .beko-logo {
+            display: block;
+            text-align: center;
+            /* No borders, backgrounds, or padding */
+        }
+        
+        #home-tab .beko-logo img {
+            display: block;
+            /* Clean image with gentle hovering animation */
+            animation: logoFadeIn 0.8s ease-out 0.3s both, logoHover 4s ease-in-out infinite 1.5s;
+        }
+        
+        @keyframes logoHover {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        
+        /* Remove old hover effects */
+        
+        /* Override previous logo loading state */
+        
+        @keyframes logoFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Clean Logo Fallback - No Styling */
+        #home-tab .beko-logo div {
+            /* Clean fallback text only */
         }
         
         /* Instant Result Tab Styles */
@@ -194,114 +928,704 @@
             transition: zoom 0.3s ease;
         }
         
-        /* Zoom control buttons */
-        .zoom-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            gap: 8px;
+        
+        
+        /* ========================================
+           MINIMALIST PREMIUM THEME FOR ALL TABS
+           ======================================== */
+        
+        /* Clean Minimalist Background - All Tabs */
+        .tab-content {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 1rem 0;
         }
         
-        .zoom-btn {
-            background: rgba(59, 130, 246, 0.9);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .zoom-btn:hover {
-            background: rgba(59, 130, 246, 1);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .zoom-btn.active {
-            background: rgba(34, 197, 94, 0.9);
-        }
-        
-        .zoom-btn.active:hover {
-            background: rgba(34, 197, 94, 1);
-        }
-        
-        /* Simple Mini Chart */
-        .mini-chart {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            width: 300px;
-            height: 180px;
-            background: white;
-            border: 2px solid #3b82f6;
+        /* Premium Card Styling - All Tabs */
+        .sortable-card, .tab-content .bg-white {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 1000;
-            display: none;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.08);
+            transition: box-shadow 0.2s ease;
         }
         
-        .mini-chart.show {
+        .sortable-card:hover, .tab-content .bg-white:hover {
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.12);
+        }
+        
+        /* Premium Headers - All Tabs */
+        .tab-content .card-header {
+            background: #1e3a8a;
+            border-bottom: 2px solid #1e40af;
+            color: #ffffff;
+            margin: -2rem -2rem 1rem -2rem;
+            padding: 1rem 2rem;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .tab-content .card-header h2,
+        .tab-content .card-header h3 {
+            color: #ffffff;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        /* Premium Section Headers - All Tabs */
+        .tab-content h3 {
+            color: #1e40af;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #dbeafe;
+            padding-bottom: 0.125rem;
+        }
+        
+        /* Premium Input Groups - All Tabs */
+        .tab-content .input-group {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 0.375rem;
+            margin-bottom: 0.25rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .tab-content .input-group:hover {
+            border-color: #94a3b8;
+        }
+        
+        .tab-content .input-group:focus-within {
+            border-color: #1e40af;
+            box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
+        }
+        
+        /* Premium Labels - All Tabs */
+        .tab-content .input-label {
+            color: #1e40af;
+            font-weight: 500;
+            font-size: 0.8rem;
+            margin-bottom: 0.125rem;
             display: block;
         }
         
-        .mini-chart-header {
-            background: #3b82f6;
-            color: white;
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 600;
+        /* Premium Input Fields - All Tabs */
+        .tab-content .input-field, .tab-content input, .tab-content select, .tab-content textarea {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e3a8a;
+            transition: border-color 0.2s ease;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
         }
         
-        .mini-chart-content {
-            padding: 8px;
-            height: calc(100% - 30px);
+        .tab-content .input-field:focus, .tab-content input:focus, .tab-content select:focus, .tab-content textarea:focus {
+            outline: none;
+            border-color: #1e40af;
+            box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
+        }
+        
+        .tab-content .input-field:hover, .tab-content input:hover, .tab-content select:hover, .tab-content textarea:hover {
+            border-color: #94a3b8;
+        }
+        
+        /* Premium Unit Text - All Tabs */
+        .tab-content .unit-text {
+            color: #64748b;
+            font-weight: 400;
+            font-size: 0.7rem;
+            margin-top: 0.0625rem;
+            display: block;
+            text-align: right;
+            font-style: italic;
+        }
+        
+        /* Premium Buttons - All Tabs */
+        .tab-content button[type="button"], .tab-content button:not([type]), .tab-content .btn {
+            background: #1e3a8a;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.875rem 1.75rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .tab-content button[type="button"]:hover, .tab-content button:not([type]):hover, .tab-content .btn:hover {
+            background: #1e40af;
+        }
+        
+        .tab-content button[type="button"]:active, .tab-content button:not([type]):active, .tab-content .btn:active {
+            background: #1d4ed8;
+        }
+        
+        /* Secondary Buttons */
+        .tab-content .btn-secondary {
+            background: #1e40af;
+            border: 1px solid #1e3a8a;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+        }
+        
+        .tab-content .btn-secondary:hover {
+            background: #1d4ed8;
+            border-color: #1e40af;
+        }
+        
+        /* Premium Action Area - All Tabs */
+        .tab-content .bg-gradient-to-r, .tab-content .action-area {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        /* Premium Control Buttons - All Tabs */
+        .tab-content .layout-btn,
+        .tab-content .control-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1e40af;
+            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .tab-content .layout-btn:hover,
+        .tab-content .control-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        
+        .tab-content .layout-btn.active {
+            background: #1e3a8a;
+            color: white;
+            border-color: #1e3a8a;
+        }
+        
+        /* Premium Tables - All Tabs */
+        .tab-content table {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .tab-content table thead {
+            background: #1e3a8a;
+            color: white;
+        }
+        
+        .tab-content table th {
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+            text-align: left;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab-content table th:last-child {
+            border-right: none;
+        }
+        
+        .tab-content table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f3f4;
+            border-right: 1px solid #f1f3f4;
+            font-weight: 400;
+            color: #1e40af;
+            font-size: 0.9rem;
+        }
+        
+        /* Monospace for numerical data only */
+        .tab-content table td[data-type="number"], 
+        .tab-content .result-value,
+        .tab-content .numerical-data {
+            font-family: 'Courier New', monospace;
+        }
+        
+        .tab-content table td:last-child {
+            border-right: none;
+        }
+        
+        .tab-content table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .tab-content table tbody tr:nth-child(even) {
+            background: #fdfdfd;
+        }
+        
+        /* Premium Dropdowns & Menus - All Tabs */
+        .tab-content .dropdown, .tab-content [id*="menu"] {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-content .dropdown:hover, .tab-content [id*="menu"]:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        
+        .tab-content .dropdown-menu {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.1);
+        }
+        
+        /* Premium Results Display - All Tabs */
+        .tab-content .results, .tab-content [id*="result"] {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.08);
+        }
+        
+        /* Premium Charts - All Tabs */
+        .tab-content .chart-container {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.08);
+        }
+        
+        .tab-content .chart-container:hover {
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.12);
+        }
+        
+        .tab-content .chart-container h3 {
+            color: #1e3a8a;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.75rem;
+        }
+        
+        /* Premium Error Messages - All Tabs */
+        .tab-content .error, .tab-content [id*="error"] {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 4px;
+            color: #c53030;
+        }
+        
+        /* Premium Typography - All Tabs */
+        .tab-content {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.5;
+        }
+        
+        .tab-content h1, .tab-content h2 {
+            color: #1e3a8a;
+        }
+        
+        .tab-content h4, .tab-content h5, .tab-content h6 {
+            color: #1e40af;
+        }
+        
+        .tab-content p {
+            color: #64748b;
+        }
+        
+        /* Premium Result Values - All Tabs */
+        .tab-content .result-value {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        
+        /* Premium Chart Controls - All Tabs */
+        .tab-content .chart-copy-btn,
+        .tab-content .chart-export-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1e40af;
+            border-radius: 4px;
+            padding: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-content .chart-copy-btn:hover,
+        .tab-content .chart-export-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        
+        /* Premium Drag Handles - All Tabs */
+        .tab-content .drag-handle {
+            color: #94a3b8;
+            transition: color 0.2s ease;
+        }
+        
+        .tab-content .drag-handle:hover {
+            color: #64748b;
+        }
+        
+        /* Viewport Height Optimization for Input Parameters - No Internal Scroll */
+        #single-calc-tab #calculator-form {
+            height: auto;
+            overflow: visible;
+        }
+        
+        #single-calc-tab #calculator-form .grid {
+            gap: 0.75rem;
+        }
+        
+        #single-calc-tab #calculator-form .space-y-3 > * + * {
+            margin-top: 0.25rem !important;
+        }
+        
+        /* Ultra Compact Action Area */
+        #single-calc-tab .bg-gradient-to-r {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+        }
+        
+        /* Academic Responsive Design */
+        @media (max-width: 768px) {
+            #single-calc-tab {
+                padding: 1rem 0;
+            }
+            
+            #single-calc-tab .sortable-card {
+                margin: 0 1rem;
+                border-radius: 6px;
+            }
+            
+            #single-calc-tab .input-group {
+                padding: 0.5rem;
+            }
+            
+            #single-calc-tab .card-header {
+                margin: -1.5rem -1.5rem 1rem -1.5rem;
+                padding: 1rem 1.5rem;
+                border-radius: 6px 6px 0 0;
+            }
+            
+            #single-calc-tab #calculate-btn {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+        
+        /* Academic Focus States */
+        #single-calc-tab *:focus {
+            outline: 2px solid #3498db;
+            outline-offset: 2px;
+        }
+        
+        #single-calc-tab .input-field:focus,
+        #single-calc-tab #run-name-input:focus {
+            outline: none;
+        }
+        
+        /* Academic Print Styles */
+        @media print {
+            #single-calc-tab {
+                background: white !important;
+            }
+            
+            #single-calc-tab .sortable-card {
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+                break-inside: avoid;
+            }
+            
+            #single-calc-tab .card-header {
+                background: white !important;
+                color: black !important;
+                border-bottom: 2px solid #000 !important;
+            }
+        }
+        
+        /* DOE Visualization Tabs */
+        .doe-viz-tab-content {
+            display: block;
+        }
+        .doe-viz-tab-content.hidden {
+            display: none;
+        }
+        .doe-viz-tab-button.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
         }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Zoom Controls -->
-    <div class="zoom-controls">
-        <button id="zoom-80-btn" class="zoom-btn" onclick="setZoom(0.8)">🔍- 80%</button>
-        <button id="zoom-100-btn" class="zoom-btn active" onclick="setZoom(1.0)">🔍+ 100%</button>
-    </div>
 
-    <!-- Simple Mini Chart -->
-    <div id="mini-chart" class="mini-chart">
-        <div class="mini-chart-header">
-            📊 Efficiency Comparison
-        </div>
-        <div class="mini-chart-content">
-            <canvas id="mini-efficiency-chart"></canvas>
-        </div>
-    </div>
 
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-screen-xl">
-        <header class="text-center mb-8">
-            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900">Generalized Cyclone Parameter Calculator</h1>
-            <p class="mt-2 text-lg text-gray-600">Mert Küplülü</p>
-        </header>
-
         <main>
-            <div class="border-b border-gray-300 mb-8">
+            <div class="tab-navigation">
                 <nav class="flex -mb-px">
-                    <button class="tab-button active" data-tab="single-calc-tab">Single Calculation</button>
+                    <button class="tab-button active" data-tab="home-tab">Home</button>
+                    <button class="tab-button" data-tab="single-calc-tab">Single Calculation</button>
                     <button class="tab-button" data-tab="param-study-tab">Parametric Study</button>
                     <button class="tab-button" data-tab="optimization-tab">Optimization</button>
                     <button class="tab-button" data-tab="instant-result-tab">Instant Result</button>
-                    <button class="tab-button" data-tab="ml-assistant-tab">🤖 AI Assistant</button>
-                    <button class="tab-button" data-tab="doe-tab">🧪 DOE Integration</button>
+                    <button class="tab-button" data-tab="ml-assistant-tab">AI Assistant</button>
+                    <button class="tab-button" data-tab="doe-tab">DOE Integration</button>
                 </nav>
             </div>
 
-            <div id="single-calc-tab" class="tab-content active">
+            <!-- Home Tab -->
+            <div id="home-tab" class="tab-content active">
+                <div class="max-w-6xl mx-auto px-4 py-8">
+                    <!-- Premium Header Section -->
+                    <div class="text-center mb-16 relative">
+                        <div class="relative z-10">
+                            <div class="mb-6">
+                                <!-- Pure Beko Logo - Perfectly Centered with Hovering -->
+                                <div class="beko-logo">
+                                    <img src="Dark_Blue_bg.png" alt="Beko Logo" class="h-24 w-auto object-contain mx-auto" loading="eager" 
+                                         onload="console.log('Logo loaded successfully:', this.src);"
+                                         onerror="console.log('Logo failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <!-- Simple Fallback -->
+                                    <div class="text-4xl font-bold text-blue-900 text-center" style="display: none;">
+                                        BEKO
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h1 class="text-5xl sm:text-7xl font-bold mb-6 leading-tight">
+                                <span class="block">AI Enhanced</span>
+                                <span class="block text-4xl sm:text-5xl mt-2">Cyclone Parameter Calculator</span>
+                            </h1>
+                            
+                            <div class="mb-6">
+                                <p class="text-2xl text-blue-800 font-semibold mb-2">Beko Fluid Dynamics Department</p>
+                                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                                    Advanced computational fluid dynamics modeling with AI-powered optimization 
+                                    for precision cyclone separator design and analysis.
+                                </p>
+                            </div>
+                            
+                            <div class="w-32 h-1 bg-gradient-to-r from-blue-800 via-blue-600 to-blue-400 mx-auto rounded-full shadow-lg"></div>
+                        </div>
+                    </div>
+
+                    <!-- Premium Feature Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                        <!-- Single Calculation Card -->
+                        <div class="premium-feature-card group">
+                            <div class="card-glow"></div>
+                            <div class="premium-icon-container">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="premium-card-title">Single Calculation</h3>
+                            <p class="premium-card-description">Perform individual cyclone performance calculations with detailed parameter input and comprehensive results analysis.</p>
+                            <button onclick="switchToTab('single-calc-tab')" class="premium-action-btn">
+                                <span>Start Calculation</span>
+                                <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Parametric Study Card -->
+                        <div class="premium-feature-card group">
+                            <div class="card-glow"></div>
+                            <div class="premium-icon-container">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="premium-card-title">Parametric Study</h3>
+                            <p class="premium-card-description">Analyze how parameter variations affect cyclone performance through systematic parameter sweeps and sensitivity analysis.</p>
+                            <button onclick="switchToTab('param-study-tab')" class="premium-action-btn">
+                                <span>Run Study</span>
+                                <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- DOE Integration Card -->
+                        <div class="premium-feature-card group">
+                            <div class="card-glow"></div>
+                            <div class="premium-icon-container">
+                                <span class="text-white text-2xl">🧪</span>
+                            </div>
+                            <h3 class="premium-card-title">DOE Integration</h3>
+                            <p class="premium-card-description">Design of Experiments with advanced visualization including parameter effects analysis and residual plots.</p>
+                            <button onclick="switchToTab('doe-tab')" class="premium-action-btn">
+                                <span>Design Experiments</span>
+                                <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Optimization Card -->
+                        <div class="premium-feature-card group">
+                            <div class="card-glow"></div>
+                            <div class="premium-icon-container">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="premium-card-title">Optimization</h3>
+                            <p class="premium-card-description">Multi-objective optimization to find optimal cyclone parameters for maximum efficiency and minimum pressure drop.</p>
+                            <button onclick="switchToTab('optimization-tab')" class="premium-action-btn">
+                                <span>Optimize Design</span>
+                                <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- AI Assistant Card -->
+                        <div class="premium-feature-card group">
+                            <div class="card-glow"></div>
+                            <div class="premium-icon-container">
+                                <span class="text-white text-lg font-bold">AI</span>
+                            </div>
+                            <h3 class="premium-card-title">AI Assistant</h3>
+                            <p class="premium-card-description">Intelligent assistant for cyclone design guidance, parameter recommendations, and performance interpretation.</p>
+                            <button onclick="switchToTab('ml-assistant-tab')" class="premium-action-btn">
+                                <span>Ask AI</span>
+                                <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Instant Result Card -->
+                        <div class="premium-feature-card group">
+                            <div class="card-glow"></div>
+                            <div class="premium-icon-container">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="premium-card-title">Instant Result</h3>
+                            <p class="premium-card-description">Quick calculations with preset parameters for rapid cyclone performance estimation and comparison.</p>
+                            <button onclick="switchToTab('instant-result-tab')" class="premium-action-btn">
+                                <span>Quick Calculate</span>
+                                <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Premium About Section -->
+                    <div class="premium-about-section">
+                        <div class="max-w-5xl mx-auto relative">
+                            <div class="text-center mb-12">
+                                <h2 class="text-4xl font-bold mb-4">About This Calculator</h2>
+                                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                                    Cutting-edge computational fluid dynamics with artificial intelligence integration
+                                </p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                                <div class="premium-info-section">
+                                    <div class="premium-section-header">
+                                        <div class="premium-section-icon">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                            </svg>
+                                        </div>
+                                        <h3>Advanced Cyclone Modeling</h3>
+                                    </div>
+                                    <p class="premium-section-text">
+                                        Our AI-enhanced calculator uses sophisticated fluid dynamics models to predict cyclone separator performance. 
+                                        It incorporates advanced algorithms for particle trajectory analysis, pressure drop calculations, and 
+                                        separation efficiency predictions.
+                                    </p>
+                                    <ul class="premium-feature-list">
+                                        <li><span>✓</span>Lapple cut diameter calculations</li>
+                                        <li><span>✓</span>Multi-component pressure drop analysis</li>
+                                        <li><span>✓</span>Particle size distribution modeling</li>
+                                        <li><span>✓</span>Advanced fluid velocity calculations</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="premium-info-section">
+                                    <div class="premium-section-header">
+                                        <div class="premium-section-icon">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                            </svg>
+                                        </div>
+                                        <h3>Professional Features</h3>
+                                    </div>
+                                    <p class="premium-section-text">
+                                        Designed for engineering professionals, this calculator provides comprehensive analysis tools 
+                                        including parametric studies, design optimization, and statistical analysis through Design of Experiments.
+                                    </p>
+                                    <ul class="premium-feature-list">
+                                        <li><span>✓</span>Interactive visualization charts</li>
+                                        <li><span>✓</span>Export capabilities for reports</li>
+                                        <li><span>✓</span>Parameter comparison tools</li>
+                                        <li><span>✓</span>AI-powered optimization algorithms</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-12 text-center">
+                                <div class="premium-footer-badge">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-left">
+                                            <p class="text-lg font-semibold text-blue-900">Beko Fluid Dynamics Department</p>
+                                            <p class="text-sm text-gray-600">Advanced cyclone separator design and analysis</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Copyright and Designer Credit -->
+                            <div class="mt-8 text-center border-t border-gray-200 pt-6">
+                                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-500">
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-lg">©</span>
+                                        <span>2024 Beko Fluid Dynamics Department</span>
+                                    </div>
+                                    <div class="hidden sm:block text-gray-300">•</div>
+                                    <div>
+                                        <span>Designed by </span>
+                                        <span class="font-medium text-blue-800">Mert Küplülü</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="single-calc-tab" class="tab-content hidden">
                 <div id="main-grid-container" class="grid grid-cols-1 gap-8">
                      <div id="sortable-column-1" class="sortable-column flex flex-col gap-8">
                          <div class="sortable-card bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
@@ -356,10 +1680,10 @@
                                         <div class="flex items-center gap-4 flex-wrap justify-center">
                                             <input type="text" id="run-name-input" placeholder="Enter Run Name" class="p-3 border border-gray-300 rounded-lg shadow-sm w-64 text-center font-medium">
                                             <button id="calculate-btn" class="bg-indigo-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105 text-lg">
-                                                🚀 Calculate
+                                                Calculate
                                             </button>
                                             <button id="save-run-btn" class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-700 transition-all transform hover:scale-105">
-                                                💾 Save Run
+                                                Save Run
                                             </button>
                                         </div>
                                         
@@ -537,15 +1861,15 @@
                         </div>
                         <div>
                             <label for="param-start" class="block text-sm font-medium text-gray-700 mb-1">Start Value</label>
-                            <input type="number" id="param-start" value="1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <input type="number" id="param-start" value="0.2" step="0.1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div>
                             <label for="param-end" class="block text-sm font-medium text-gray-700 mb-1">End Value</label>
-                            <input type="number" id="param-end" value="5" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <input type="number" id="param-end" value="1" step="0.1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div>
                             <label for="param-step" class="block text-sm font-medium text-gray-700 mb-1">Step</label>
-                            <input type="number" id="param-step" value="1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <input type="number" id="param-step" value="0.2" step="0.1" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="md:col-span-4 flex justify-center mt-4">
                             <button id="run-study-btn" class="bg-purple-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-purple-700 transition-transform transform hover:scale-105">Run Study</button>
@@ -839,7 +2163,7 @@
                         <!-- Efficiency Chart -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <div class="flex justify-between items-center border-b border-indigo-200 pb-2 mb-4">
-                                <h3 class="text-xl font-semibold text-indigo-700">📊 Live Efficiency Chart</h3>
+                                <h3 class="text-xl font-semibold text-indigo-700">Live Efficiency Chart</h3>
                                 <div class="flex gap-2"><button class="chart-copy-btn bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded-lg transition-colors" data-chart="instant-efficiency-chart" title="Copy to Clipboard"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 712-2h8a2 2 0 712 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="instant-efficiency-chart" data-type="image" title="Export as Image"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 712.828 0L16 16m-2-2l1.586-1.586a2 2 0 712.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></button><button class="chart-export-btn bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-lg transition-colors" data-chart="instant-efficiency-chart" data-type="csv" title="Export as CSV"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 712-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div>
                             </div>
                             <div class="mb-4"><div class="text-sm font-medium text-gray-700 mb-2">Live Data:</div><div id="instant-efficiency-chart-controls" class="flex flex-wrap gap-2"></div></div>
@@ -873,7 +2197,6 @@
                             <!-- Run Selector -->
                             <div class="bg-white p-4 rounded-xl shadow-md">
                                 <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                    <span class="text-blue-500">🎯</span>
                                     Run Selection
                                 </h4>
                                 <select id="run-selector" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="updateSelectedRunAnalysis()">
@@ -883,7 +2206,7 @@
 
                             <!-- Action Buttons -->
                             <div class="bg-white p-4 rounded-xl shadow-md">
-                                <h4 class="text-sm font-semibold text-gray-800 mb-3">🔧 Actions</h4>
+                                <h4 class="text-sm font-semibold text-gray-800 mb-3">Actions</h4>
                                 <div class="space-y-2">
                                     <button onclick="analyzeSelectedRun()" class="w-full bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs font-medium">
                                         Analyze Run
@@ -892,26 +2215,26 @@
                                         Compare All
                                     </button>
                                     <button onclick="generateDetailedReport()" class="w-full bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700 transition-colors text-xs font-medium">
-                                        📄 Report
+                                        Report
                                     </button>
                                     <button onclick="generateComparisonReport()" class="w-full bg-orange-600 text-white px-3 py-2 rounded-lg hover:bg-orange-700 transition-colors text-xs font-medium">
-                                        📊 Compare Report
+                                        Compare Report
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Export Options -->
                             <div class="bg-white p-4 rounded-xl shadow-md">
-                                <h4 class="text-sm font-semibold text-gray-800 mb-3">📥 Export</h4>
+                                <h4 class="text-sm font-semibold text-gray-800 mb-3">Export</h4>
                                 <div class="space-y-2">
                                     <button onclick="downloadReportAsWord()" class="w-full bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition-colors text-xs font-medium" style="display: none;" id="download-word-btn">
-                                        📄 Word
+                                        Word
                                     </button>
                                     <button onclick="downloadReportAsPDF()" class="w-full bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600 transition-colors text-xs font-medium" style="display: none;" id="download-pdf-btn">
-                                        📥 Text
+                                        Text
                                     </button>
                                     <button onclick="copyReportToClipboard()" class="w-full bg-gray-500 text-white px-3 py-2 rounded-lg hover:bg-gray-600 transition-colors text-xs font-medium" style="display: none;" id="copy-report-btn">
-                                        📋 Copy
+                                        Copy
                                     </button>
                                 </div>
                             </div>
@@ -919,7 +2242,6 @@
                             <!-- Quick Suggestions -->
                             <div class="bg-white p-4 rounded-xl shadow-md">
                                 <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                    <span class="text-yellow-500">💡</span>
                                     Quick Ask
                                 </h4>
                                 <div class="space-y-1">
@@ -937,7 +2259,7 @@
 
                             <!-- AI Status -->
                             <div class="bg-white p-4 rounded-xl shadow-md">
-                                <h4 class="text-sm font-semibold text-gray-800 mb-3">⚙️ AI Status</h4>
+                                <h4 class="text-sm font-semibold text-gray-800 mb-3">AI Status</h4>
                                 <div class="space-y-2">
                                     <div class="flex items-center gap-2">
                                         <div class="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -961,7 +2283,7 @@
                                 <div class="flex items-center justify-between border-b border-gray-200 p-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                            <span class="text-white text-sm">🤖</span>
+                                            <span class="text-white text-sm font-bold">AI</span>
                                         </div>
                                         <div>
                                             <h3 class="text-lg font-semibold text-gray-800">AI Design Assistant</h3>
@@ -980,7 +2302,7 @@
                                 <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 p-4 bg-gray-50">
                                     <div class="flex items-start gap-3">
                                         <div class="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <span class="text-white text-xs">🤖</span>
+                                            <span class="text-white text-xs font-bold">AI</span>
                                         </div>
                                         <div class="bg-white p-3 rounded-lg shadow-sm max-w-lg">
                                             <p class="text-gray-800 text-sm">Hello! I'm your AI design assistant. I can help you:</p>
@@ -1025,13 +2347,13 @@
                             <div class="bg-white rounded-xl shadow-md mb-4">
                                 <div class="flex border-b border-gray-200">
                                     <button onclick="switchAnalysisTab('run-analysis')" class="flex-1 px-3 py-2 text-xs font-medium text-blue-600 border-b-2 border-blue-600" id="run-analysis-tab">
-                                        📊 Analysis
+                                        Analysis
                                     </button>
                                     <button onclick="switchAnalysisTab('comparison')" class="flex-1 px-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-700" id="comparison-tab">
-                                        📈 Compare
+                                        Compare
                                     </button>
                                     <button onclick="switchAnalysisTab('reports')" class="flex-1 px-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-700" id="reports-tab">
-                                        📄 Reports
+                                        Reports
                                     </button>
                                 </div>
                             </div>
@@ -1104,7 +2426,7 @@
             <!-- DOE Integration Tab -->
             <div id="doe-tab" class="tab-content hidden">
                 <div class="max-w-7xl mx-auto">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-8">🧪 Design of Experiments (DOE) Integration</h2>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-8">Design of Experiments (DOE) Integration</h2>
                     
                     <!-- DOE Introduction Section -->
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6 mb-8">
@@ -1122,7 +2444,7 @@
                                 
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
                                     <div>
-                                        <h4 class="font-semibold text-gray-800 mb-2">🎯 DOE Methods Explained:</h4>
+                                        <h4 class="font-semibold text-gray-800 mb-2">DOE Methods Explained:</h4>
                                         <ul class="text-sm space-y-2 text-gray-700">
                                             <li><strong>Full Factorial:</strong> Tests all possible combinations (2^n experiments). Best for 2-3 parameters.</li>
                                             <li><strong>Fractional Factorial:</strong> Tests selected combinations (2^(n-1)). Efficient for screening many parameters.</li>
@@ -1131,7 +2453,7 @@
                                         </ul>
                                     </div>
                                     <div>
-                                        <h4 class="font-semibold text-gray-800 mb-2">📊 Key Terms:</h4>
+                                        <h4 class="font-semibold text-gray-800 mb-2">Key Terms:</h4>
                                         <ul class="text-sm space-y-2 text-gray-700">
                                             <li><strong>Parameters (Factors):</strong> Design variables you want to study (e.g., diameter, height)</li>
                                             <li><strong>Responses:</strong> Performance measures you want to optimize (e.g., efficiency, pressure drop)</li>
@@ -1143,7 +2465,7 @@
                                 </div>
                                 
                                 <div class="mt-4 p-4 bg-white rounded-lg border border-blue-200">
-                                    <h4 class="font-semibold text-gray-800 mb-2">🚀 How to Use This DOE Tool:</h4>
+                                    <h4 class="font-semibold text-gray-800 mb-2">How to Use This DOE Tool:</h4>
                                     <ol class="text-sm space-y-1 text-gray-700 list-decimal list-inside">
                                         <li><strong>Select Parameters:</strong> Choose 2-4 cyclone dimensions to study</li>
                                         <li><strong>Set Ranges:</strong> Define min/max values for each parameter</li>
@@ -1193,13 +2515,13 @@
                                 </div>
                                 
                                 <button onclick="generateDOEMatrix()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                                    🎯 Generate Design Matrix
+                                    Generate Design Matrix
                                 </button>
                             </div>
                             
                             <!-- Parameter Selection -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">🔧 Design Parameters</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Design Parameters</h3>
                                 
                                 <div class="space-y-4" id="doe-parameters">
                                     <div class="parameter-row">
@@ -1261,7 +2583,7 @@
                             
                             <!-- Response Variables -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 Response Variables</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Response Variables</h3>
                                 
                                 <div class="space-y-2">
                                     <label class="flex items-center">
@@ -1290,18 +2612,18 @@
                             <!-- Design Matrix Display -->
                             <div class="bg-white rounded-lg shadow-md p-6">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-xl font-semibold text-gray-800">📈 Design Matrix</h3>
+                                    <h3 class="text-xl font-semibold text-gray-800">Design Matrix</h3>
                                     <div class="flex gap-2">
                                         <button onclick="exportDOEMatrix()" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
-                                            📥 Export CSV
+                                            Export CSV
                                         </button>
                                         <button onclick="runAllExperiments()" class="bg-orange-600 text-white px-3 py-1 rounded text-sm hover:bg-orange-700 transition-colors font-semibold">
-                                            ▶️ Run All Experiments
+                                            Run All Experiments
                                         </button>
                                     </div>
                                 </div>
                                 <div class="mb-2">
-                                    <p class="text-xs text-gray-600 italic">💡 After generating the design matrix, click "Run All Experiments" to execute calculations and see results</p>
+                                    <p class="text-xs text-gray-600 italic">After generating the design matrix, click "Run All Experiments" to execute calculations and see results</p>
                                 </div>
                                 
                                 <div class="overflow-auto max-h-96">
@@ -1360,30 +2682,30 @@
                             
                             <!-- Analysis Methods -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">🔬 Analysis Methods</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Analysis Methods</h3>
                                 
                                 <div class="space-y-3">
                                     <button onclick="performANOVA()" class="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
-                                        📊 ANOVA Analysis
+                                        ANOVA Analysis
                                     </button>
                                     <button onclick="generateResponseSurface()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
-                                        🏔️ Response Surface
+                                        Response Surface
                                     </button>
                                     <button onclick="performSensitivityAnalysis()" class="w-full bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors text-sm font-medium">
-                                        ⚖️ Sensitivity Analysis
+                                        Sensitivity Analysis
                                     </button>
                                     <button onclick="generateInteractionPlots()" class="w-full bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors text-sm font-medium">
-                                        🔗 Interaction Plots
+                                        Interaction Plots
                                     </button>
                                     <button onclick="optimizeResponse()" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
-                                        🎯 Multi-Objective Optimization
+                                        Multi-Objective Optimization
                                     </button>
                                 </div>
                             </div>
                             
                             <!-- Quick Stats -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">📈 Quick Statistics</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Quick Statistics</h3>
                                 
                                 <div id="doe-stats" class="space-y-3 text-sm">
                                     <div class="flex justify-between">
@@ -1411,19 +2733,19 @@
                             
                             <!-- Export Options -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">💾 Export & Import</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Export & Import</h3>
                                 
                                 <div class="space-y-3">
                                     <button onclick="exportDOEResults()" class="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium">
-                                        📊 Export Results (CSV)
+                                        Export Results (CSV)
                                     </button>
                                     <button onclick="exportDOEReport()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                                        📄 Generate Report
+                                        Generate Report
                                     </button>
                                     <div class="relative">
                                         <input type="file" id="doe-import-file" accept=".csv" class="hidden" onchange="importDOEMatrix()">
                                         <button onclick="document.getElementById('doe-import-file').click()" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-                                            📥 Import Matrix
+                                            Import Matrix
                                         </button>
                                     </div>
                                 </div>
@@ -1432,43 +2754,80 @@
                         </div>
                     </div>
                     
-                    <!-- Visualization Panel -->
+                    <!-- Visualization Panel with Tabs -->
                     <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 DOE Analysis Visualization</h3>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">DOE Analysis Visualization</h3>
                         
-                        <div class="grid grid-cols-12 gap-4">
-                            <!-- Main Chart -->
-                            <div class="col-span-8">
+                        <!-- Visualization Tab Navigation -->
+                        <div class="border-b border-gray-200 mb-6">
+                            <nav class="-mb-px flex space-x-8">
+                                <button class="doe-viz-tab-button active py-2 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600" data-doe-tab="main-chart-tab">
+                                    Main Chart
+                                </button>
+                                <button class="doe-viz-tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-doe-tab="parameter-effects-tab">
+                                    Parameter Effects
+                                </button>
+                                <button class="doe-viz-tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-doe-tab="residual-plots-tab">
+                                    Residual Plots
+                                </button>
+                            </nav>
+                        </div>
+                        
+                        <!-- Main Chart Tab -->
+                        <div id="main-chart-tab" class="doe-viz-tab-content">
+                            <div class="mb-4 flex gap-2 flex-wrap">
+                                <select id="doe-chart-type" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="scatter">Scatter Plot</option>
+                                    <option value="contour">Contour Plot</option>
+                                    <option value="surface">3D Surface</option>
+                                    <option value="parallel">Parallel Coordinates</option>
+                                </select>
+                                <select id="doe-x-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select X-axis</option>
+                                </select>
+                                <select id="doe-y-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select Y-axis</option>
+                                </select>
+                                <select id="doe-response-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <option value="">Select Response</option>
+                                </select>
+                            </div>
+                            <div class="chart-container-fixed">
+                                <canvas id="doe-main-chart" width="800" height="500"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Parameter Effects Tab -->
+                        <div id="parameter-effects-tab" class="doe-viz-tab-content hidden">
+                            <div class="mb-4">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">Parameter Effects Analysis</h4>
+                                <p class="text-sm text-gray-600 mb-4">This chart shows how each design parameter affects the selected response variable. Larger bars indicate parameters with stronger influence on the response.</p>
                                 <div class="mb-4 flex gap-2">
-                                    <select id="doe-chart-type" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="scatter">Scatter Plot</option>
-                                        <option value="contour">Contour Plot</option>
-                                        <option value="surface">3D Surface</option>
-                                        <option value="parallel">Parallel Coordinates</option>
-                                    </select>
-                                    <select id="doe-x-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="">Select X-axis</option>
-                                    </select>
-                                    <select id="doe-y-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="">Select Y-axis</option>
-                                    </select>
-                                    <select id="doe-response-axis" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                    <label class="text-sm font-medium text-gray-700">Response Variable:</label>
+                                    <select id="doe-effects-response" class="px-3 py-1 border border-gray-300 rounded text-sm">
                                         <option value="">Select Response</option>
                                     </select>
                                 </div>
-                                <canvas id="doe-main-chart" width="600" height="400"></canvas>
                             </div>
-                            
-                            <!-- Side Charts -->
-                            <div class="col-span-4 space-y-4">
-                                <div>
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Parameter Effects</h4>
-                                    <canvas id="doe-effects-chart" width="300" height="180"></canvas>
+                            <div class="chart-container-fixed">
+                                <canvas id="doe-effects-chart" width="800" height="500"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Residual Plots Tab -->
+                        <div id="residual-plots-tab" class="doe-viz-tab-content hidden">
+                            <div class="mb-4">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">Residual Analysis</h4>
+                                <p class="text-sm text-gray-600 mb-4">Residual plots help validate the model assumptions. Points should be randomly scattered around zero with no clear patterns.</p>
+                                <div class="mb-4 flex gap-2">
+                                    <label class="text-sm font-medium text-gray-700">Response Variable:</label>
+                                    <select id="doe-residuals-response" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                        <option value="">Select Response</option>
+                                    </select>
                                 </div>
-                                <div>
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Residuals</h4>
-                                    <canvas id="doe-residuals-chart" width="300" height="180"></canvas>
-                                </div>
+                            </div>
+                            <div class="chart-container-fixed">
+                                <canvas id="doe-residuals-chart" width="800" height="500"></canvas>
                             </div>
                         </div>
                     </div>
@@ -1560,8 +2919,34 @@
                         content.classList.toggle('active', content.id === tab.dataset.tab);
                     });
                     
-                    // Show/hide mini chart based on active tab
-                    showMiniChart();
+                });
+            });
+            
+            // DOE Visualization Tab Controls
+            const doeVizTabs = document.querySelectorAll('.doe-viz-tab-button');
+            const doeVizTabContents = document.querySelectorAll('.doe-viz-tab-content');
+            doeVizTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all DOE viz tabs
+                    doeVizTabs.forEach(t => {
+                        t.classList.remove('active', 'text-blue-600', 'border-blue-500');
+                        t.classList.add('text-gray-500', 'border-transparent');
+                    });
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active', 'text-blue-600', 'border-blue-500');
+                    tab.classList.remove('text-gray-500', 'border-transparent');
+                    
+                    // Hide all DOE viz tab contents
+                    doeVizTabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // Show the selected tab content
+                    const targetTab = document.getElementById(tab.dataset.doeTab);
+                    if (targetTab) {
+                        targetTab.classList.remove('hidden');
+                    }
                 });
             });
         }
@@ -1597,8 +2982,8 @@
         document.getElementById("result-Vin").textContent=V_in.toFixed(2);document.getElementById("result-V1").textContent=V1.toFixed(4);document.getElementById("result-L1_mm").textContent=(L1*1e3).toFixed(2);document.getElementById("result-Ne1").textContent=Ne1.toFixed(2);document.getElementById("result-V2").textContent=isFinite(average_V2)?average_V2.toFixed(4):"N/A";document.getElementById("result-L2_mm").textContent=(L2*1e3).toFixed(2);document.getElementById("result-Ne2").textContent=Ne2.toFixed(2);document.getElementById("result-Ne_total").textContent=Ne_total.toFixed(2);
         document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
         document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
-        document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);updateMiniChart();updateAIComparisonTable();runCounter++;document.getElementById("run-name-input").value=""});
-        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()});hideMiniChart();updateAIComparisonTable()});
+        document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);updateAIComparisonTable();runCounter++;document.getElementById("run-name-input").value=""});
+        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()});updateAIComparisonTable()});
 
         // File Operations
         document.getElementById("save-to-file-btn").addEventListener("click", saveRunsToFile);
@@ -2685,6 +4070,7 @@
             initCharts();
             initParametricStudyCharts();
             setupControls();
+            setupDOEVisualizationControls();
             populateParamSelect();
             loadInputHistoryFromStorage();
             updateAllTextSizes();
@@ -5098,6 +6484,30 @@ Comparative analysis based on ${runHistory.length} design variations
             copyBtn.style.display = 'block';
         }
 
+        function switchToTab(tabId) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                content.classList.add('hidden');
+            });
+            
+            // Activate the selected tab
+            const targetButton = document.querySelector(`[data-tab="${tabId}"]`);
+            const targetContent = document.getElementById(tabId);
+            
+            if (targetButton && targetContent) {
+                targetButton.classList.add('active');
+                targetContent.classList.add('active');
+                targetContent.classList.remove('hidden');
+            }
+            
+        }
+
         function switchAnalysisTab(tabName) {
             // Hide all tab contents
             document.getElementById('run-analysis-content').classList.add('hidden');
@@ -5131,29 +6541,10 @@ Comparative analysis based on ${runHistory.length} design variations
             });
         }
 
-        // Zoom Control Functions
-        let currentZoom = 1.0;
         
-        function setZoom(zoomLevel) {
-            currentZoom = zoomLevel;
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabContents.forEach(tab => {
-                tab.style.zoom = zoomLevel;
-            });
-            
-            // Update button states
-            document.getElementById('zoom-80-btn').classList.toggle('active', zoomLevel === 0.8);
-            document.getElementById('zoom-100-btn').classList.toggle('active', zoomLevel === 1.0);
-        }
-        
-        // Initialize zoom controls
+        // Initialize application
         document.addEventListener('DOMContentLoaded', function() {
-            // Set initial state
-            setZoom(1.0);
             
-            // Initialize mini chart
-            createMiniChart();
             
             // Initialize DOE visualization controls
             setupDOEVisualizationControls();
@@ -5197,87 +6588,6 @@ Comparative analysis based on ${runHistory.length} design variations
             }, 300);
         }
 
-        // Simple Mini Chart
-        let miniChart = null;
-        
-        function createMiniChart() {
-            const ctx = document.getElementById('mini-efficiency-chart').getContext('2d');
-            
-            miniChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: particle_sizes_microns,
-                    datasets: []
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            ticks: {
-                                font: { size: 8 },
-                                maxRotation: 45
-                            },
-                            grid: {
-                                display: true,
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        y: {
-                            display: true,
-                            min: 0,
-                            max: 100,
-                            ticks: {
-                                font: { size: 8 }
-                            },
-                            grid: {
-                                display: true,
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        }
-                    }
-                }
-            });
-            
-            updateMiniChart();
-        }
-        
-        function updateMiniChart() {
-            if (!miniChart) {
-                createMiniChart();
-                return;
-            }
-            
-            // Copy data from the main efficiency chart
-            const mainChart = efficiencyChart;
-            if (mainChart && mainChart.data.datasets.length > 0) {
-                miniChart.data.datasets = [...mainChart.data.datasets];
-                miniChart.update('none');
-                showMiniChart();
-            }
-        }
-        
-        function showMiniChart() {
-            const currentTab = document.querySelector('.tab-content.active');
-            const miniChartDiv = document.getElementById('mini-chart');
-            
-            if (currentTab && currentTab.id === 'single-calc-tab') {
-                miniChartDiv.classList.add('show');
-            } else {
-                miniChartDiv.classList.remove('show');
-            }
-        }
-        
-        function hideMiniChart() {
-            const miniChartDiv = document.getElementById('mini-chart');
-            miniChartDiv.classList.remove('show');
-        }
 
         // ============================================================================
         // DOE INTEGRATION FUNCTIONS
@@ -6079,11 +7389,15 @@ Comparative analysis based on ${runHistory.length} design variations
             const xAxisSelect = document.getElementById('doe-x-axis');
             const yAxisSelect = document.getElementById('doe-y-axis');
             const responseSelect = document.getElementById('doe-response-axis');
+            const effectsResponseSelect = document.getElementById('doe-effects-response');
+            const residualsResponseSelect = document.getElementById('doe-residuals-response');
             
             // Clear existing options
             xAxisSelect.innerHTML = '<option value="">Select X-axis</option>';
             yAxisSelect.innerHTML = '<option value="">Select Y-axis</option>';
             responseSelect.innerHTML = '<option value="">Select Response</option>';
+            if (effectsResponseSelect) effectsResponseSelect.innerHTML = '<option value="">Select Response</option>';
+            if (residualsResponseSelect) residualsResponseSelect.innerHTML = '<option value="">Select Response</option>';
             
             // Add parameter options
             selectedParams.forEach(param => {
@@ -6093,7 +7407,10 @@ Comparative analysis based on ${runHistory.length} design variations
             
             // Add response options
             selectedResponses.forEach(response => {
-                responseSelect.innerHTML += `<option value="${response}">${getResponseDisplayName(response)}</option>`;
+                const displayName = getResponseDisplayName(response);
+                responseSelect.innerHTML += `<option value="${response}">${displayName}</option>`;
+                if (effectsResponseSelect) effectsResponseSelect.innerHTML += `<option value="${response}">${displayName}</option>`;
+                if (residualsResponseSelect) residualsResponseSelect.innerHTML += `<option value="${response}">${displayName}</option>`;
             });
         }
 
@@ -6541,9 +7858,18 @@ Comparative analysis based on ${runHistory.length} design variations
             }
             
             const selectedParams = getSelectedDOEParameters();
-            const responseAxis = document.getElementById('doe-response-axis').value || 'efficiency';
+            const effectsResponseSelect = document.getElementById('doe-effects-response');
+            const responseAxis = effectsResponseSelect ? effectsResponseSelect.value : (document.getElementById('doe-response-axis').value || 'efficiency');
             
-            if (selectedParams.length === 0) return;
+            if (selectedParams.length === 0 || !responseAxis) {
+                // Show instruction message
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.fillText('Select a response variable', canvas.width/2, canvas.height/2);
+                return;
+            }
             
             // Calculate parameter effects (simplified main effects)
             const effects = selectedParams.map(param => {
@@ -6611,7 +7937,19 @@ Comparative analysis based on ${runHistory.length} design variations
                 window.doeResidualsChart.destroy();
             }
             
-            const responseAxis = document.getElementById('doe-response-axis').value || 'efficiency';
+            const residualsResponseSelect = document.getElementById('doe-residuals-response');
+            const responseAxis = residualsResponseSelect ? residualsResponseSelect.value : (document.getElementById('doe-response-axis').value || 'efficiency');
+            
+            if (!responseAxis) {
+                // Show instruction message
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.fillText('Select a response variable', canvas.width/2, canvas.height/2);
+                return;
+            }
+            
             const responseValues = doeResults.map(result => result[responseAxis]);
             
             if (responseValues.length === 0) return;
@@ -6674,9 +8012,28 @@ Comparative analysis based on ${runHistory.length} design variations
             document.getElementById('doe-y-axis').addEventListener('change', createDOEScatterPlot);
             document.getElementById('doe-response-axis').addEventListener('change', () => {
                 createDOEScatterPlot();
-                createDOEEffectsChart();
-                createDOEResidualsChart();
+                // Update the other dropdowns if they don't have values
+                const effectsSelect = document.getElementById('doe-effects-response');
+                const residualsSelect = document.getElementById('doe-residuals-response');
+                if (effectsSelect && !effectsSelect.value) {
+                    createDOEEffectsChart();
+                }
+                if (residualsSelect && !residualsSelect.value) {
+                    createDOEResidualsChart();
+                }
             });
+            
+            // Add event listeners for the new separate dropdowns
+            const effectsResponseSelect = document.getElementById('doe-effects-response');
+            const residualsResponseSelect = document.getElementById('doe-residuals-response');
+            
+            if (effectsResponseSelect) {
+                effectsResponseSelect.addEventListener('change', createDOEEffectsChart);
+            }
+            
+            if (residualsResponseSelect) {
+                residualsResponseSelect.addEventListener('change', createDOEResidualsChart);
+            }
         }
 
         // Utility function for correlation calculation

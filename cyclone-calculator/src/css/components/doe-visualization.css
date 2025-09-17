@@ -1,0 +1,50 @@
+/* DOE Visualization Components */
+.doe-viz-tab-content {
+    display: block;
+}
+
+.doe-viz-tab-content.hidden {
+    display: none;
+}
+
+.doe-viz-tab-button {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.doe-viz-tab-button.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
+
+.doe-viz-tab-button:hover:not(.active) {
+    color: #374151;
+    border-bottom-color: #d1d5db;
+}
+
+.doe-analysis-container {
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.doe-chart-controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.doe-chart-controls select {
+    min-width: 150px;
+}
+
+@media (max-width: 768px) {
+    .doe-chart-controls {
+        flex-direction: column;
+    }
+    
+    .doe-chart-controls select {
+        width: 100%;
+    }
+}
