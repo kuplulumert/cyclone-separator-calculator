@@ -245,26 +245,7 @@
             overflow: hidden;
         }
         
-        /* Animated Background Elements */
-        #home-tab::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: 
-                radial-gradient(circle at 25% 25%, rgba(30, 58, 138, 0.03) 0%, transparent 25%),
-                radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.02) 0%, transparent 25%);
-            animation: floatBackground 30s ease-in-out infinite;
-            pointer-events: none;
-        }
-        
-        @keyframes floatBackground {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(30px, -30px) rotate(120deg); }
-            66% { transform: translate(-20px, 20px) rotate(240deg); }
-        }
+        /* Clean Background - No Animated Elements */
         
         /* Premium Header Section */
         #home-tab .text-center {
@@ -524,24 +505,7 @@
             }
         }
         
-        /* Premium Floating Elements */
-        #home-tab::after {
-            content: '';
-            position: absolute;
-            top: 10%;
-            right: 10%;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(30, 58, 138, 0.05) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-            pointer-events: none;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
+        /* Clean Home - No Floating Elements */
         
         /* Premium Scrollbar for Home Tab */
         #home-tab::-webkit-scrollbar {
@@ -1563,10 +1527,6 @@
                 <div class="max-w-6xl mx-auto px-4 py-8">
                     <!-- Premium Header Section -->
                     <div class="text-center mb-16 relative">
-                        <!-- Floating Background Elements -->
-                        <div class="absolute top-0 left-1/4 w-32 h-32 bg-blue-100 rounded-full opacity-20 animate-pulse"></div>
-                        <div class="absolute top-20 right-1/4 w-24 h-24 bg-blue-200 rounded-full opacity-15 animate-bounce" style="animation-delay: 1s;"></div>
-                        
                         <div class="relative z-10">
                             <div class="mb-6">
                                 <!-- Pure Beko Logo - Perfectly Centered with Hovering -->
