@@ -359,11 +359,11 @@
            ACADEMIC MINIMALIST THEME FOR SINGLE CALCULATION TAB
            ======================================== */
         
-        /* Clean Academic Background */
+        /* Clean Academic Background - Compact */
         #single-calc-tab {
             background: #fafafa;
             min-height: 100vh;
-            padding: 2rem 0;
+            padding: 1rem 0;
         }
         
         /* Academic Card Styling */
@@ -379,13 +379,13 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
         }
         
-        /* Academic Headers */
+        /* Academic Headers - Compact */
         #single-calc-tab .card-header {
             background: #f8f9fa;
             border-bottom: 2px solid #2c3e50;
             color: #2c3e50;
-            margin: -2rem -2rem 2rem -2rem;
-            padding: 1.5rem 2rem;
+            margin: -2rem -2rem 1rem -2rem;
+            padding: 1rem 2rem;
             border-radius: 8px 8px 0 0;
         }
         
@@ -396,23 +396,23 @@
             margin: 0;
         }
         
-        /* Academic Section Headers */
+        /* Academic Section Headers - Compact */
         #single-calc-tab h3 {
             color: #34495e;
             font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 1.25rem;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
             border-bottom: 1px solid #ecf0f1;
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.25rem;
         }
         
-        /* Academic Input Groups */
+        /* Academic Input Groups - Compact Layout */
         #single-calc-tab .input-group {
             background: #ffffff;
             border: 1px solid #ddd;
             border-radius: 4px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
             transition: border-color 0.2s ease;
         }
         
@@ -425,22 +425,22 @@
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
         }
         
-        /* Academic Labels */
+        /* Academic Labels - Compact */
         #single-calc-tab .input-label {
             color: #2c3e50;
             font-weight: 500;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
             display: block;
         }
         
-        /* Academic Input Fields */
+        /* Academic Input Fields - Compact */
         #single-calc-tab .input-field {
             background: #ffffff;
             border: 1px solid #bdc3c7;
             border-radius: 4px;
-            padding: 0.75rem;
-            font-size: 0.95rem;
+            padding: 0.5rem;
+            font-size: 0.9rem;
             font-weight: 400;
             color: #2c3e50;
             transition: border-color 0.2s ease;
@@ -458,12 +458,12 @@
             border-color: #95a5a6;
         }
         
-        /* Academic Unit Text */
+        /* Academic Unit Text - Compact */
         #single-calc-tab .unit-text {
             color: #7f8c8d;
             font-weight: 400;
-            font-size: 0.85rem;
-            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            margin-top: 0.125rem;
             display: block;
             text-align: right;
             font-style: italic;
@@ -728,6 +728,26 @@
             line-height: 1.5;
         }
         
+        /* Viewport Height Optimization for Input Parameters */
+        #single-calc-tab #calculator-form {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        
+        #single-calc-tab #calculator-form .grid {
+            gap: 1rem;
+        }
+        
+        #single-calc-tab #calculator-form .space-y-3 > * + * {
+            margin-top: 0.5rem !important;
+        }
+        
+        /* Compact Action Area */
+        #single-calc-tab .bg-gradient-to-r {
+            margin-top: 1rem;
+            padding: 1rem;
+        }
+        
         /* Academic Responsive Design */
         @media (max-width: 768px) {
             #single-calc-tab {
@@ -740,11 +760,11 @@
             }
             
             #single-calc-tab .input-group {
-                padding: 0.75rem;
+                padding: 0.5rem;
             }
             
             #single-calc-tab .card-header {
-                margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+                margin: -1.5rem -1.5rem 1rem -1.5rem;
                 padding: 1rem 1.5rem;
                 border-radius: 6px 6px 0 0;
             }
