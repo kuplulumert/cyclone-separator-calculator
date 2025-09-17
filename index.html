@@ -1025,18 +1025,18 @@
         }
         
         /* ========================================
-           ACADEMIC MINIMALIST THEME FOR SINGLE CALCULATION TAB
+           MINIMALIST PREMIUM THEME FOR ALL TABS
            ======================================== */
         
-        /* Clean Academic Background - Dark Blue & White Theme */
-        #single-calc-tab {
-            background: #f8fafc;
+        /* Clean Minimalist Background - All Tabs */
+        .tab-content {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
             padding: 1rem 0;
         }
         
-        /* Academic Card Styling - Dark Blue & White */
-        #single-calc-tab .sortable-card {
+        /* Premium Card Styling - All Tabs */
+        .sortable-card, .tab-content .bg-white {
             background: #ffffff;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
@@ -1044,12 +1044,12 @@
             transition: box-shadow 0.2s ease;
         }
         
-        #single-calc-tab .sortable-card:hover {
+        .sortable-card:hover, .tab-content .bg-white:hover {
             box-shadow: 0 4px 8px rgba(30, 58, 138, 0.12);
         }
         
-        /* Academic Headers - Dark Blue & White Theme */
-        #single-calc-tab .card-header {
+        /* Premium Headers - All Tabs */
+        .tab-content .card-header {
             background: #1e3a8a;
             border-bottom: 2px solid #1e40af;
             color: #ffffff;
@@ -1058,15 +1058,15 @@
             border-radius: 8px 8px 0 0;
         }
         
-        #single-calc-tab .card-header h2,
-        #single-calc-tab .card-header h3 {
+        .tab-content .card-header h2,
+        .tab-content .card-header h3 {
             color: #ffffff;
             font-weight: 600;
             margin: 0;
         }
         
-        /* Academic Section Headers - Dark Blue Theme */
-        #single-calc-tab h3 {
+        /* Premium Section Headers - All Tabs */
+        .tab-content h3 {
             color: #1e40af;
             font-weight: 600;
             font-size: 0.95rem;
@@ -1075,8 +1075,8 @@
             padding-bottom: 0.125rem;
         }
         
-        /* Academic Input Groups - Dark Blue Theme */
-        #single-calc-tab .input-group {
+        /* Premium Input Groups - All Tabs */
+        .tab-content .input-group {
             background: #ffffff;
             border: 1px solid #cbd5e1;
             border-radius: 4px;
@@ -1085,17 +1085,17 @@
             transition: border-color 0.2s ease;
         }
         
-        #single-calc-tab .input-group:hover {
+        .tab-content .input-group:hover {
             border-color: #94a3b8;
         }
         
-        #single-calc-tab .input-group:focus-within {
+        .tab-content .input-group:focus-within {
             border-color: #1e40af;
             box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
         }
         
-        /* Academic Labels - Dark Blue Theme */
-        #single-calc-tab .input-label {
+        /* Premium Labels - All Tabs */
+        .tab-content .input-label {
             color: #1e40af;
             font-weight: 500;
             font-size: 0.8rem;
@@ -1103,8 +1103,8 @@
             display: block;
         }
         
-        /* Academic Input Fields - Dark Blue Theme */
-        #single-calc-tab .input-field {
+        /* Premium Input Fields - All Tabs */
+        .tab-content .input-field, .tab-content input, .tab-content select, .tab-content textarea {
             background: #ffffff;
             border: 1px solid #cbd5e1;
             border-radius: 4px;
@@ -1117,18 +1117,18 @@
             font-family: 'Courier New', monospace;
         }
         
-        #single-calc-tab .input-field:focus {
+        .tab-content .input-field:focus, .tab-content input:focus, .tab-content select:focus, .tab-content textarea:focus {
             outline: none;
             border-color: #1e40af;
             box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
         }
         
-        #single-calc-tab .input-field:hover {
+        .tab-content .input-field:hover, .tab-content input:hover, .tab-content select:hover, .tab-content textarea:hover {
             border-color: #94a3b8;
         }
         
-        /* Academic Unit Text - Dark Blue Theme */
-        #single-calc-tab .unit-text {
+        /* Premium Unit Text - All Tabs */
+        .tab-content .unit-text {
             color: #64748b;
             font-weight: 400;
             font-size: 0.7rem;
@@ -1138,8 +1138,8 @@
             font-style: italic;
         }
         
-        /* Academic Buttons - Dark Blue Theme */
-        #single-calc-tab #calculate-btn {
+        /* Premium Buttons - All Tabs */
+        .tab-content button[type="button"], .tab-content button:not([type]), .tab-content .btn {
             background: #1e3a8a;
             border: none;
             color: white;
@@ -1151,40 +1151,38 @@
             cursor: pointer;
         }
         
-        #single-calc-tab #calculate-btn:hover {
+        .tab-content button[type="button"]:hover, .tab-content button:not([type]):hover, .tab-content .btn:hover {
             background: #1e40af;
         }
         
-        #single-calc-tab #calculate-btn:active {
+        .tab-content button[type="button"]:active, .tab-content button:not([type]):active, .tab-content .btn:active {
             background: #1d4ed8;
         }
         
-        #single-calc-tab #save-run-btn {
+        /* Secondary Buttons */
+        .tab-content .btn-secondary {
             background: #1e40af;
             border: 1px solid #1e3a8a;
             color: white;
             font-weight: 500;
             padding: 0.75rem 1.25rem;
-            border-radius: 4px;
-            transition: background-color 0.2s ease;
-            cursor: pointer;
         }
         
-        #single-calc-tab #save-run-btn:hover {
+        .tab-content .btn-secondary:hover {
             background: #1d4ed8;
             border-color: #1e40af;
         }
         
-        /* Academic Action Area - Dark Blue Theme */
-        #single-calc-tab .bg-gradient-to-r {
+        /* Premium Action Area - All Tabs */
+        .tab-content .bg-gradient-to-r, .tab-content .action-area {
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
             border-radius: 4px;
         }
         
-        /* Academic Control Buttons - Dark Blue Theme */
-        #single-calc-tab .layout-btn,
-        #single-calc-tab .control-btn {
+        /* Premium Control Buttons - All Tabs */
+        .tab-content .layout-btn,
+        .tab-content .control-btn {
             background: #ffffff;
             border: 1px solid #cbd5e1;
             color: #1e40af;
@@ -1196,120 +1194,151 @@
             cursor: pointer;
         }
         
-        #single-calc-tab .layout-btn:hover,
-        #single-calc-tab .control-btn:hover {
+        .tab-content .layout-btn:hover,
+        .tab-content .control-btn:hover {
             background: #f1f5f9;
             border-color: #94a3b8;
         }
         
-        #single-calc-tab .layout-btn.active {
+        .tab-content .layout-btn.active {
             background: #1e3a8a;
             color: white;
             border-color: #1e3a8a;
         }
         
-        /* Academic Run Name Input - Dark Blue Theme */
-        #single-calc-tab #run-name-input {
+        /* Premium Tables - All Tabs */
+        .tab-content table {
             background: #ffffff;
             border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            padding: 0.75rem 1rem;
-            font-weight: 400;
-            color: #1e40af;
-            transition: border-color 0.2s ease;
-        }
-        
-        #single-calc-tab #run-name-input:focus {
-            outline: none;
-            border-color: #1e40af;
-            box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.1);
-        }
-        
-        /* Academic Quick Menu */
-        #single-calc-tab #quick-menu-btn {
-            background: #ffffff;
-            border: 1px solid #bdc3c7;
-            color: #2c3e50;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        
-        #single-calc-tab #quick-menu-btn:hover {
-            background: #ecf0f1;
-            border-color: #95a5a6;
-        }
-        
-        #single-calc-tab #quick-menu-dropdown {
-            background: #ffffff;
-            border: 1px solid #bdc3c7;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Academic Results Display */
-        #single-calc-tab #results {
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        
-        /* Academic Results Tables */
-        #single-calc-tab table {
-            background: #ffffff;
-            border: 1px solid #dee2e6;
             border-radius: 4px;
             overflow: hidden;
         }
         
-        #single-calc-tab table thead {
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
+        .tab-content table thead {
+            background: #1e3a8a;
+            color: white;
         }
         
-        #single-calc-tab table th {
+        .tab-content table th {
             padding: 0.75rem 1rem;
             font-weight: 600;
             font-size: 0.85rem;
-            color: #2c3e50;
+            color: white;
             text-align: left;
-            border-right: 1px solid #dee2e6;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        #single-calc-tab table th:last-child {
+        .tab-content table th:last-child {
             border-right: none;
         }
         
-        #single-calc-tab table td {
+        .tab-content table td {
             padding: 0.75rem 1rem;
             border-bottom: 1px solid #f1f3f4;
             border-right: 1px solid #f1f3f4;
             font-weight: 400;
-            color: #2c3e50;
+            color: #1e40af;
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
         }
         
-        #single-calc-tab table td:last-child {
+        .tab-content table td:last-child {
             border-right: none;
         }
         
-        #single-calc-tab table tbody tr:hover {
+        .tab-content table tbody tr:hover {
             background: #f8f9fa;
         }
         
-        #single-calc-tab table tbody tr:nth-child(even) {
+        .tab-content table tbody tr:nth-child(even) {
             background: #fdfdfd;
         }
         
-        /* Academic Result Values */
-        #single-calc-tab .result-value {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
+        /* Premium Dropdowns & Menus - All Tabs */
+        .tab-content .dropdown, .tab-content [id*="menu"] {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-content .dropdown:hover, .tab-content [id*="menu"]:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        
+        .tab-content .dropdown-menu {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.1);
+        }
+        
+        /* Premium Results Display - All Tabs */
+        .tab-content .results, .tab-content [id*="result"] {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.08);
+        }
+        
+        /* Premium Charts - All Tabs */
+        .tab-content .chart-container {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.08);
+        }
+        
+        .tab-content .chart-container:hover {
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.12);
+        }
+        
+        .tab-content .chart-container h3 {
+            color: #1e3a8a;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.75rem;
+        }
+        
+        /* Premium Error Messages - All Tabs */
+        .tab-content .error, .tab-content [id*="error"] {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 4px;
+            color: #c53030;
+        }
+        
+        /* Premium Typography - All Tabs */
+        .tab-content {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.5;
+        }
+        
+        .tab-content h1, .tab-content h2 {
+            color: #1e3a8a;
+        }
+        
+        .tab-content h4, .tab-content h5, .tab-content h6 {
+            color: #1e40af;
+        }
+        
+        .tab-content p {
+            color: #64748b;
+        }
+        
+        /* Premium Result Values - All Tabs */
+        .tab-content .result-value {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
             border-radius: 4px;
             padding: 0.5rem 0.75rem;
             font-weight: 500;
-            color: #2c3e50;
+            color: #1e40af;
             display: inline-block;
             min-width: 60px;
             text-align: center;
@@ -1317,85 +1346,31 @@
             font-size: 0.9rem;
         }
         
-        /* Academic Charts */
-        #single-calc-tab .chart-container {
+        /* Premium Chart Controls - All Tabs */
+        .tab-content .chart-copy-btn,
+        .tab-content .chart-export-btn {
             background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        
-        #single-calc-tab .chart-container:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-        }
-        
-        /* Academic Chart Headers */
-        #single-calc-tab .chart-container h3 {
-            color: #2c3e50;
-            font-weight: 600;
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 0.75rem;
-        }
-        
-        /* Academic Chart Controls */
-        #single-calc-tab .chart-copy-btn,
-        #single-calc-tab .chart-export-btn {
-            background: #ffffff;
-            border: 1px solid #bdc3c7;
-            color: #2c3e50;
+            border: 1px solid #cbd5e1;
+            color: #1e40af;
             border-radius: 4px;
             padding: 0.5rem;
             transition: all 0.2s ease;
         }
         
-        #single-calc-tab .chart-copy-btn:hover,
-        #single-calc-tab .chart-export-btn:hover {
-            background: #ecf0f1;
-            border-color: #95a5a6;
+        .tab-content .chart-copy-btn:hover,
+        .tab-content .chart-export-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
         }
         
-        /* Academic Error Messages */
-        #single-calc-tab #error-message {
-            background: #fff5f5;
-            border: 1px solid #fed7d7;
-            border-radius: 4px;
-            color: #c53030;
-        }
-        
-        /* Academic History Panel */
-        #single-calc-tab .history-panel {
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        
-        /* Academic Comparison Table */
-        #single-calc-tab #comparison-section {
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        
-        /* Academic Drag Handle */
-        #single-calc-tab .drag-handle {
-            color: #95a5a6;
+        /* Premium Drag Handles - All Tabs */
+        .tab-content .drag-handle {
+            color: #94a3b8;
             transition: color 0.2s ease;
         }
         
-        #single-calc-tab .drag-handle:hover {
-            color: #7f8c8d;
-        }
-        
-        /* Academic Typography */
-        #single-calc-tab {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            line-height: 1.5;
+        .tab-content .drag-handle:hover {
+            color: #64748b;
         }
         
         /* Viewport Height Optimization for Input Parameters - No Internal Scroll */
