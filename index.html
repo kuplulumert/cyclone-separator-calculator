@@ -894,7 +894,7 @@
             /* Clean hover - no filters or effects */
         }
         
-        /* Clean Logo Container - No Background */
+        /* Clean Centered Logo with Gentle Hovering */
         #home-tab .beko-logo {
             display: inline-block;
             /* No borders, backgrounds, or padding */
@@ -902,13 +902,13 @@
         
         #home-tab .beko-logo img {
             display: block;
-            /* Clean image with simple fade-in */
-            animation: logoFadeIn 0.8s ease-out 0.3s both;
+            /* Clean image with gentle hovering animation */
+            animation: logoFadeIn 0.8s ease-out 0.3s both, logoHover 4s ease-in-out infinite 1.5s;
         }
         
-        @keyframes logoFloat {
+        @keyframes logoHover {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-4px); }
+            50% { transform: translateY(-6px); }
         }
         
         /* Remove old hover effects */
@@ -1637,8 +1637,8 @@
                         <div class="absolute top-20 right-1/4 w-24 h-24 bg-blue-200 rounded-full opacity-15 animate-bounce" style="animation-delay: 1s;"></div>
                         
                         <div class="relative z-10">
-                            <div class="mb-6">
-                                <!-- Pure Beko Logo - No Container -->
+                            <div class="mb-6 text-center">
+                                <!-- Pure Beko Logo - Centered with Hovering -->
                                 <div class="beko-logo inline-block">
                                     <img src="Dark_Blue_bg.png" alt="Beko Logo" class="h-24 w-auto object-contain" loading="eager" 
                                          onload="console.log('Logo loaded successfully:', this.src);"
