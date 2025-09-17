@@ -1474,7 +1474,7 @@
     <!-- Simple Mini Chart -->
     <div id="mini-chart" class="mini-chart">
         <div class="mini-chart-header">
-            <span>📊 Efficiency Comparison</span>
+            <span>Efficiency Comparison</span>
             <div class="mini-chart-controls">
                 <button id="mini-chart-minimize-btn" class="mini-chart-btn" title="Minimize">−</button>
                 <button id="mini-chart-close-btn" class="mini-chart-btn" title="Close">×</button>
@@ -1486,7 +1486,7 @@
     </div>
 
     <!-- Mini Chart Restore Button -->
-    <button id="mini-chart-restore-btn" class="mini-chart-restore-btn" title="Show Efficiency Comparison">📊</button>
+    <button id="mini-chart-restore-btn" class="mini-chart-restore-btn" title="Show Efficiency Comparison">Chart</button>
 
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-screen-xl">
         <main>
@@ -1790,10 +1790,10 @@
                                         <div class="flex items-center gap-4 flex-wrap justify-center">
                                             <input type="text" id="run-name-input" placeholder="Enter Run Name" class="p-3 border border-gray-300 rounded-lg shadow-sm w-64 text-center font-medium">
                                             <button id="calculate-btn" class="bg-indigo-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105 text-lg">
-                                                🚀 Calculate
+                                                Calculate
                                             </button>
                                             <button id="save-run-btn" class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-700 transition-all transform hover:scale-105">
-                                                💾 Save Run
+                                                Save Run
                                             </button>
                                         </div>
                                         
@@ -2273,7 +2273,7 @@
                         <!-- Efficiency Chart -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <div class="flex justify-between items-center border-b border-indigo-200 pb-2 mb-4">
-                                <h3 class="text-xl font-semibold text-indigo-700">📊 Live Efficiency Chart</h3>
+                                <h3 class="text-xl font-semibold text-indigo-700">Live Efficiency Chart</h3>
                                 <div class="flex gap-2"><button class="chart-copy-btn bg-blue-100 hover:bg-blue-200 text-blue-700 p-2 rounded-lg transition-colors" data-chart="instant-efficiency-chart" title="Copy to Clipboard"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 712-2h8a2 2 0 712 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button><button class="chart-export-btn bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-colors" data-chart="instant-efficiency-chart" data-type="image" title="Export as Image"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 712.828 0L16 16m-2-2l1.586-1.586a2 2 0 712.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></button><button class="chart-export-btn bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-lg transition-colors" data-chart="instant-efficiency-chart" data-type="csv" title="Export as CSV"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 712-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></div>
                             </div>
                             <div class="mb-4"><div class="text-sm font-medium text-gray-700 mb-2">Live Data:</div><div id="instant-efficiency-chart-controls" class="flex flex-wrap gap-2"></div></div>
@@ -2307,7 +2307,6 @@
                             <!-- Run Selector -->
                             <div class="bg-white p-4 rounded-xl shadow-md">
                                 <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                    <span class="text-blue-500">🎯</span>
                                     Run Selection
                                 </h4>
                                 <select id="run-selector" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="updateSelectedRunAnalysis()">
@@ -2326,23 +2325,23 @@
                                         Compare All
                                     </button>
                                     <button onclick="generateDetailedReport()" class="w-full bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700 transition-colors text-xs font-medium">
-                                        📄 Report
+                                        Report
                                     </button>
                                     <button onclick="generateComparisonReport()" class="w-full bg-orange-600 text-white px-3 py-2 rounded-lg hover:bg-orange-700 transition-colors text-xs font-medium">
-                                        📊 Compare Report
+                                        Compare Report
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Export Options -->
                             <div class="bg-white p-4 rounded-xl shadow-md">
-                                <h4 class="text-sm font-semibold text-gray-800 mb-3">📥 Export</h4>
+                                <h4 class="text-sm font-semibold text-gray-800 mb-3">Export</h4>
                                 <div class="space-y-2">
                                     <button onclick="downloadReportAsWord()" class="w-full bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition-colors text-xs font-medium" style="display: none;" id="download-word-btn">
-                                        📄 Word
+                                        Word
                                     </button>
                                     <button onclick="downloadReportAsPDF()" class="w-full bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600 transition-colors text-xs font-medium" style="display: none;" id="download-pdf-btn">
-                                        📥 Text
+                                        Text
                                     </button>
                                     <button onclick="copyReportToClipboard()" class="w-full bg-gray-500 text-white px-3 py-2 rounded-lg hover:bg-gray-600 transition-colors text-xs font-medium" style="display: none;" id="copy-report-btn">
                                         📋 Copy
@@ -2459,13 +2458,13 @@
                             <div class="bg-white rounded-xl shadow-md mb-4">
                                 <div class="flex border-b border-gray-200">
                                     <button onclick="switchAnalysisTab('run-analysis')" class="flex-1 px-3 py-2 text-xs font-medium text-blue-600 border-b-2 border-blue-600" id="run-analysis-tab">
-                                        📊 Analysis
+                                        Analysis
                                     </button>
                                     <button onclick="switchAnalysisTab('comparison')" class="flex-1 px-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-700" id="comparison-tab">
-                                        📈 Compare
+                                        Compare
                                     </button>
                                     <button onclick="switchAnalysisTab('reports')" class="flex-1 px-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-700" id="reports-tab">
-                                        📄 Reports
+                                        Reports
                                     </button>
                                 </div>
                             </div>
@@ -2538,7 +2537,7 @@
             <!-- DOE Integration Tab -->
             <div id="doe-tab" class="tab-content hidden">
                 <div class="max-w-7xl mx-auto">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-8">🧪 Design of Experiments (DOE) Integration</h2>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-8">Design of Experiments (DOE) Integration</h2>
                     
                     <!-- DOE Introduction Section -->
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6 mb-8">
@@ -2556,7 +2555,7 @@
                                 
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
                                     <div>
-                                        <h4 class="font-semibold text-gray-800 mb-2">🎯 DOE Methods Explained:</h4>
+                                        <h4 class="font-semibold text-gray-800 mb-2">DOE Methods Explained:</h4>
                                         <ul class="text-sm space-y-2 text-gray-700">
                                             <li><strong>Full Factorial:</strong> Tests all possible combinations (2^n experiments). Best for 2-3 parameters.</li>
                                             <li><strong>Fractional Factorial:</strong> Tests selected combinations (2^(n-1)). Efficient for screening many parameters.</li>
@@ -2565,7 +2564,7 @@
                                         </ul>
                                     </div>
                                     <div>
-                                        <h4 class="font-semibold text-gray-800 mb-2">📊 Key Terms:</h4>
+                                        <h4 class="font-semibold text-gray-800 mb-2">Key Terms:</h4>
                                         <ul class="text-sm space-y-2 text-gray-700">
                                             <li><strong>Parameters (Factors):</strong> Design variables you want to study (e.g., diameter, height)</li>
                                             <li><strong>Responses:</strong> Performance measures you want to optimize (e.g., efficiency, pressure drop)</li>
@@ -2577,7 +2576,7 @@
                                 </div>
                                 
                                 <div class="mt-4 p-4 bg-white rounded-lg border border-blue-200">
-                                    <h4 class="font-semibold text-gray-800 mb-2">🚀 How to Use This DOE Tool:</h4>
+                                    <h4 class="font-semibold text-gray-800 mb-2">How to Use This DOE Tool:</h4>
                                     <ol class="text-sm space-y-1 text-gray-700 list-decimal list-inside">
                                         <li><strong>Select Parameters:</strong> Choose 2-4 cyclone dimensions to study</li>
                                         <li><strong>Set Ranges:</strong> Define min/max values for each parameter</li>
@@ -2627,13 +2626,13 @@
                                 </div>
                                 
                                 <button onclick="generateDOEMatrix()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                                    🎯 Generate Design Matrix
+                                    Generate Design Matrix
                                 </button>
                             </div>
                             
                             <!-- Parameter Selection -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">🔧 Design Parameters</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Design Parameters</h3>
                                 
                                 <div class="space-y-4" id="doe-parameters">
                                     <div class="parameter-row">
@@ -2695,7 +2694,7 @@
                             
                             <!-- Response Variables -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 Response Variables</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Response Variables</h3>
                                 
                                 <div class="space-y-2">
                                     <label class="flex items-center">
@@ -2724,18 +2723,18 @@
                             <!-- Design Matrix Display -->
                             <div class="bg-white rounded-lg shadow-md p-6">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-xl font-semibold text-gray-800">📈 Design Matrix</h3>
+                                    <h3 class="text-xl font-semibold text-gray-800">Design Matrix</h3>
                                     <div class="flex gap-2">
                                         <button onclick="exportDOEMatrix()" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
-                                            📥 Export CSV
+                                            Export CSV
                                         </button>
                                         <button onclick="runAllExperiments()" class="bg-orange-600 text-white px-3 py-1 rounded text-sm hover:bg-orange-700 transition-colors font-semibold">
-                                            ▶️ Run All Experiments
+                                            Run All Experiments
                                         </button>
                                     </div>
                                 </div>
                                 <div class="mb-2">
-                                    <p class="text-xs text-gray-600 italic">💡 After generating the design matrix, click "Run All Experiments" to execute calculations and see results</p>
+                                    <p class="text-xs text-gray-600 italic">After generating the design matrix, click "Run All Experiments" to execute calculations and see results</p>
                                 </div>
                                 
                                 <div class="overflow-auto max-h-96">
@@ -2794,30 +2793,30 @@
                             
                             <!-- Analysis Methods -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">🔬 Analysis Methods</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Analysis Methods</h3>
                                 
                                 <div class="space-y-3">
                                     <button onclick="performANOVA()" class="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
-                                        📊 ANOVA Analysis
+                                        ANOVA Analysis
                                     </button>
                                     <button onclick="generateResponseSurface()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
-                                        🏔️ Response Surface
+                                        Response Surface
                                     </button>
                                     <button onclick="performSensitivityAnalysis()" class="w-full bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors text-sm font-medium">
-                                        ⚖️ Sensitivity Analysis
+                                        Sensitivity Analysis
                                     </button>
                                     <button onclick="generateInteractionPlots()" class="w-full bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors text-sm font-medium">
-                                        🔗 Interaction Plots
+                                        Interaction Plots
                                     </button>
                                     <button onclick="optimizeResponse()" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
-                                        🎯 Multi-Objective Optimization
+                                        Multi-Objective Optimization
                                     </button>
                                 </div>
                             </div>
                             
                             <!-- Quick Stats -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">📈 Quick Statistics</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Quick Statistics</h3>
                                 
                                 <div id="doe-stats" class="space-y-3 text-sm">
                                     <div class="flex justify-between">
@@ -2845,19 +2844,19 @@
                             
                             <!-- Export Options -->
                             <div class="bg-white rounded-lg shadow-md p-6">
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4">💾 Export & Import</h3>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Export & Import</h3>
                                 
                                 <div class="space-y-3">
                                     <button onclick="exportDOEResults()" class="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium">
-                                        📊 Export Results (CSV)
+                                        Export Results (CSV)
                                     </button>
                                     <button onclick="exportDOEReport()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                                        📄 Generate Report
+                                        Generate Report
                                     </button>
                                     <div class="relative">
                                         <input type="file" id="doe-import-file" accept=".csv" class="hidden" onchange="importDOEMatrix()">
                                         <button onclick="document.getElementById('doe-import-file').click()" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-                                            📥 Import Matrix
+                                            Import Matrix
                                         </button>
                                     </div>
                                 </div>
@@ -2868,19 +2867,19 @@
                     
                     <!-- Visualization Panel with Tabs -->
                     <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 DOE Analysis Visualization</h3>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">DOE Analysis Visualization</h3>
                         
                         <!-- Visualization Tab Navigation -->
                         <div class="border-b border-gray-200 mb-6">
                             <nav class="-mb-px flex space-x-8">
                                 <button class="doe-viz-tab-button active py-2 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600" data-doe-tab="main-chart-tab">
-                                    📈 Main Chart
+                                    Main Chart
                                 </button>
                                 <button class="doe-viz-tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-doe-tab="parameter-effects-tab">
-                                    🎯 Parameter Effects
+                                    Parameter Effects
                                 </button>
                                 <button class="doe-viz-tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-doe-tab="residual-plots-tab">
-                                    📊 Residual Plots
+                                    Residual Plots
                                 </button>
                             </nav>
                         </div>
