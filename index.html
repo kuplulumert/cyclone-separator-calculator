@@ -895,12 +895,11 @@
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
         }
         
-        /* Premium Logo Container */
-        #home-tab .w-32.h-32 {
-            background: white;
-            border: 2px solid rgba(30, 58, 138, 0.1);
+        /* Premium Logo Container - No Background */
+        #home-tab .beko-logo img {
             transition: all 0.4s ease;
             animation: logoFloat 6s ease-in-out infinite;
+            border: 2px solid rgba(30, 58, 138, 0.1);
         }
         
         @keyframes logoFloat {
@@ -908,16 +907,16 @@
             50% { transform: translateY(-4px); }
         }
         
-        #home-tab .w-32.h-32:hover {
+        #home-tab .beko-logo:hover img {
             border-color: rgba(30, 58, 138, 0.3);
-            box-shadow: 0 16px 32px rgba(30, 58, 138, 0.15);
-            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(30, 58, 138, 0.2);
+            transform: translateY(-2px) scale(1.05);
         }
         
         /* Logo Loading State */
         .beko-logo img {
             opacity: 0;
-            animation: logoFadeIn 1s ease-out 0.3s both;
+            animation: logoFadeIn 1s ease-out 0.3s both, logoFloat 6s ease-in-out infinite 1.3s;
         }
         
         @keyframes logoFadeIn {
@@ -929,6 +928,19 @@
                 opacity: 1;
                 transform: scale(1);
             }
+        }
+        
+        /* Premium Logo Fallback Styling */
+        #home-tab .beko-logo div {
+            border: 2px solid rgba(30, 58, 138, 0.1);
+            transition: all 0.4s ease;
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+        
+        #home-tab .beko-logo:hover div {
+            border-color: rgba(30, 58, 138, 0.3);
+            box-shadow: 0 16px 32px rgba(30, 58, 138, 0.2);
+            transform: translateY(-2px) scale(1.05);
         }
         
         /* Instant Result Tab Styles */
@@ -1638,19 +1650,19 @@
                         
                         <div class="relative z-10">
                             <div class="mb-6">
-                                <div class="inline-flex items-center justify-center w-32 h-32 rounded-2xl mb-6 shadow-xl relative overflow-hidden bg-white p-2">
+                                <div class="inline-block relative">
                                     <!-- Beko Logo Image -->
                                     <div class="beko-logo">
-                                        <img src="./Dark_Blue_bg.png" alt="Beko Logo" class="w-full h-full object-contain" loading="lazy" 
+                                        <img src="./Dark_Blue_bg.png" alt="Beko Logo" class="w-32 h-32 object-cover rounded-2xl shadow-xl" loading="lazy" 
                                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                         <!-- Fallback if image fails to load -->
-                                        <div class="w-full h-full flex items-center justify-center text-white font-bold text-2xl" style="display: none;">
+                                        <div class="w-32 h-32 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800 text-white font-bold text-2xl rounded-2xl shadow-xl" style="display: none;">
                                             BEKO
                                         </div>
                                     </div>
                                     
                                     <!-- Premium Logo Effects -->
-                                    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"></div>
                                 </div>
                             </div>
                             
