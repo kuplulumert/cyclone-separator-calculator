@@ -872,6 +872,50 @@
             box-shadow: 0 12px 24px rgba(30, 58, 138, 0.12);
         }
         
+        /* Premium Beko Logo Styling */
+        .beko-logo {
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .beko-logo svg {
+            transition: all 0.4s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        
+        .beko-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .beko-logo:hover svg {
+            transform: rotate(2deg);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+        
+        /* Beko Logo Animation */
+        .beko-logo svg path {
+            animation: logoGlow 4s ease-in-out infinite alternate;
+        }
+        
+        .beko-logo svg circle {
+            animation: logoAccent 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoGlow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.1); }
+        }
+        
+        @keyframes logoAccent {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        /* Premium Logo Container Hover Effects */
+        .beko-logo svg:hover {
+            animation-play-state: paused;
+        }
+        
         /* Instant Result Tab Styles */
         .result-card {
             border: 1px solid #e5e7eb;
@@ -1579,10 +1623,22 @@
                         
                         <div class="relative z-10">
                             <div class="mb-6">
-                                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl mb-6 shadow-xl">
-                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                                    </svg>
+                                <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl mb-6 shadow-xl relative overflow-hidden">
+                                    <!-- Beko Logo -->
+                                    <div class="beko-logo">
+                                        <svg class="w-16 h-16 text-white" viewBox="0 0 100 100" fill="currentColor">
+                                            <!-- B -->
+                                            <path d="M10 15 L10 85 L35 85 Q50 85 50 70 Q50 60 40 57.5 Q50 55 50 45 Q50 30 35 30 L10 30 Z M20 40 L32 40 Q40 40 40 47.5 Q40 55 32 55 L20 55 Z M20 65 L35 65 Q40 65 40 72.5 Q40 80 35 80 L20 80 Z"/>
+                                            <!-- E -->
+                                            <path d="M55 30 L55 85 L85 85 L85 75 L65 75 L65 62.5 L80 62.5 L80 52.5 L65 52.5 L65 40 L85 40 L85 30 Z"/>
+                                            <!-- Circular accent -->
+                                            <circle cx="50" cy="15" r="8" fill="currentColor" opacity="0.8"/>
+                                            <circle cx="50" cy="15" r="5" fill="none" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+                                        </svg>
+                                    </div>
+                                    
+                                    <!-- Premium Logo Effects -->
+                                    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
                                 </div>
                             </div>
                             
