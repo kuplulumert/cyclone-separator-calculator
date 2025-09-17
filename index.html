@@ -929,100 +929,6 @@
         }
         
         
-        /* Simple Mini Chart */
-        .mini-chart {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            width: 300px;
-            height: 180px;
-            background: white;
-            border: 2px solid #3b82f6;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 1000;
-            display: none;
-            transition: all 0.3s ease;
-        }
-        
-        .mini-chart.show {
-            display: block;
-        }
-        
-        .mini-chart.minimized {
-            height: 30px;
-            overflow: hidden;
-        }
-        
-        .mini-chart-header {
-            background: #3b82f6;
-            color: white;
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: move;
-        }
-        
-        .mini-chart-controls {
-            display: flex;
-            gap: 4px;
-        }
-        
-        .mini-chart-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            transition: background-color 0.2s ease;
-        }
-        
-        .mini-chart-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .mini-chart-content {
-            padding: 8px;
-            height: calc(100% - 30px);
-        }
-        
-        .mini-chart-restore-btn {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 999;
-            transition: all 0.2s ease;
-        }
-        
-        .mini-chart-restore-btn:hover {
-            background: #2563eb;
-            transform: scale(1.1);
-        }
-        
-        .mini-chart-restore-btn.show {
-            display: flex;
-        }
         
         /* ========================================
            MINIMALIST PREMIUM THEME FOR ALL TABS
@@ -1471,22 +1377,6 @@
 <body class="bg-gray-100 text-gray-800">
 
 
-    <!-- Simple Mini Chart -->
-    <div id="mini-chart" class="mini-chart">
-        <div class="mini-chart-header">
-            <span>Efficiency Comparison</span>
-            <div class="mini-chart-controls">
-                <button id="mini-chart-minimize-btn" class="mini-chart-btn" title="Minimize">−</button>
-                <button id="mini-chart-close-btn" class="mini-chart-btn" title="Close">×</button>
-            </div>
-        </div>
-        <div class="mini-chart-content">
-            <canvas id="mini-efficiency-chart"></canvas>
-        </div>
-    </div>
-
-    <!-- Mini Chart Restore Button -->
-    <button id="mini-chart-restore-btn" class="mini-chart-restore-btn" title="Show Efficiency Comparison">Chart</button>
 
     <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-screen-xl">
         <main>
@@ -3029,8 +2919,6 @@
                         content.classList.toggle('active', content.id === tab.dataset.tab);
                     });
                     
-                    // Show/hide mini chart based on active tab
-                    showMiniChart();
                 });
             });
             
@@ -3094,8 +2982,8 @@
         document.getElementById("result-Vin").textContent=V_in.toFixed(2);document.getElementById("result-V1").textContent=V1.toFixed(4);document.getElementById("result-L1_mm").textContent=(L1*1e3).toFixed(2);document.getElementById("result-Ne1").textContent=Ne1.toFixed(2);document.getElementById("result-V2").textContent=isFinite(average_V2)?average_V2.toFixed(4):"N/A";document.getElementById("result-L2_mm").textContent=(L2*1e3).toFixed(2);document.getElementById("result-Ne2").textContent=Ne2.toFixed(2);document.getElementById("result-Ne_total").textContent=Ne_total.toFixed(2);
         document.getElementById("result-d50").textContent=d50_microns.toFixed(2);document.getElementById("result-total-efficiency").textContent=(totalMassEfficiency*100).toFixed(2);document.getElementById("result-dust-per-cyclone").textContent=dust_per_cyclone.toFixed(2);document.getElementById("result-escaped-per-cyclone").textContent=escaped_per_cyclone.toFixed(2);document.getElementById("result-escaped-dust").textContent=total_escaped_dust.toFixed(2);document.getElementById("result-dPe").textContent=pressureResults.delta_Pe.toFixed(2);document.getElementById("result-dPk").textContent=pressureResults.delta_Pk.toFixed(2);
         document.getElementById("result-dPf").textContent=pressureResults.delta_Pf_total.toFixed(2);document.getElementById("result-dPr").textContent=pressureResults.delta_Pr.toFixed(2);document.getElementById("result-dPo").textContent=pressureResults.delta_Po.toFixed(2);document.getElementById("result-total-pa").textContent=pressureResults.total_loss.toFixed(2);document.getElementById("result-total-h2o").textContent=(pressureResults.total_loss*.00401865).toFixed(2);document.getElementById("result-airwatt-loss").textContent=airwatt_loss.toFixed(3);resultsContainer.appendChild(resultsDiv);resultsDiv.classList.remove("hidden");updateAllTextSizes();autoSaveCurrentParameters()}catch(e){const errorContainer=document.getElementById("error-message");errorContainer.textContent=`Error: ${e.message}. Please check your inputs.`;errorContainer.classList.remove("hidden")}})
-        document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);updateMiniChart();updateAIComparisonTable();runCounter++;document.getElementById("run-name-input").value=""});
-        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()});hideMiniChart();updateAIComparisonTable()});
+        document.getElementById("save-run-btn").addEventListener("click",()=>{let runName=document.getElementById("run-name-input").value.trim();if(runName==="")runName=`Run ${runCounter}`;const runData={id:runCounter,name:runName,...lastCalculatedData};runHistory.push(runData);updateComparisonTable();updateChartsForNewRun(runData);updateAIComparisonTable();runCounter++;document.getElementById("run-name-input").value=""});
+        document.getElementById("clear-runs-btn").addEventListener("click",()=>{runHistory=[];runCounter=1;updateComparisonTable();[efficiencyChart,pressureChart,escapedDustChart,perCycloneDustChart,airwattChart].forEach(chart=>{chart.data.labels=[];chart.data.datasets.forEach(d=>d.data=[]);chart.update()});updateAIComparisonTable()});
 
         // File Operations
         document.getElementById("save-to-file-btn").addEventListener("click", saveRunsToFile);
@@ -6618,8 +6506,6 @@ Comparative analysis based on ${runHistory.length} design variations
                 targetContent.classList.remove('hidden');
             }
             
-            // Show/hide mini chart based on active tab
-            showMiniChart();
         }
 
         function switchAnalysisTab(tabName) {
@@ -6659,9 +6545,6 @@ Comparative analysis based on ${runHistory.length} design variations
         // Initialize application
         document.addEventListener('DOMContentLoaded', function() {
             
-            // Initialize mini chart
-            createMiniChart();
-            setupMiniChartControls();
             
             // Initialize DOE visualization controls
             setupDOEVisualizationControls();
@@ -6705,213 +6588,6 @@ Comparative analysis based on ${runHistory.length} design variations
             }, 300);
         }
 
-        // Simple Mini Chart
-        let miniChart = null;
-        
-        function createMiniChart() {
-            const ctx = document.getElementById('mini-efficiency-chart').getContext('2d');
-            
-            miniChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: particle_sizes_microns,
-                    datasets: []
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            ticks: {
-                                font: { size: 8 },
-                                maxRotation: 45
-                            },
-                            grid: {
-                                display: true,
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        },
-                        y: {
-                            display: true,
-                            min: 0,
-                            max: 100,
-                            ticks: {
-                                font: { size: 8 }
-                            },
-                            grid: {
-                                display: true,
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            }
-                        }
-                    }
-                }
-            });
-            
-            updateMiniChart();
-        }
-        
-        function updateMiniChart() {
-            if (!miniChart) {
-                createMiniChart();
-                return;
-            }
-            
-            // Copy data from the main efficiency chart
-            const mainChart = efficiencyChart;
-            if (mainChart && mainChart.data.datasets.length > 0) {
-                miniChart.data.datasets = [...mainChart.data.datasets];
-                miniChart.update('none');
-                showMiniChart();
-            }
-        }
-        
-        function showMiniChart() {
-            const currentTab = document.querySelector('.tab-content.active');
-            const miniChartDiv = document.getElementById('mini-chart');
-            const restoreBtn = document.getElementById('mini-chart-restore-btn');
-            
-            if (currentTab && currentTab.id === 'single-calc-tab') {
-                miniChartDiv.classList.add('show');
-                restoreBtn.classList.remove('show'); // Hide restore button when mini chart is visible
-            } else {
-                miniChartDiv.classList.remove('show');
-                restoreBtn.classList.remove('show'); // Hide restore button on other tabs
-            }
-        }
-        
-        function hideMiniChart() {
-            const miniChartDiv = document.getElementById('mini-chart');
-            const restoreBtn = document.getElementById('mini-chart-restore-btn');
-            
-            miniChartDiv.classList.remove('show');
-            
-            // Show restore button only if we're on the single calc tab and have data
-            const currentTab = document.querySelector('.tab-content.active');
-            if (currentTab && currentTab.id === 'single-calc-tab' && runHistory.length > 0) {
-                restoreBtn.classList.add('show');
-            }
-        }
-        
-        function restoreMiniChart() {
-            const miniChartDiv = document.getElementById('mini-chart');
-            const restoreBtn = document.getElementById('mini-chart-restore-btn');
-            
-            miniChartDiv.classList.add('show');
-            miniChartDiv.classList.remove('minimized'); // Always restore to full size
-            restoreBtn.classList.remove('show');
-            
-            // Reset minimize button
-            const minimizeBtn = document.getElementById('mini-chart-minimize-btn');
-            if (minimizeBtn) {
-                minimizeBtn.textContent = '−';
-                minimizeBtn.title = 'Minimize';
-            }
-        }
-        
-        function minimizeMiniChart() {
-            const miniChartDiv = document.getElementById('mini-chart');
-            const minimizeBtn = document.getElementById('mini-chart-minimize-btn');
-            
-            if (miniChartDiv.classList.contains('minimized')) {
-                // Maximize
-                miniChartDiv.classList.remove('minimized');
-                minimizeBtn.textContent = '−';
-                minimizeBtn.title = 'Minimize';
-            } else {
-                // Minimize
-                miniChartDiv.classList.add('minimized');
-                minimizeBtn.textContent = '□';
-                minimizeBtn.title = 'Maximize';
-            }
-        }
-        
-        function closeMiniChart() {
-            hideMiniChart();
-        }
-        
-        function setupMiniChartControls() {
-            const minimizeBtn = document.getElementById('mini-chart-minimize-btn');
-            const closeBtn = document.getElementById('mini-chart-close-btn');
-            const restoreBtn = document.getElementById('mini-chart-restore-btn');
-            
-            if (minimizeBtn) {
-                minimizeBtn.addEventListener('click', minimizeMiniChart);
-            }
-            
-            if (closeBtn) {
-                closeBtn.addEventListener('click', closeMiniChart);
-            }
-            
-            if (restoreBtn) {
-                restoreBtn.addEventListener('click', restoreMiniChart);
-            }
-            
-            // Make mini chart draggable
-            makeMiniChartDraggable();
-        }
-        
-        function makeMiniChartDraggable() {
-            const miniChart = document.getElementById('mini-chart');
-            const header = miniChart.querySelector('.mini-chart-header');
-            let isDragging = false;
-            let currentX;
-            let currentY;
-            let initialX;
-            let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
-            
-            header.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', dragMove);
-            document.addEventListener('mouseup', dragEnd);
-            
-            function dragStart(e) {
-                // Don't drag if clicking on buttons
-                if (e.target.classList.contains('mini-chart-btn')) return;
-                
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-                
-                if (e.target === header || e.target.parentNode === header) {
-                    isDragging = true;
-                    miniChart.style.cursor = 'grabbing';
-                }
-            }
-            
-            function dragMove(e) {
-                if (isDragging) {
-                    e.preventDefault();
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
-                    
-                    xOffset = currentX;
-                    yOffset = currentY;
-                    
-                    // Keep within viewport bounds
-                    const rect = miniChart.getBoundingClientRect();
-                    const maxX = window.innerWidth - rect.width;
-                    const maxY = window.innerHeight - rect.height;
-                    
-                    xOffset = Math.max(0, Math.min(maxX, xOffset));
-                    yOffset = Math.max(0, Math.min(maxY, yOffset));
-                    
-                    miniChart.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-                }
-            }
-            
-            function dragEnd(e) {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-                miniChart.style.cursor = 'default';
-            }
-        }
 
         // ============================================================================
         // DOE INTEGRATION FUNCTIONS
